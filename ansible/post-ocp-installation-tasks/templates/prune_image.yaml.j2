@@ -1,0 +1,11 @@
+apiVersion: imageregistry.operator.openshift.io/v1
+kind: ImagePruner
+metadata:
+  name: cluster
+spec:
+  failedJobsHistoryLimit: 3
+  keepTagRevisions: 3
+  keepYoungerThan: 3600000000000
+  schedule: {{ prune_image_schedule }}
+  successfulJobsHistoryLimit: 3
+  suspend: false

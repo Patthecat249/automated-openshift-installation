@@ -1,0 +1,69 @@
+---
+# Dieses Playbook konfiguriert die LDAP-Anbindung an den LDAP-Server bei der Bafin
+# Erstelle ein Secret, welches die Anmeldedaten vom LDAP-Benutzer enthält
+- name: "### --- 22 - Create LDAP bind secret"
+  shell: |
+    oc create secret generic "{{ ldap_bind_secret_name }}" \
+     --from-env-file="{{ ldap_bind_secret_src_file }}" \
+     -n openshift-config \
+     --config="{{ kubeconfig_path }}" 
+
+# Erstelle eine configmap, die das Zertifikat vom LDAP-Server enthält
+- name: "### --- 23 - Create LDAP certificate"
+  shell: oc create configmap "{{ ldap_cert_configmap_name }}" --from-file=ca.crt="{{ ldap_cert_configmap_src_file }}" -n openshift-config --config="{{ kubeconfig_path }}" 
+
+# Konfigurieren des Identity Providers aus dem jinja-template und kopieren ins Arbeitsverzeichnis
+- name: "### --- 24 - Render ldap_oauth.yaml from a template"
+  template:
+    src: templates/ldap_oauth.yaml.j2
+    dest: "{{ dir_post_install_config }}ldap_oauth.yaml"
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+
+# Ausrollen des Identity-Providers im OpenShift
+- name: "### --- 25 - Deploy ldap_oauth.yaml for LDAP identity provider"
+  shell: |
+    oc apply -f "{{ dir_post_install_config }}ldap_oauth.yaml" \
+      --config="{{ kubeconfig_path }}" 
+
+# Erzeuge die LDAP-Gruppen und eine Whitelist für den LDAP-Gruppen-Sync aus den jinja-Templates
+- name: "### --- 26 - Render ldap_oc_groups.yaml and whitelist from a template"
+  template:
+    src: "{{ item.tmpl }}"
+    dest: "{{ dir_post_install_config }}{{ item.res }}"
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+  with_items:
+    - tmpl: templates/ldap_oc_groups.yaml.j2
+      res: ldap_oc_groups.yaml
+    - tmpl: templates/ldap_whitelist.j2
+      res: ldap_whitelist
+
+# Synchronisiere die LDAP-Gruppen aus dem AD mit OpenShift
+- name: "### --- 27 - Deploy ldap_oc_groups.yaml to sync LDAP groups"
+  shell: |
+    oc adm groups sync \
+     --sync-config="{{ dir_post_install_config }}ldap_oc_groups.yaml" \
+     --whitelist="{{ dir_post_install_config }}ldap_whitelist" \
+     --confirm \
+     --config="{{ kubeconfig_path }}" 
+
+# Erstelle ein YAML-File mit einem Clusterrolebinding, sodass die Benutzer dieser Gruppe zu Clusteradmins werden
+- name: "### --- 28 - Render rolebinding_ocpadmin_clusteradmin.yaml from a template"
+  template:
+    src: templates/ldap_rolebinding_ocpadmin_clusteradmin.yaml.j2
+    dest: "{{ dir_post_install_config }}ldap_rolebinding_ocpadmin_clusteradmin.yaml"
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+
+# Führe die YAML-Datei aus und erzeuge das Clusterrolebindung im OpenShift 
+- name: "### --- 29 - Map ocp-admin group from LDAP with cluster-admins role from OCP"
+  shell: |
+    oc create -f "{{ dir_post_install_config }}ldap_rolebinding_ocpadmin_clusteradmin.yaml" \
+      --config="{{ kubeconfig_path }}" 

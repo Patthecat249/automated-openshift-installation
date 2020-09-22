@@ -1,0 +1,11 @@
+export KUBECONFIG={{ kubeconfig_path }}
+
+oc get nodes
+oc get clusteroperators
+
+sleep 30m
+while [ $(oc get csr | grep worker | grep Approved | wc -l) -lt {{ workers | length }} ]
+do
+  oc get csr -o json | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs oc adm certificate approve
+  sleep 10s
+done

@@ -1,0 +1,27 @@
+---
+# Dieses Playbook mounted das Software-Verzeichnis an den Bastion-Host an die unter path angegebene Stelle.
+# In dem gemounteten Pfad liegen die wichtigen Installationsdateien für CoreOS und OpenShift.
+- name: "### --- 04 - Mounting NFS-Share"
+  mount:
+    fstype: nfs
+    opts: "nfsvers=3,nolock"
+    dump: 0
+    passno: 0
+    state: mounted
+    src: "{{ src_nas_mount }}"
+    path: "{{ dir_mnt }}"
+
+- name: "### --- 05 - Wait a Second..."
+  wait_for:
+    timeout: 1
+
+   
+# - name: "Unmounting NFS-Share"
+  # mount:
+  #   fstype: nfs
+  #   opts: "nfsvers=3,nolock"
+  #   dump: 0
+  #   passno: 0
+  #   state: absent
+  #   src: "{{ src_nas_mount }}"
+  #   path: "{{ dir_mnt }}"

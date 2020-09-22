@@ -1,0 +1,121 @@
+provider "vsphere" {
+  user           = "{{ vsphere_user }}"
+  password       = "{{ vsphere_pass }}"
+  vsphere_server = "{{ vsphere_server }}"
+
+  # If you have a self-signed cert
+  allow_unverified_ssl = true
+}
+
+data "vsphere_datacenter" "dc" {
+  name = "{{ vsphere_datacenter }}"
+}
+
+data "vsphere_datastore" "datastore_{{ bstrp.name }}" {
+  name          = "{{ bstrp.datastore }}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+
+{% for m in masters %}
+data "vsphere_datastore" "datastore_{{ m.name }}" {
+  name          = "{{ m.datastore }}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+{% endfor %}
+
+{% for w in workers %}
+data "vsphere_datastore" "datastore_{{ w.name }}" {
+  name          = "{{ w.datastore }}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+{% endfor %}
+
+data "vsphere_resource_pool" "pool" {
+  name          = "{{ vsphere_rp }}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_network" "network" {
+  name          = "{{ vsphere_network }}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+# --- BEGIN Virtual Machine Creation for MASTERS --- #
+{% for m in masters %}
+resource "vsphere_virtual_machine" "vm_{{ m.hostname }}" {
+  name                        = "{{ m.hostname | upper }}"
+  folder                      = "{{ vsphere_folder }}"
+  guest_id                    = "coreos64Guest"
+  resource_pool_id            = data.vsphere_resource_pool.pool.id
+  firmware                    = "bios"
+  datastore_id                = data.vsphere_datastore.datastore_{{ m.name }}.id
+  num_cpus                    = {{ vsphere_master_cpu }}
+  memory                      = {{ vsphere_master_ram }}
+  wait_for_guest_ip_timeout   = 0
+  wait_for_guest_net_timeout  = 0
+  network_interface {
+    network_id                = data.vsphere_network.network.id
+    adapter_type              = "vmxnet3"
+    use_static_mac            = true
+    mac_address               = "{{ m.mac }}"
+  }
+
+  disk {
+    label                     = "disk0"
+    size                      = {{ vsphere_master_disksize }}
+  }
+}
+{% endfor %}
+
+# --- BEGIN Virtual Machine Creation for WORKERS --- #
+{% for w in workers %}
+resource "vsphere_virtual_machine" "vm_{{ w.hostname }}" {
+  name                       = "{{ w.hostname | upper }}"
+  folder                     = "{{ vsphere_folder }}"
+  guest_id                   = "coreos64Guest"
+  resource_pool_id           = data.vsphere_resource_pool.pool.id
+  firmware = "bios"
+  datastore_id               = data.vsphere_datastore.datastore_{{ w.name }}.id
+  num_cpus                   = {{ vsphere_worker_cpu }}
+  memory                     = {{ vsphere_worker_ram }}
+  wait_for_guest_ip_timeout  = 0
+  wait_for_guest_net_timeout = 0
+  network_interface {
+    network_id               = data.vsphere_network.network.id
+    adapter_type             = "vmxnet3"
+    use_static_mac           = true
+    mac_address              = "{{ w.mac }}"
+  }
+
+  disk {
+    label                    = "disk0"
+    size                     = {{ vsphere_worker_disksize }}
+  }
+}
+{% endfor %}
+
+# --- BEGIN Virtual Machine Creation for BOOTSTRAP --- #
+resource "vsphere_virtual_machine" "vm_{{ bstrp.hostname }}" {
+  name                         = "{{ bstrp.hostname | upper }}"
+  folder                       = "{{ vsphere_folder }}"
+  guest_id                     = "coreos64Guest"
+  resource_pool_id             = data.vsphere_resource_pool.pool.id
+  firmware                     = "bios"
+  datastore_id                 = data.vsphere_datastore.datastore_{{ bstrp.name }}.id
+  num_cpus                     = 8
+  memory                       = 32768
+  wait_for_guest_ip_timeout    = 0
+  wait_for_guest_net_timeout   = 0
+  network_interface {
+    network_id                 = data.vsphere_network.network.id
+    adapter_type               = "vmxnet3"
+    use_static_mac             = true
+    mac_address                = "{{ bstrp.mac }}"
+  }
+
+  disk {
+    label                      = "disk0"
+    size                       = 120
+  }
+}

@@ -1,0 +1,5 @@
+---
+- name: "Installation of CP4MCM v2.0.0 on OpenShift x86_64"
+  shell: |
+    
+

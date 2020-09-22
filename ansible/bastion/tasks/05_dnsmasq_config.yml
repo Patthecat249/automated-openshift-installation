@@ -1,0 +1,44 @@
+---
+- name: "### --- 14 - Check if dnsmasq.conf is backed up"
+  stat:
+    path: /etc/dnsmasq.conf.backup
+  register: dnsmasq_conf_backup_details
+
+- name: "### --- 15 - Backup dnsmasq.conf if not already done"
+  copy:
+    src: /etc/dnsmasq.conf
+    dest: /etc/dnsmasq.conf.backup
+    mode: '0644'
+    remote_src: yes
+  when: not dnsmasq_conf_backup_details.stat.exists
+
+- name: "### --- 16 - Render dnsmasq.conf from template"
+  template:
+    src: templates/dnsmasq.conf.j2
+    dest: "/etc/dnsmasq.conf"
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+    validate: "dnsmasq --test -C %s"
+  notify: 
+    - restart dnsmasq
+
+# 21.09.2020 - New Feature to backup the dnsmasq.conf-file
+- name: "### --- 17 - Backup dnsmasq.conf to /opt/sva/backup"
+  copy:
+    src: "/etc/dnsmasq.conf"
+    dest: "{{ dir_backup_dnsmasq }}dnsmasq.conf"
+    remote_src: yes
+
+- name: "### --- 18 - Ensure dnsmasq is running"
+  systemd: 
+    name: dnsmasq
+    state: started
+    enabled: yes
+
+- name: "### --- 19 - Add DNS server and search domain"
+  shell: |
+    nmcli con mod eth0 +ipv4.dns-search "{{ clustername }}.{{ domainname }}"
+    nmcli con mod eth0 +ipv4.dns "{{ bastion.ip }}"
+    nmcli connection up eth0 

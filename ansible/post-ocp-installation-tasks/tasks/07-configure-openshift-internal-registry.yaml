@@ -1,0 +1,45 @@
+---
+# Dieses Playbook konfiguriert die interne OpenShift-Registry so, dass sie verwendet werden kann
+# Setze den ManagementState auf managed
+- name: "### --- 18 - Patch configs.imageregistry.operator.openshift.io - Change ManagementState Image Registry Operator configuration from Removed to Managed"
+  shell: |
+    oc patch configs.imageregistry.operator.openshift.io cluster \
+     --type merge \
+     --patch '{"spec":{"managementState":"Managed"}}' \
+     --config="{{ kubeconfig_path }}" 
+  
+  # Entferne eine eventuell vorhandene Storage-Konfiguration
+- name: "### --- 19 - Patch configs.imageregistry.operator.openshift.io - Delete emptyDir"
+  shell: |
+    oc patch configs.imageregistry.operator.openshift.io cluster \
+     --type merge \
+     --patch '{"spec":{"storage":null}}' \
+     --config="{{ kubeconfig_path }}" 
+
+# Konfiguriere die Registry so, dass sie einen Persistent Volume Claim verwendet
+- name: "### --- 20 - Patch configs.imageregistry.operator.openshift.io - Leave the claim field blank to allow the automatic creation of an image-registry-storage PVC"
+  shell: |
+    oc patch configs.imageregistry.operator.openshift.io cluster \
+     --type merge \
+     --patch '{"spec":{"storage":{"pvc":{"claim":""}}}}' \
+     --config="{{ kubeconfig_path }}" 
+
+# Setze den Schalter der Default-Route auf true, so dass man die Registry von extern nutzen kann.
+- name: "### --- 21 - Patch configs.imageregistry.operator.openshift.io - Set defaultRoute to True"
+  raw: oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"defaultRoute":true}}' --kubeconfig="{{ kubeconfig_path }}"
+
+
+
+
+
+# Status REMOVES>>MANAGED und Storage configuration
+# oc edit configs.imageregistry.operator.openshift.io
+# oc get configs.imageregistry.operator.openshift.io/cluster -o yaml
+
+# oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"managementState":"Managed"}}'
+
+# oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":null}}'
+
+# oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"pvc":{"claim":""}}}}'
+
+# oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"storage":{"emptyDir":{}}}}'

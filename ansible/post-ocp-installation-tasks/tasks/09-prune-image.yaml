@@ -1,0 +1,17 @@
+---
+# Wende den Best-Practice von Red Hat an, um veraltete, nicht genutzte Images aus der internen Images-Registry zu entfernen
+# Erzeuge das YAML-File aus dem jinja-Template
+- name: "### --- 30 - Render prune_image.yaml"
+  template:
+    src: prune_image.yaml.j2
+    dest: "{{ dir_post_install_config }}prune_image.yaml"
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+
+# Führe das YAML-File aus und
+- name: "### --- 31 - Deploy prune_image.yaml"
+  shell: |
+    oc apply -f "{{ dir_post_install_config }}prune_image.yaml" \
+      --config="{{ kubeconfig_path }}" 

@@ -1,0 +1,44 @@
+---
+# Dieses Playbook bezieht die SSL-Zertifikate, damit man nach der erfolgreichen Installation von OpenShift mit dem "oc"-Kommando eine gesicherte Verbindung zur Cluster API aufbauen kann.
+- name: "### --- 01 - Make sure '{{ dir_certs }}' exists"
+  file: 
+    path: "{{ dir_certs }}"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+
+# Lese die Daten der kubeconfig-Datei in eine Variable ein
+- name: "### --- 02 - Get content of kubeconfig"
+  shell: cat "{{ kubeconfig_path }}"
+  register: res
+  no_log: True
+
+# Ermittle aus der Variablen ausschließlich das Zertifikat
+- name: "### --- 03 - Get 'certificate-authority-data'"
+  set_fact:
+    final: "{{ (res.stdout|from_yaml).clusters[0].cluster['certificate-authority-data'] | b64decode }}"
+  no_log: True
+
+# Speichere das Zertifikat in einer Datei im Arbeitsverzeichnis CERTS
+- name: "### --- 04 - Save 'certificate-authority-data'"
+  copy:
+    content: "{{ final }}"
+    dest: "{{ dir_certs }}{{ kubeconfig_certs_filename }}"
+    force: yes
+
+# Kopiere das Zertifikat an die Stelle des Truststore von RHEL unter /etc/pki/...
+- name: "### --- 05 - Copy pem files to /etc/pki/ca-trust/source/anchors/" 
+  copy: 
+    src: "{{ dir_certs }}{{ kubeconfig_certs_filename }}"
+    dest: "/etc/pki/ca-trust/source/anchors/{{ kubeconfig_certs_filename }}" 
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+  register: copy_pem_details
+
+# Aktualisiere den Truststore von RHEL
+- name: "### --- 06 - Update the trust-store"
+  shell: update-ca-trust
+  when: copy_pem_details.changed==True

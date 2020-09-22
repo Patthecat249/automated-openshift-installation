@@ -1,0 +1,8 @@
+---
+# Dieses Playbook erstellt die Arbeitsverzeichnisse auf dem Bastion-Host
+- name: "### --- 47 - Prepare Terraform-Plan-File: Render jinja-template to main.tf-file"
+  template:
+    src: "../ocp-master-worker-nodes/{{ tf_jinja_template }}"
+    dest: "{{ dir_terraform }}{{ tf_filename_main_tf }}"    
+  tags:
+    - terraform

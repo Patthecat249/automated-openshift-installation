@@ -1,0 +1,43 @@
+---
+# Dieses Playbook erstellt die Arbeitsverzeichnisse auf dem Bastion-Host
+- name: "### --- 01 - Run 00_create_ssh_keys.sh"
+  script: templates/00_create_ssh_keys.sh
+  tags:
+    - debug
+
+
+- name: "### --- 02 - Create working directories" 
+  file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+    recurse: true
+  with_items:
+    - "{{ dir_working }}"
+    - "{{ dir_tools }}"
+    - "{{ dir_cluster }}"
+    - "{{ dir_install_config }}"
+    - "{{ dir_tftp_root }}"
+    - "{{ dir_http_server }}"
+    - "{{ dir_mnt }}"
+    - "{{ dir_tftp_root }}{{ dir_coreos_files }}"
+    - "{{ dir_terraform }}"
+    - "{{ dir_backup }}"
+    - "{{ dir_backup_manifest_files }}"
+    - "{{ dir_backup_ignition_files }}"
+    - "{{ dir_backup_ssh_keys }}"
+    - "{{ dir_backup_tftp }}"
+    - "{{ dir_backup_install_config }}"
+    - "{{ dir_backup_dnsmasq }}"
+
+# 21.09.2020 - New Feature to backup the SSH-Key-Folder-Content
+- name: "### --- 03 - Backup SSH-Keys to /opt/sva/backup"
+  command: cp "{{ key_to_nodes_dir }}{{ item }}" "{{ dir_backup_ssh_keys }}"
+  with_items:
+    - "{{ key_to_nodes_name }}"
+    - "{{ key_to_nodes_name }}.pub"
+
+
+

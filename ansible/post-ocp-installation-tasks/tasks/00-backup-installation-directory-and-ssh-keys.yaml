@@ -1,0 +1,6 @@
+---
+# Dieses Playbook sichert den install-config-folder und die SSH-Keys
+# 21.09.2020 - New Feature to backup the ignition-files to /opt/sva/backup
+- name: "### --- 00a - Sichere den Install-config-folder"
+  command: cp -r "{{ dir_install_config }}" "{{ dir_backup_install_config }}"
+

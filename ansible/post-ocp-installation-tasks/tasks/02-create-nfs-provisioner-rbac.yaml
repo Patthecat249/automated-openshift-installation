@@ -1,0 +1,25 @@
+---
+# Dieses Playbook erzeugt die RBAC-Rolle im OpenShift-Cluster
+- name: "### --- 07 - Make sure '{{ dir_post_install_config }}' exists"
+  file: 
+    path: "{{ dir_post_install_config }}"
+    owner: root
+    group: root
+    mode: '0644'
+    state: directory
+
+# Kopiere die YAML-Datei auf den Bastion Host
+- name: "### --- 08 - Copy nfs_provisioner_rbac to remote host"
+  copy: 
+    src: "templates/storage_rbac.yaml"
+    dest: "{{ dir_post_install_config }}nfs_provisioner_rbac.yaml"
+    owner: root
+    group: root
+    mode: '0644'
+    force: yes
+
+# Erzeuge die RBAC-Rolle per oc create -f nfs_provisioner_rbac.yaml im OpenShift-Cluster
+- name: "### --- 09 - Deploy nfs_provisioner_rbac.yaml for nfs-client-provisioner"
+  shell: |
+    oc create -f "{{ dir_post_install_config }}nfs_provisioner_rbac.yaml" \
+      --config="{{ kubeconfig_path }}" 

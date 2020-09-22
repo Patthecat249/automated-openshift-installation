@@ -1,0 +1,17 @@
+---
+- name: restart dnsmasq
+  systemd:
+    name: dnsmasq
+    state: restarted
+
+- name: restart httpd
+  systemd:
+    name: httpd
+    state: restarted
+
+- name: restart network.service
+  service:
+    name: network
+    state: restarted
+    args: eth0
+  # shell: "ifdown eth0 && ifup eth0"
