@@ -1,0 +1,133 @@
+- name: "### --- 01 - Start Playbook to create a Load-Balancer --- ###"
+  hosts: pxe
+  vars_files: 
+    - "central_vars.yaml"
+  gather_facts: no
+  vars_prompt:
+# Frage den Hostnamen ab und speichere ihn in einer Variable (max 14 Zeichen, kein FQDN, nur Hostname)
+#    - name: hostname
+#      prompt: "Wie ist der Hostname? (14 Zeichen, kein FQDN, nur Hostname): "
+#      private: no
+# Frage das OS ab (centos76, centos77, centos78, rhel81,...)
+#    - name: os
+#      prompt: "Welches Betriebssystem? (centos76, centos77, centos78, rhel81): "
+#      private: no
+      
+# Beginn TASKs
+  tasks:
+
+# Erstelle Arbeitsverzeichnisse
+  - name: "--- 01 - Create Working Directories"
+    file:
+      path: "{{ item }}"
+      #owner: root
+      #group: root
+      #mode: '0755'
+      state: directory
+      recurse: true
+    with_items:
+      - "{{ mount_path }}"
+      - "{{ mount_path_cdrom }}"
+      - "{{ dir_work }}"
+      - "{{ dir_work }}{{ dir_terraform }}"
+
+  - name: "--- 02 - Create Working Directories for DNSMASQ"
+    file:
+      path: "{{ item }}"
+      owner: "{{ dnsmasq_user }}"
+      group: "{{ dnsmasq_group }}"
+      mode: '0755'
+      state: directory
+      recurse: true
+    with_items:
+      - "{{ tftproot_path }}{{ kernel_initrd_path }}"
+      - "{{ tftproot_path }}{{ kernel_initrd_path }}{{ os_name_centos76 }}"
+      - "{{ tftproot_path }}{{ kernel_initrd_path }}{{ os_name_centos77 }}"
+      - "{{ tftproot_path }}{{ kernel_initrd_path }}{{ os_name_centos78 }}"
+      - "{{ tftproot_path }}{{ kernel_initrd_path }}{{ os_name_rhel77 }}"
+
+
+# Mounte NFS-Server-Verzeichnis zum Kopieren der Kickstart-Datei
+  - name: "--- 03 - Mounting NFS-Share"
+    mount:
+      fstype: nfs
+      opts: "nfsvers=3,nolock"
+      dump: "0"
+      passno: "0"
+      state: mounted
+      src: "{{ nfs_server_name }}:{{ nfs_path }}"
+      path: "{{ mount_path }}"
+
+
+# pxelinux.cfg > default jinja-Template erstellen 
+  - name: "--- 04 - Create default.cfg from jinja-Template"
+    template:
+      src: "{{ jinja_template_folder }}{{ jinja_template_default }}"
+      dest: "{{ tftproot_path }}{{ pxelinux_cfg_path }}default"
+      mode: "0755"
+      owner: "{{ dnsmasq_user }}"
+      group: "{{ dnsmasq_group }}"
+
+# Extract the vmlinuz-kernels and initramdisks
+  - name: "--- 05 - {{ os_name_centos76 }} - Extract kernel and ramdisk from a ISO"
+    iso_extract:
+      image: "{{ mount_path }}{{ nfs_path_os_centos76 }}"
+      dest: "{{ tftproot_path }}{{ kernel_initrd_path }}{{ os_name_centos76 }}/"
+      files:
+      - isolinux/vmlinuz
+      - isolinux/initrd.img
+
+  - name: "--- 06 - {{ os_name_centos77 }} - Extract kernel and ramdisk from a ISO"
+    iso_extract:
+      image: "{{ mount_path }}{{ nfs_path_os_centos77 }}"
+      dest: "{{ tftproot_path }}{{ kernel_initrd_path }}{{ os_name_centos77 }}/"
+      files:
+      - isolinux/vmlinuz
+      - isolinux/initrd.img
+
+  - name: "--- 07 - {{ os_name_centos78 }} - Extract kernel and ramdisk from a ISO"
+    iso_extract:
+      image: "{{ mount_path }}{{ nfs_path_os_centos78 }}"
+      dest: "{{ tftproot_path }}{{ kernel_initrd_path }}{{ os_name_centos78 }}/"
+      files:
+      - isolinux/vmlinuz
+      - isolinux/initrd.img
+
+  - name: "--- 08 - {{ os_name_rhel77 }} - Extract kernel and ramdisk from a ISO"
+    iso_extract:
+      image: "{{ mount_path }}{{ nfs_path_os_rhel77 }}"
+      dest: "{{ tftproot_path }}{{ kernel_initrd_path }}{{ os_name_rhel77 }}/"
+      files:
+      - isolinux/vmlinuz
+      - isolinux/initrd.img
+
+
+# Default kickstart jinja-Template erstellen 
+  - name: "--- 09 - Create default.cfg from jinja-Template"
+    template:
+      src: "{{ jinja_template_folder }}{{ jinja_template_default_kickstart_cfg }}"
+      dest: "{{ mount_path }}kickstart-configs/{{ lb.hostname }}.cfg"
+      mode: "0744"
+      owner: "1027"
+      group: "users"
+      force: yes
+
+# Terraform - Create main.tf from template
+  - name: "--- 10 - Terraform - Create main.tf from jinja-template"
+    template:
+      src: "{{ dir_template_terraform }}{{ template_terraform_main_tf }}"
+      dest: "{{ dir_work }}{{ dir_terraform }}main.tf"
+      mode: "0644"
+      owner: "root"
+      group: "root"
+      force: yes
+
+# Terraform - Create variables.tf from template
+  - name: "--- 11 - Terraform - Create variables.tf from jinja-template"
+    template:
+      src: "{{ dir_template_terraform }}{{ template_terraform_variables_tf }}"
+      dest: "{{ dir_work }}{{ dir_terraform }}variables.tf"
+      mode: "0644"
+      owner: "root"
+      group: "root"
+      force: yes
