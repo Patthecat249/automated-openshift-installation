@@ -13,7 +13,7 @@ variable "vsphere_password" {
 
 # VM-name
 variable "vm_name" {
-  default = "{{ hostname }}"
+  default = "{{ lb.hostname }}"
 }
 
 variable "vm_folder" {
