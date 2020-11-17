@@ -6,9 +6,13 @@ domain: "home.local"
 cpu: "2"
 ram: "4096"
 
+# OpenShift-Cluster
+clustername: "ocp43"
+
 # Working Directories
 dir_work: "/opt/sva/"
-dir_terraform: "terraform/"
+dir_terraform: "{{dir_work}}terraform/"
+dir_lb: "{{dir_terraform}}lb/"
 
 
 # VM-Config
