@@ -30,6 +30,15 @@
       - "{{ mount_path_cdrom }}"
       - "{{ dir_lb }}"
       
+# Erstelle Arbeitsverzeichnisse
+  - name: "--- 01a - Create local Working Directories"
+    file:
+      path: "{{ item }}"
+      state: directory
+      recurse: true
+    with_items:
+      - "{{ dir_lb }}"
+    delegate_to: 127.0.0.1
       
 
   - name: "--- 02 - Create Working Directories for DNSMASQ"
