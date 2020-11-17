@@ -57,14 +57,14 @@ resource "vsphere_virtual_machine" "{{ lb.hostname }}" {
     size  = "120"
     thin_provisioned  = "true"
   }
-  clone {
-    template_uuid = "4226b890-4986-d6b5-f3ef-e3458f22cfee"
-    customize {
-      linux_options {
-        host_name = "{{ lb.hostname }}"
-        domain = "{{ domain }}"
-      }
-      network_interface { }
-    }
-  }
+#  clone {
+#    template_uuid = "4226b890-4986-d6b5-f3ef-e3458f22cfee"
+#    customize {
+#      linux_options {
+#        host_name = "{{ lb.hostname }}"
+#        domain = "{{ domain }}"
+#      }
+#      network_interface { }
+#    }
+#  }
 }
