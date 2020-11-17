@@ -56,9 +56,9 @@ kickstart_config_file: "default.cfg"
 kernel_initrd_path: "kernels_initrd/"
 
 lb:
-  - name: "loadbalancer"
-    hostname: "lb01"
-    ip: ""
+  name: "loadbalancer"
+  hostname: "lb01"
+  ip: ""
 
 os:
   - name: "centos7"
