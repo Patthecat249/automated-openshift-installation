@@ -1,7 +1,7 @@
 - name: "### --- 01 - Start Playbook to create a Load-Balancer --- ###"
   hosts: pxe
   vars_files: 
-    - "central_vars.yaml"
+    - "../central_vars.yaml"
   gather_facts: no
   vars_prompt:
 # Frage den Hostnamen ab und speichere ihn in einer Variable (max 14 Zeichen, kein FQDN, nur Hostname)
