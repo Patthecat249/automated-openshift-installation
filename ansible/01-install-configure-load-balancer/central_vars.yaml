@@ -39,10 +39,10 @@ mount_path: "/mnt/nfs-iso/"
 mount_path_cdrom: "/mnt/cdrom/"
 
 # Jinja-Template-Folder
-jinja_template_folder: "./config-files/menu-c32/"
+jinja_template_folder: "../config-files/menu-c32/"
 jinja_template_default: "default-jinja.j2"
 jinja_template_default_kickstart_cfg: "default-kickstart-cfg.j2"
-dir_template_terraform: "./config-files/terraform/"
+dir_template_terraform: "../config-files/terraform/"
 template_terraform_main_tf: "main_tf.j2"
 template_terraform_variables_tf: "variables_tf.j2"
 
