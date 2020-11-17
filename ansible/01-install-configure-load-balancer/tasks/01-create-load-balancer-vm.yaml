@@ -29,7 +29,7 @@
       - "{{ mount_path }}"
       - "{{ mount_path_cdrom }}"
       - "{{ dir_lb }}"
-      #- "{{ dir_work }}{{ dir_terraform }}"
+      
       
 
   - name: "--- 02 - Create Working Directories for DNSMASQ"
@@ -122,6 +122,7 @@
       owner: "root"
       group: "root"
       force: yes
+    delegate_to: 127.0.0.1
 
 # Terraform - Create variables.tf from template
   - name: "--- 11 - Terraform - Create variables.tf from jinja-template"
@@ -132,3 +133,4 @@
       owner: "root"
       group: "root"
       force: yes
+    delegate_to: 127.0.0.1
