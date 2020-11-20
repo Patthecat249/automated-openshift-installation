@@ -2,6 +2,7 @@
 - name: "Installation and Configuration of a central-installation-vm"
   hosts: "{{ install.hostname }}"
   gather_facts: "false"
+  vars_file: "../vars/vars.yaml"
   tasks:
     - name: "01 - Install software"
 ...
