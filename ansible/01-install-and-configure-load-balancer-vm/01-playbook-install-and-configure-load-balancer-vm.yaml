@@ -1,0 +1,7 @@
+---
+- name: "Installation and Configuration of a load-balancer"
+  hosts: "{{ lb1.hostname }}"
+  gather_facts: "false"
+  tasks:
+    - name: "01 - Install software"
+...

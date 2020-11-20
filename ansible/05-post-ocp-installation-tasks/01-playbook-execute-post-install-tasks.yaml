@@ -1,0 +1,7 @@
+---
+- name: "Execution of post-installation-task after an ocp-installation"
+  hosts: "{{ bastion.hostname }}"
+  gather_facts: "false"
+  tasks:
+    - name: "01 - Install software"
+...

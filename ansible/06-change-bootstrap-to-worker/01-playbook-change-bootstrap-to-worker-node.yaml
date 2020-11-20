@@ -1,0 +1,7 @@
+---
+- name: "Change the Bootstrap-Node into a Worker-Node"
+  hosts: "{{ localhost }}"
+  gather_facts: "false"
+  tasks:
+    - name: "01 - Install software"
+...
