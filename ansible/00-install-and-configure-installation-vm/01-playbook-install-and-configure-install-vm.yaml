@@ -1,16 +1,58 @@
 ---
 - name: "Installation and Configuration of a central-installation-vm"
-  hosts: all
+  hosts: localhost
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
   tasks:
-    - name: "01 - Install software"
+    - name: "01 - Install necassary software programs"
       yum:
         name:
           - epel-release
-          - wget
-          - jq
-          - podman
+          - centos-release-ansible-29.noarch
+          - ansible
+          - wget.x86_64
+          - jq.x86_64
+          - podman.x86_64
+          - skopeo.x86_64
+          - nfs-utils.x86_64
+          - unzip
         state: "present"
+
+    - name: "02 - Create Working-Directories"
+      file:
+        path: "{{items}}"
+        state: directory
+      with_items:
+        - "{{ dir_root }}"
+        - "{{ dir_cluster }}"
+        - "{{ dir_terraform }}"
+        - "{{ dir_terraform_vsphere_plugin }}"
+        - "{{ dir_tools }}"
+      
+    
+    - name: "03 - Download terraform"
+      get_url:
+        url: "{{ download_tf }}"
+        dest: "{{ dir_terraform }}"
+
+    - name: "03a - Download terraform vSphere-Provider-Plugin"
+      get_url:
+        url: "{{ download_tf_vsphere_plugin }}"
+        dest: "{{ dir_terraform_vsphere_plugin }}"
+
+
+    - name: "04 - Entpacken von terraform"
+      unarchive:
+        src: "{{ dir_terraform }}terraform_{{ tf_version }}_linux_amd64.zip"
+        dest: "{{ dir_tools }}"
+        remote_src: "true"
+
+    - name: "05 - Terraform nach /usr/bin kopieren und ausführbar machen"
+      copy:
+        src: "{{ dir_tools }}terraform"
+        dest: "/usr/local/bin/terraform"
+        mode: "0755"
+        remote_src: "true"
+        
 ...

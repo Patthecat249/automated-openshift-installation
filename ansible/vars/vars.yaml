@@ -1,0 +1,22 @@
+# OpenShift
+clustername: "ocp-patrick"
+
+
+# Terraform
+tf_version: "0.13.5"
+tf_zip_filename: "terraform_{{tf_version}}_linux_amd64.zip"
+
+## Terraform - vSphere-Plugin
+tf_vsphere_plugin_version: "1.24.2"
+tf_vsphere_plugin_zip_filename: "terraform-provider-vsphere_{{tf_vsphere_plugin_version}}_linux_amd64.zip"
+
+# Download-Links
+download_tf: "https://releases.hashicorp.com/terraform/{{tf_version}}/terraform_{{tf_version}}_linux_amd64.zip"
+download_tf_vsphere_plugin: "https://releases.hashicorp.com/terraform-provider-vsphere/{{tf_vsphere_plugin_version}}/terraform-provider-vsphere_{{tf_vsphere_plugin_version}}_linux_amd64.zip"
+
+# Working directories >> always end with Slash /
+dir_root: "/opt/patrick/"
+dir_cluster: "{{dir_root}}{{clustername}}/"
+dir_terraform: "{{dir_root}}terraform/"
+dir_terraform_vsphere_plugin: "{{dir_terraform}}vsphere_plugin"
+dir_tools: "{{dir_root}}tools/"
