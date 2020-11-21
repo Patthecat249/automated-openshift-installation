@@ -1,8 +1,16 @@
 ---
 - name: "Installation and Configuration of a central-installation-vm"
-  hosts: "{{ install.hostname }}"
+  hosts: all
   gather_facts: "false"
-  vars_file: "../vars/vars.yaml"
+  vars_files:
+    - "../vars/vars.yaml"
   tasks:
     - name: "01 - Install software"
+      yum:
+        name:
+          - epel-release
+          - wget
+          - jq
+          - podman
+        state: "present"
 ...
