@@ -8,9 +8,6 @@
     - name: "01 - Install necassary software programs"
       yum:
         name:
-          - epel-release
-          - centos-release-ansible-29.noarch
-          - ansible
           - wget.x86_64
           - jq.x86_64
           - podman.x86_64
