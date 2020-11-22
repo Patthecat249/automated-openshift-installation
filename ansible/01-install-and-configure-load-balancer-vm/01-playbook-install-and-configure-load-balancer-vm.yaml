@@ -1,7 +1,10 @@
 ---
 - name: "Installation and Configuration of a load-balancer"
-  hosts: "{{ lb1.hostname }}"
+  hosts: "localhost"
   gather_facts: "false"
   tasks:
-    - name: "01 - Install software"
+    - name: "01 - Render terraform-template for load-balancer-vm"
+      template:
+        src: ""
+        dest: ""
 ...

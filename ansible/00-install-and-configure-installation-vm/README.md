@@ -4,3 +4,15 @@ Mit diesem Playbook wird eine virtuelle Maschine vorbereitet, welche als Ausgang
 Wir bezeichnen sie als "Puppenspieler", "Fadenzieher" oder "Ausgangspunkt".
 
 Dieser Rechner hat zum Zeitpunkt der Einrichtung Internet-Zugang!
+
+# Requirements
+- Linux CentOS 7.7 x64_86
+- 1 vCPU
+- 1024 MB RAM
+- 16 GB Thin provisioned disk
+
+# Software
+This software packages will be installed
+- git
+- ansible
+- terraform + vsphere-plugin
