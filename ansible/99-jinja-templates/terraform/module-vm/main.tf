@@ -36,7 +36,7 @@ variable "ocp-folder" {
 }
 
 # --- Create VM OCP-Bastion-Host --- #
-resource "vsphere_virtual_machine" "{{ hostname }}" {
+resource "vsphere_virtual_machine" "hostname" {
 
   name = var.vm_name
   folder = var.ocp-folder
@@ -44,8 +44,8 @@ resource "vsphere_virtual_machine" "{{ hostname }}" {
   resource_pool_id = data.vsphere_resource_pool.pool.id
   firmware = "bios"
   datastore_id = data.vsphere_datastore.datastore.id
-  num_cpus = "{{ cpu }}"
-  memory = "{{ ram }}"
+  num_cpus = var.cpu
+  memory = var.ram
   wait_for_guest_ip_timeout = 0
   wait_for_guest_net_timeout = 0
   network_interface {

@@ -13,7 +13,15 @@ variable "vsphere_password" {
 
 # VM-name
 variable "vm_name" {
-  default = "{{ hostname }}"
+  default = "test-vm"
+}
+
+variable "cpu" {
+  default = "1"
+}
+
+variable "ram" {
+  default = "1024"
 }
 
 variable "vm_folder" {
