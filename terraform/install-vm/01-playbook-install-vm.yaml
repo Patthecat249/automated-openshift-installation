@@ -1,0 +1,21 @@
+- name: "Install-VM"
+  hosts: 127.0.0.1
+  gather_facts: "false"
+  vars:
+    hostname: "test-vm-01"
+  tasks:
+    - name: "Render main.tf.j2 to main.tf.j2"
+      template:
+        src: "main.tf.j2"
+        dest: "main.tf"
+    - name: "Create virtual machine"
+      raw: "terraform init && terraform apply -auto-approve"
+
+    - name: "Get mac-address from created virtual machine"
+      raw: "terraform output -json | jq '.["mac-address"].value' | sed -e 's|\"||g'"
+      register: mac
+
+    - name: "Create file with mac-address-filename"
+      copy:
+        content: ""
+        dest: "{{ mac }}.txt"

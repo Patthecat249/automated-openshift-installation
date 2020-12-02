@@ -1,3 +1,4 @@
 credentials.yaml
 vault
 pull-secret
+main.tf
