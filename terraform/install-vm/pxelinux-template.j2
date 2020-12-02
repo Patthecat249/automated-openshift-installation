@@ -1,0 +1,13 @@
+DEFAULT menu.c32
+PROMPT 0
+
+MENU TITLE OpenShift-Node-Install-Menu
+MENU AUTOBOOT Starting CoreOS in # seconds
+
+timeout 18
+ONTIMEOUT CoreOS
+
+LABEL CoreOS
+menu label Install OCP-{{vm_type}}#1
+KERNEL kernels_initrd/coreos_4.3.8/vmlinuz
+APPEND ip=dhcp rd.neednet=1 initrd=kernels_initrd/coreos_4.3.8/initramfs.img console=tty0 console=ttyS0 coreos.inst=yes coreos.inst.install_dev=sda coreos.inst.image_url=http://ocpbastion-rhel/rhcos-4.3.8-x86_64-metal.x86_64.raw.gz coreos.inst.ignition_url=http://ocpbastion-rhel/{{vm_type}}.ign

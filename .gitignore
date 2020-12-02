@@ -2,3 +2,5 @@ credentials.yaml
 vault
 pull-secret
 main.tf
+.terraform
+terraform.state*

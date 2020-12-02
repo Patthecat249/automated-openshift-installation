@@ -3,6 +3,8 @@
   gather_facts: "false"
   vars:
     hostname: "test-vm-01"
+    dir_tftproot: "/tftproot/pxelinux.cfg/"
+    vm_type: "worker"
   tasks:
     - name: "Render main.tf.j2 to main.tf.j2"
       template:
@@ -16,7 +18,8 @@
       raw: "terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
 
-    - name: "Create file with mac-address-filename"
-      copy:
-        content: "Hello World!"
-        dest: "01-{{ mac.stdout | trim | regex_replace(':', '-')}}"
+    - name: "Create file with mac-address-filename on tftproot on pxe-server"
+      hosts: "pxe-server"
+      template:
+        src: "./pxelinux-template.j2"
+        dest: "{{dir_tftproot}}01-{{ mac.stdout | trim | regex_replace(':', '-')}}"
