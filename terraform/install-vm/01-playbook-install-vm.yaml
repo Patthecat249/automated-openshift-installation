@@ -5,21 +5,43 @@
     hostname: "test-vm-01"
     dir_tftproot: "/tftproot/pxelinux.cfg/"
     vm_type: "worker"
+    ip: "10.0.249.111"
   tasks:
-    - name: "Render main.tf.j2 to main.tf.j2"
+    - name: "01 --- Create main.tf-file from main.tf.j2"
       template:
         src: "main.tf.j2"
         dest: "main.tf"
 
-    - name: "Create virtual machine"
+    - name: "02 --- Create virtual machine with terraform"
       raw: "terraform init && terraform apply -auto-approve"
 
-    - name: "Get mac-address from created virtual machine"
+    - name: "03 --- Retrieve mac-address from created virtual machine"
       raw: "terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
 
-    - name: "Create file with mac-address-filename on tftproot on pxe-server"
-      hosts: "pxe-server"
+    - name: "04 --- Create pxelinux-config-file with mac-address-filename on tftproot on pxe-server"
       template:
         src: "./pxelinux-template.j2"
         dest: "{{dir_tftproot}}01-{{ mac.stdout | trim | regex_replace(':', '-')}}"
+        mode: "0755"
+        owner: "dnsmasq"
+        group: "wheel"
+      delegate_to: pxe-server
+
+
+    - name: "05 --- Add entry to dnsmasq.conf"
+      become: "true"
+      become_user: "pi"
+      lineinfile:
+        path: /etc/dnsmasq.conf
+        line: "#dhcp-host={{ mac.stdout | trim }},{{hostname}},{{ ip }},set:ocp43"
+      delegate_to: pi
+
+
+    - name: "06 --- Add entry to dnsmasq.conf"
+      become: "true"
+      become_user: "pi"
+      lineinfile:
+        path: /etc/dnsmasq.conf
+        line: "#address=/{{hostname}}.ocp43-patrick.home.local/{{ ip }}"
+      delegate_to: pi

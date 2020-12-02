@@ -49,6 +49,7 @@ resource "vsphere_virtual_machine" "vm-name" {
   firmware = "bios"
   datastore_id = data.vsphere_datastore.datastore.id
   num_cpus = 1
+  boot_delay = 10000
   memory = 1024
   wait_for_guest_ip_timeout = 0
   wait_for_guest_net_timeout = 0
