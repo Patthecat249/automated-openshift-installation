@@ -8,14 +8,15 @@
       template:
         src: "main.tf.j2"
         dest: "main.tf"
+
     - name: "Create virtual machine"
       raw: "terraform init && terraform apply -auto-approve"
 
     - name: "Get mac-address from created virtual machine"
-      raw: "terraform output -json | jq '.["mac-address"].value' | sed -e 's|\"||g'"
+      raw: "terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
 
     - name: "Create file with mac-address-filename"
       copy:
-        content: ""
-        dest: "{{ mac }}.txt"
+        content: "Hello World!"
+        dest: "01-{{ mac.stdout | trim | regex_replace(':', '-')}}"
