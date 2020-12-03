@@ -2,15 +2,30 @@
   hosts: 127.0.0.1
   gather_facts: "false"
   vars:
-    hostname: "patrick-vm-01"
+    hostname: "default-template"
     dir_tftproot: "/tftproot/pxelinux.cfg/"
     vm_type: "worker"
     ip: "10.0.249.111"
+    cpu: "1"
+    ram: "1024"
+    disksize: "120"
+    boot_delay: "60000"
+    dir_root: "/opt/sva/"
+    dir_terraform: "{{dir_root}}terraform/"
   tasks:
+    - name: "00 --- Create Working-Directories"
+      file:
+        path: "{{ item }}"
+        state: "directory"
+        recurse: "true"
+      with_items:
+        - "{{ dir_root }}"
+        - "{{ dir_terraform }}"
+
     - name: "01 --- Create main.tf-file from main.tf.j2"
       template:
         src: "main.tf.j2"
-        dest: "main.tf"
+        dest: "{{ dir_terraform }}{{ hostname }}/main.tf"
 
     - name: "02 --- Create virtual machine with terraform"
       raw: "terraform init && terraform apply -auto-approve"
@@ -36,6 +51,7 @@
       become_user: "root"
       lineinfile:
         path: /etc/dnsmasq.conf
+        insertafter: "^# OpenShift-Nodes"         
         line: "dhcp-host={{ mac.stdout | trim }},{{hostname}},{{ ip }},set:ocp43"
       delegate_to: pi
       notify: "restart dnsmasq"
@@ -45,7 +61,8 @@
       become: "true"
       become_user: "root"
       lineinfile:
-        path: /etc/dnsmasq.conf
+        path: "/etc/dnsmasq.conf"
+        insertafter: "^# Static-DNS-Assignements" 
         line: "address=/{{hostname}}.ocp43-patrick.home.local/{{ ip }}"
       delegate_to: pi
       notify: "restart dnsmasq"

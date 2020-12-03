@@ -48,9 +48,9 @@ resource "vsphere_virtual_machine" "vm-name" {
   resource_pool_id = data.vsphere_resource_pool.pool.id
   firmware = "bios"
   datastore_id = data.vsphere_datastore.datastore.id
-  num_cpus = 1
-  boot_delay = 10000
-  memory = 1024
+  num_cpus = "{{ cpu }}"
+  boot_delay = "{{ boot_delay }}"
+  memory = "{{ ram }}"
   wait_for_guest_ip_timeout = 0
   wait_for_guest_net_timeout = 0
   network_interface {
@@ -59,7 +59,7 @@ resource "vsphere_virtual_machine" "vm-name" {
   }
   disk {
     label = "rootvolume"
-    size  = "120"
+    size  = "{{ disksize }}"
     thin_provisioned  = "true"
     unit_number = 0
   }
