@@ -7,48 +7,41 @@
     vm_type: "worker"
     ip: "10.0.249.111"
   tasks:
-    - name: "01 --- Create main.tf-file from main.tf.j2"
-      template:
-        src: "main.tf.j2"
-        dest: "main.tf"
-
-    - name: "02 --- Create virtual machine with terraform"
-      raw: "terraform init && terraform apply -auto-approve"
-
-    - name: "03 --- Retrieve mac-address from created virtual machine"
+    - name: "01 --- Retrieve mac-address from created virtual machine"
       raw: "terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
 
-    - name: "04 --- Create pxelinux-config-file with mac-address-filename on tftproot on pxe-server"
+    - name: "01 --- Delete pxelinux-config-file on pxe-server"
       become: "true"
       become_user: "root"
-      template:
-        src: "./pxelinux-template.j2"
-        dest: "{{dir_tftproot}}01-{{ mac.stdout | trim | regex_replace(':', '-')}}"
-        mode: "0755"
-        owner: "dnsmasq"
-        group: "wheel"
+      raw: "rm -f {{dir_tftproot}}01-{{ mac.stdout | trim | regex_replace(':', '-')}}"
       delegate_to: pxe-server
 
-
-    - name: "05 --- Add entry to dnsmasq.conf"
+    - name: "02 --- Remove entry from dnsmasq.conf"
       become: "true"
       become_user: "root"
       lineinfile:
-        path: /etc/dnsmasq.conf
+        path: "/etc/dnsmasq.conf"
         line: "dhcp-host={{ mac.stdout | trim }},{{hostname}},{{ ip }},set:ocp43"
+        state: "absent"
       delegate_to: pi
-      notify: "restart dnsmasq"
+      notify: 
+        - "restart dnsmasq"
 
 
-    - name: "06 --- Add entry to dnsmasq.conf"
+    - name: "03 --- Remove entry from dnsmasq.conf"
       become: "true"
       become_user: "root"
       lineinfile:
-        path: /etc/dnsmasq.conf
+        path: "/etc/dnsmasq.conf"
         line: "address=/{{hostname}}.ocp43-patrick.home.local/{{ ip }}"
+        state: "absent"
       delegate_to: pi
-      notify: "restart dnsmasq"
+      notify: 
+        - "restart dnsmasq"
+    
+    - name: "04 --- Delete virtual machine with terraform"
+      raw: "terraform init && terraform destroy -auto-approve"
 
   handlers:
     - name: "restart dnsmasq"

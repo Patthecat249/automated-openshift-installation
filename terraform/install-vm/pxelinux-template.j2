@@ -1,13 +1,14 @@
 DEFAULT menu.c32
 PROMPT 0
 
-MENU TITLE OpenShift-Node-Install-Menu
-MENU AUTOBOOT Starting CoreOS in # seconds
+MENU TITLE CentOS-Server-Install-Menu
+MENU AUTOBOOT Starting CentOS in # seconds
 
 timeout 18
-ONTIMEOUT CoreOS
+ONTIMEOUT centOS
 
-LABEL CoreOS
-menu label Install OCP-{{vm_type}}#1
-KERNEL kernels_initrd/coreos_4.3.8/vmlinuz
-APPEND ip=dhcp rd.neednet=1 initrd=kernels_initrd/coreos_4.3.8/initramfs.img console=tty0 console=ttyS0 coreos.inst=yes coreos.inst.install_dev=sda coreos.inst.image_url=http://ocpbastion-rhel/rhcos-4.3.8-x86_64-metal.x86_64.raw.gz coreos.inst.ignition_url=http://ocpbastion-rhel/{{vm_type}}.ign
+LABEL centOS
+menu label Install {{ hostname }}
+kernel kernels_initrd/centos77/vmlinuz
+append ip=dhcp initrd=kernels_initrd/centos77/initrd.img inst.repo=nfs:nas.home.local:/volume1/nfs-iso/downloaded-iso/linux/CentOS-7-x86_64-DVD-1908.iso inst.ks=nfs:nas.home.local:/volume1/nfs-iso/kickstart-configs/registry.cfg
+

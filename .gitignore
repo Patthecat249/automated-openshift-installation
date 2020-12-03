@@ -3,4 +3,5 @@ vault
 pull-secret
 main.tf
 .terraform
-terraform.state*
+terraform.state*terraform.tfstate
+terraform.tfstate.backup
