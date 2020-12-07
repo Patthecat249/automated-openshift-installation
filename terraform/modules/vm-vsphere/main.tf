@@ -34,7 +34,7 @@ data "vsphere_network" "network" {
 
 # --- Create VM Test-VM--- #
 resource "vsphere_virtual_machine" "default" {
-  name = var.vm-name
+  name = var.vm_name
   folder = var.ocp-folder
   guest_id = var.master_guest_id_tag
   resource_pool_id = data.vsphere_resource_pool.pool.id
