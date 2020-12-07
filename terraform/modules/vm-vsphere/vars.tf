@@ -26,10 +26,24 @@ variable "vsphere_server" {
 
 # VM-Name
 variable "vm_name" {
-  default = "{{ hostname }}"
+  default = "no-name"
 }
 
 # VM-CPU
 variable "vm_cpu" {
-  default = "{{ cpu }}"
+  default = "1"
+}
+# VM-RAM
+variable "vm_ram" {
+  default = "1024"
+}
+
+# VM-DISK
+variable "vm_disk" {
+  default = "16"
+}
+
+# Boot-Delay
+variable "vm_boot_delay" {
+  default = "5000"
 }

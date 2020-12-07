@@ -34,15 +34,15 @@ data "vsphere_network" "network" {
 
 # --- Create VM Test-VM--- #
 resource "vsphere_virtual_machine" "default" {
-  name = vm.name
+  name = var.vm-name
   folder = var.ocp-folder
   guest_id = var.master_guest_id_tag
   resource_pool_id = data.vsphere_resource_pool.pool.id
   firmware = "bios"
   datastore_id = data.vsphere_datastore.datastore.id
-  num_cpus = "1"
-  boot_delay = "10000"
-  memory = "1024"
+  num_cpus = var.vm_cpu
+  boot_delay = var.vm_boot_delay
+  memory = var.vm_ram
   wait_for_guest_ip_timeout = 0
   wait_for_guest_net_timeout = 0
   network_interface {
@@ -51,7 +51,7 @@ resource "vsphere_virtual_machine" "default" {
   }
   disk {
     label = "rootvolume"
-    size  = "120"
+    size  = var.vm_disk
     thin_provisioned  = "true"
     unit_number = 0
   }
