@@ -1,7 +1,7 @@
 credentials.yaml
 vault
 pull-secret
-main.tf
+#main.tf
 .terraform
 terraform.state*terraform.tfstate
 terraform.tfstate.backup

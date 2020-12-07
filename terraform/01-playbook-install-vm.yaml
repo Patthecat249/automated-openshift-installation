@@ -12,7 +12,12 @@
     boot_delay: "60000"
     dir_root: "/opt/sva/"
     dir_terraform: "{{dir_root}}terraform/"
+    #dir_terraform_modules: "{{dir_terraform}}modules/"
+    dir_terraform_module_vm: "{{dir_terraform_modules}}vm-vsphere/"
     dir_vmware: "/dc-home/vm/spielwiese"
+    vsphere_server: "vcenter.home.local"
+    vsphere_user: "administrator@home.local"
+    vsphere_pass: "Test1234!"
   tasks:
     - name: "00 --- Create Working-Directories"
       file:
@@ -23,13 +28,14 @@
         - "{{ dir_root }}"
         - "{{ dir_terraform }}"
         - "{{ dir_terraform }}{{ hostname }}"
+        - "{{ dir_terraform_module_vm }}"
       tags:
         - create
 
     - name: "01 --- Create main.tf-file from vm.tf.j2"
       template:
-        src: "modules/vm-vsphere/vm.tf.j2"
-        dest: "{{ dir_terraform }}{{ hostname }}/{{ hostname }}.tf"
+        src: "templates/tf-vm-module.j2"
+        dest: "{{ dir_terraform }}{{ hostname }}/main.tf"
       tags:
         - create
 
