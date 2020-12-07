@@ -1,7 +1,8 @@
 module "{{ hostname }}" {
     source = "{{ dir_terraform_module_vm }}"
-    name = "{{ hostname }}"
-    num_cpus = "{{ cpu }}"
-    memory = "{{ ram }}"
-    boot_delay = "{{ boot_delay }}"
+    vm_name = "{{ hostname }}"
+    vm_cpu = "{{ cpu }}"
+    vm_ram = "{{ ram }}"
+    vm_boot_delay = "{{ boot_delay }}"
+    vm_disk = "{{ disksize }}"
 }
