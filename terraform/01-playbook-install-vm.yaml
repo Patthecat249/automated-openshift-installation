@@ -25,10 +25,10 @@
       tags:
         - create
 
-    - name: "01 --- Create main.tf-file from main.tf.j2"
+    - name: "01 --- Create main.tf-file from vm.tf.j2"
       template:
-        src: "modules/vm-vsphere/main.tf.j2"
-        dest: "{{ dir_terraform }}{{ hostname }}/main.tf"
+        src: "modules/vm-vsphere/vm.tf.j2"
+        dest: "{{ dir_terraform }}{{ hostname }}/{{ hostname }}.tf"
       tags:
         - create
 
