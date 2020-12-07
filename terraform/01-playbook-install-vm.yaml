@@ -12,6 +12,7 @@
     boot_delay: "60000"
     dir_root: "/opt/sva/"
     dir_terraform: "{{dir_root}}terraform/"
+    dir_vmware: "/dc-home/vm/spielwiese"
   tasks:
     - name: "00 --- Create Working-Directories"
       file:
@@ -21,11 +22,15 @@
       with_items:
         - "{{ dir_root }}"
         - "{{ dir_terraform }}"
+      tags:
+        - create
 
     - name: "01 --- Create main.tf-file from main.tf.j2"
       template:
         src: "main.tf.j2"
         dest: "{{ dir_terraform }}{{ hostname }}/main.tf"
+      tags:
+        - create
 
     - name: "02 --- Create virtual machine with terraform"
       raw: "terraform init && terraform apply -auto-approve"
