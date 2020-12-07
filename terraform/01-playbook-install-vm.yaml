@@ -68,17 +68,17 @@
         - create
 
     - name: "02 --- Create virtual machine with terraform"
-      raw: "terraform init && terraform apply -auto-approve"
+      raw: "cd {{ dir_terraform }}{{ hostname }} && terraform init && terraform apply -auto-approve"
 
     - name: "03 --- Retrieve mac-address from created virtual machine"
-      raw: "terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
+      raw: "cd {{ dir_terraform }}{{ hostname }} && terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
 
     - name: "04 --- Create pxelinux-config-file with mac-address-filename on tftproot on pxe-server"
       become: "true"
       become_user: "root"
       template:
-        src: "./pxelinux-template.j2"
+        src: "templates/pxelinux-template.j2"
         dest: "{{dir_tftproot}}01-{{ mac.stdout | trim | regex_replace(':', '-')}}"
         mode: "0755"
         owner: "dnsmasq"
