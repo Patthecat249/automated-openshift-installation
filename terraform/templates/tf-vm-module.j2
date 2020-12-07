@@ -1,7 +1,7 @@
 module "{{ hostname }}" {
     source = "/root/git/automated-openshift-installation/terraform/modules/vm-vsphere"
-    hostname = "{{ hostname }}"
-    num_cpus = "{{ cpu }}"
-    memory = "{{ ram }}"
-    boot_delay = "{{ boot_delay }}"
+    vm_name = "{{ hostname }}"
+    vm_ram = "{{ cpu }}"
+    vm_ram = "{{ ram }}"
+    vm_boot_delay = "{{ boot_delay }}"
 }
