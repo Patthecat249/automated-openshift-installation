@@ -26,24 +26,24 @@ variable "vsphere_server" {
 
 # VM-Name
 variable "vm_name" {
-  default = "no-name"
+  default = ""
 }
 
 # VM-CPU
 variable "vm_cpu" {
-  default = "1"
+  default = ""
 }
 # VM-RAM
 variable "vm_ram" {
-  default = "1024"
+  default = ""
 }
 
 # VM-DISK
 variable "vm_disk" {
-  default = "16"
+  default = ""
 }
 
 # Boot-Delay
 variable "vm_boot_delay" {
-  default = "5000"
+  default = ""
 }
