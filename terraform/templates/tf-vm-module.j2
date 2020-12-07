@@ -1,5 +1,5 @@
 module "{{ hostname }}" {
-    source = "/root/git/automated-openshift-installation/terraform/modules/vm-vsphere"
+    source = "{{ dir_terraform_module_vm }}"
     name = "{{ hostname }}"
     num_cpus = "{{ cpu }}"
     memory = "{{ ram }}"
