@@ -65,7 +65,7 @@
         fstype: nfs
         opts: defaults
         state: mounted
-        src: "{{ nfs_server }}{{ nfs_mount_path }}"
+        src: "{{ nfs_server }}:{{ nfs_mount_path }}"
         path: "{{ dir_nfs_root }}"
         backup: yes
 
