@@ -60,6 +60,24 @@
       yum:
         name: libnfs-utils.x86_64
         state: present
+
+# Prüfe, ob die IP-Adresse bereits in /etc/dnsmasq.conf existiert.
+    - name: "Check whether /etc/dnsmasq.conf contains {{ ip }}"
+      command: "grep -Fxq \"{{ ip }}\" /etc/dnsmasq.conf"
+      register: checkmyconf
+      check_mode: no
+      ignore_errors: yes
+      changed_when: no
+      delegate_to: "pi"
+      tags:
+        - checker
+
+    - name: "Greet the world if /etc/dnsmasq.conf contains {{ ip }}"
+      debug: msg="Hello, world!"
+      when: checkmyconf.rc == 0
+      tags:
+        - checker
+
 # Mounte das NFS-Verzeichnis /volume1/nfs-iso nach /mnt/sva
     - name: "Mounting NFS-Share"
       become: "true"
