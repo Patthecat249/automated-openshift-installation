@@ -51,10 +51,12 @@
 
 # Install some Software
     - name: "Installiere nfs-utils.x86_64"
+      become: "true"
       yum:
         name: nfs-utils.x86_64
         state: present
     - name: "Installiere libnfs-utils.x86_64"
+      become: "true"
       yum:
         name: libnfs-utils.x86_64
         state: present
@@ -71,6 +73,7 @@
 
 # Erstelle aus einem Template eine Kickstart-Datei und speichere sie auf dem NFS-Share
     - name: "01 --- Create kickstart.cfg from kickstart.j2"
+      become: "true"
       template:
         src: "templates/kickstart.j2"
         dest: "{{dir_nfs_root}}{{dir_mounted_kickstart_configs}}{{kickstart_file}}" # Hier muss noch der Pfad verifiziert werden
