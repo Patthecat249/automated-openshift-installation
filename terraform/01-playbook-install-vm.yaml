@@ -60,6 +60,7 @@
         state: present
 # Mounte das NFS-Verzeichnis /volume1/nfs-iso nach /mnt/sva
     - name: "Mounting NFS-Share"
+      become: "true"
       mount:
         fstype: nfs
         opts: defaults
