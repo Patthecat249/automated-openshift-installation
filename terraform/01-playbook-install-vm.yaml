@@ -16,10 +16,23 @@
     dir_terraform_modules: "{{dir_terraform}}modules/"
     dir_terraform_module_vm: "{{dir_terraform_modules}}vm-vsphere/"
     dir_vmware: "/dc-home/vm/spielwiese"
+    dir_nfs_root: "/mnt/sva"
+    dir_mounted_kickstart_configs: "nfs-iso/kickstart-configs/"
     vsphere_server: "vcenter.home.local"
     vsphere_user: "administrator@home.local"
     vsphere_pass: "Test1234!"
+    nfs_server: "nas.home.local"
+    nfs_software_folder: "/volume1/nfs-iso/downloaded-iso/linux/"
+    nfs_kickstart_folder: "/volume1/nfs-iso/kickstart-configs/"
+    iso_centos77: "CentOS-7-x86_64-DVD-1908.iso"
+    pxe_vmlinux_kernel: "kernels_initrd/centos77/vmlinuz"
+    pxe_initrd_image: "kernels_initrd/centos77/initrd.img"
+    ntp_server: "router.home.local"
+    kickstart_file: "{{hostname}}.cfg"
   tasks:
+
+
+
 # Erstelle Arbeitsverzeichnisse
     - name: "00 --- Create Working-Directories"
       file:
@@ -31,6 +44,18 @@
         - "{{ dir_terraform }}"
         - "{{ dir_terraform }}{{ hostname }}"
         - "{{ dir_terraform_module_vm }}"
+        - "{{ dir_nfs_root }}"
+      tags:
+        - create
+
+# Mounte das NFS-Verzeichnis /volume1/nfs-iso nach /mnt/sva
+
+
+# Erstelle aus einem Template eine Kickstart-Datei und speichere sie auf dem NFS-Share
+   - name: "01 --- Create kickstart.cfg from kickstart.j2"
+      template:
+        src: "templates/kickstart.j2"
+        dest: "{{dir_nfs_root}}{{dir_mounted_kickstart_configs}}{{kickstart_file}}" # Hier muss noch der Pfad angepasst werden
       tags:
         - create
 
