@@ -6,7 +6,7 @@
     domain: "ocp43-patrick.home.local"
     dir_tftproot: "/tftproot/pxelinux.cfg/"
     vm_type: "worker"
-    ip: "10.0.249.112"
+    ip: "10.0.249.111"
     cpu: "1"
     ram: "1024"
     disksize: "120"
@@ -72,11 +72,15 @@
       tags:
         - checker
 
-    - name: "Greet the world if /etc/dnsmasq.conf contains {{ ip }}"
+    - name: "Stop Ansible-Playbook, if /etc/dnsmasq.conf contains {{ ip }}"
       debug: msg="Die IP-Adresse {{ip}} existiert bereits in /etc/dnsmasq.conf!"
       when: checkmyconf.rc == 0
       tags:
         - checker
+
+# Beende das Playbook, wenn die IP-Adresse bereits in /etc/dnsmasq.conf existiert
+    - meta: end_play
+      when: checkmyconf.rc == 0
 
 # Mounte das NFS-Verzeichnis /volume1/nfs-iso nach /mnt/sva
     - name: "Mounting NFS-Share"
