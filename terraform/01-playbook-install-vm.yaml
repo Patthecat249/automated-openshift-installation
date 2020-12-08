@@ -36,6 +36,7 @@
 
 # Erstelle Arbeitsverzeichnisse
     - name: "00 --- Create Working-Directories"
+      become: "true"
       file:
         path: "{{ item }}"
         state: "directory"
