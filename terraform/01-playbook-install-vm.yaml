@@ -51,19 +51,19 @@
         - create
 
 # Install some Software
-    - name: "Installiere nfs-utils.x86_64"
+    - name: "01 --- Installiere nfs-utils.x86_64"
       become: "true"
       yum:
         name: nfs-utils.x86_64
         state: present
-    - name: "Installiere libnfs-utils.x86_64"
+    - name: "02 --- Installiere libnfs-utils.x86_64"
       become: "true"
       yum:
         name: libnfs-utils.x86_64
         state: present
 
 # Prüfe, ob die IP-Adresse bereits in /etc/dnsmasq.conf existiert.
-    - name: "Check whether /etc/dnsmasq.conf contains {{ ip }}"
+    - name: "03 --- Check whether /etc/dnsmasq.conf contains {{ ip }}"
       command: "grep \"{{ ip }}\" /etc/dnsmasq.conf"
       register: checkmyconf
       check_mode: no
@@ -73,7 +73,7 @@
       tags:
         - checker
 
-    - name: "Stop Ansible-Playbook, if /etc/dnsmasq.conf contains {{ ip }}"
+    - name: "04 --- Stop Ansible-Playbook, if /etc/dnsmasq.conf contains {{ ip }}"
       debug: msg="Die IP-Adresse {{ip}} existiert bereits in /etc/dnsmasq.conf!"
       when: checkmyconf.rc == 0
       tags:
@@ -84,7 +84,7 @@
       when: checkmyconf.rc == 0
 
 # Mounte das NFS-Verzeichnis /volume1/nfs-iso nach /mnt/sva
-    - name: "Mounting NFS-Share"
+    - name: "05 --- Mounting NFS-Share"
       become: "true"
       mount:
         fstype: nfs
@@ -95,7 +95,7 @@
         backup: yes
 
 # Erstelle aus einem Template eine Kickstart-Datei und speichere sie auf dem NFS-Share
-    - name: "01 --- Create kickstart.cfg from kickstart.j2"
+    - name: "06 --- Create kickstart.cfg from kickstart.j2"
       become: "true"
       template:
         src: "templates/kickstart.j2"
@@ -103,12 +103,12 @@
       tags:
         - create
 
-    - name: "Wait a Second..."
+    - name: "07 --- Wait a Second..."
       wait_for:
         timeout: 1
 
 # Erstelle VM-Instanz Terraform "main.tf"-file
-    - name: "01 --- Create main.tf-file from vm.tf.j2"
+    - name: "08 --- Create main.tf-file from vm.tf.j2"
       template:
         src: "templates/tf-vm-module.j2"
         dest: "{{ dir_terraform }}{{ hostname }}/main.tf"
@@ -116,7 +116,7 @@
         - create
 
 # Erzeuge und kopiere das output.tf-file in den VM-Instanz-Ordner
-    - name: "02 --- Create output.tf-file from jinja-template output.tf"
+    - name: "09 --- Create output.tf-file from jinja-template output.tf"
       template:
         src: "templates/output.j2"
         dest: "{{ dir_terraform }}{{ hostname }}/output.tf"
@@ -124,7 +124,7 @@
         - create
 
 # Erstelle und kopiere das vars.tf-file in den Terraform-Module Ordner
-    - name: "03 --- Create vars.tf-file from jinja-template vars.tf"
+    - name: "10 --- Create vars.tf-file from jinja-template vars.tf"
       template:
         src: "modules/vm-vsphere/vars.tf"
         dest: "{{ dir_terraform_module_vm }}vars.tf"
@@ -132,7 +132,7 @@
         - create
 
 # Erstelle und kopiere das main.tf-file in den Terraform-Module Ordner
-    - name: "04 --- Create main.tf-file from jinja-template main.tf"
+    - name: "11 --- Create main.tf-file from jinja-template main.tf"
       template:
         src: "modules/vm-vsphere/main.tf"
         dest: "{{ dir_terraform_module_vm }}main.tf"
@@ -140,7 +140,7 @@
         - create
 
 # Erzeuge und kopiere das output.tf-file in den Terraform-Module Ordner 
-    - name: "05 --- Create output.tf-file from jinja-template output.tf"
+    - name: "12 --- Create output.tf-file from jinja-template output.tf"
       template:
         src: "modules/vm-vsphere/output.tf"
         dest: "{{ dir_terraform_module_vm }}output.tf"
@@ -148,16 +148,16 @@
         - create
 
 # Erzeuge die virtuelle Maschine
-    - name: "06 --- Create virtual machine with terraform"
+    - name: "13 --- Create virtual machine with terraform"
       raw: "cd {{ dir_terraform }}{{ hostname }} && terraform init && terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM
-    - name: "07 --- Retrieve mac-address from created virtual machine"
+    - name: "14 --- Retrieve mac-address from created virtual machine"
       raw: "cd {{ dir_terraform }}{{ hostname }} && terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
 
 # Erstelle für diese VM, anhand der MAC-Adresse ein PXELINUX-Config-File im TFTPROOT-Dir vom PXE-SERVER
-    - name: "08 --- Create pxelinux-config-file with mac-address-filename on tftproot on pxe-server"
+    - name: "15 --- Create pxelinux-config-file with mac-address-filename on tftproot on pxe-server"
       become: "true"
       become_user: "root"
       template:
@@ -169,7 +169,7 @@
       delegate_to: pxe-server
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DHCP-Eintrag in DNSMASQ
-    - name: "09 --- Add DHCP-entry to dnsmasq.conf"
+    - name: "16 --- Add DHCP-entry to dnsmasq.conf"
       become: "true"
       become_user: "root"
       lineinfile:
@@ -180,7 +180,7 @@
       notify: "restart dnsmasq"
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DNS-Lookup-Eintrag in DNSMASQ
-    - name: "10 --- Add DNS-Lookup-entry to dnsmasq.conf"
+    - name: "17 --- Add DNS-Lookup-entry to dnsmasq.conf"
       become: "true"
       become_user: "root"
       lineinfile:
@@ -191,7 +191,7 @@
       notify: "restart dnsmasq"
 
 # Unmounting NFS-Share
-    - name: "Unmounting NFS-Share"
+    - name: "18 --- Unmounting NFS-Share"
       become: "true"
       mount:
         fstype: nfs
