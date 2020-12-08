@@ -16,7 +16,7 @@
     dir_terraform_modules: "{{dir_terraform}}modules/"
     dir_terraform_module_vm: "{{dir_terraform_modules}}vm-vsphere/"
     dir_vmware: "/dc-home/vm/spielwiese"
-    dir_nfs_root: "/mnt/sva"
+    dir_nfs_root: "/mnt/sva/"
     dir_mounted_kickstart_configs: "nfs-iso/kickstart-configs/"
     vsphere_server: "vcenter.home.local"
     vsphere_user: "administrator@home.local"
