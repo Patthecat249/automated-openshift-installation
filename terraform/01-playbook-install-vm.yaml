@@ -100,7 +100,7 @@
         - checker
 
     - name: "08 --- Stop Ansible-Playbook, if /etc/dnsmasq.conf contains {{ hostname }}"
-      debug: msg="Der Hostanem {{hostname}} existiert bereits in /etc/dnsmasq.conf!"
+      debug: msg="Der Hostname {{hostname}} existiert bereits in /etc/dnsmasq.conf!"
       when: checkmyconf2.rc == 0
       tags:
         - checker
