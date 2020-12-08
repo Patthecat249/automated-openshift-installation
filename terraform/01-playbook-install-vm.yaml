@@ -6,7 +6,7 @@
     domain: "ocp43-patrick.home.local"
     dir_tftproot: "/tftproot/pxelinux.cfg/"
     vm_type: "worker"
-    ip: "10.0.249.111"
+    ip: "10.0.249.112"
     cpu: "1"
     ram: "1024"
     disksize: "120"
@@ -63,7 +63,7 @@
 
 # Prüfe, ob die IP-Adresse bereits in /etc/dnsmasq.conf existiert.
     - name: "Check whether /etc/dnsmasq.conf contains {{ ip }}"
-      command: "grep  \"{{ ip }}\" /etc/dnsmasq.conf"
+      command: "grep \"{{ ip }}\" /etc/dnsmasq.conf"
       register: checkmyconf
       check_mode: no
       ignore_errors: yes
@@ -73,7 +73,7 @@
         - checker
 
     - name: "Greet the world if /etc/dnsmasq.conf contains {{ ip }}"
-      debug: msg="Hello, world!"
+      debug: msg="Die IP-Adresse {{ip}} existiert bereits in /etc/dnsmasq.conf!"
       when: checkmyconf.rc == 0
       tags:
         - checker
