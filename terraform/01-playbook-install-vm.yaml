@@ -63,7 +63,7 @@
 
 # Prüfe, ob die IP-Adresse bereits in /etc/dnsmasq.conf existiert.
     - name: "Check whether /etc/dnsmasq.conf contains {{ ip }}"
-      command: "grep -Fxq \"{{ ip }}\" /etc/dnsmasq.conf"
+      command: "grep  \"{{ ip }}\" /etc/dnsmasq.conf"
       register: checkmyconf
       check_mode: no
       ignore_errors: yes
