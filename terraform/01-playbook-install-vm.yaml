@@ -22,6 +22,7 @@
     vsphere_user: "administrator@home.local"
     vsphere_pass: "Test1234!"
     nfs_server: "nas.home.local"
+    nfs_mount_path: "/volume1/nfs-iso/"
     nfs_software_folder: "/volume1/nfs-iso/downloaded-iso/linux/"
     nfs_kickstart_folder: "/volume1/nfs-iso/kickstart-configs/"
     iso_centos77: "CentOS-7-x86_64-DVD-1908.iso"
@@ -48,16 +49,36 @@
       tags:
         - create
 
+# Install some Software
+    - name: "Installiere nfs-utils.x86_64"
+      yum:
+        name: nfs-utils.x86_64
+        state: present
+    - name: "Installiere libnfs-utils.x86_64"
+      yum:
+        name: libnfs-utils.x86_64
+        state: present
 # Mounte das NFS-Verzeichnis /volume1/nfs-iso nach /mnt/sva
-
+    - name: "Mounting NFS-Share"
+      mount:
+        fstype: nfs
+        opts: defaults
+        state: mounted
+        src: "{{ nfs_server }}{{ nfs_mount_path }}"
+        path: "{{ dir_nfs_root }}"
+        backup: yes
 
 # Erstelle aus einem Template eine Kickstart-Datei und speichere sie auf dem NFS-Share
-   - name: "01 --- Create kickstart.cfg from kickstart.j2"
+    - name: "01 --- Create kickstart.cfg from kickstart.j2"
       template:
         src: "templates/kickstart.j2"
-        dest: "{{dir_nfs_root}}{{dir_mounted_kickstart_configs}}{{kickstart_file}}" # Hier muss noch der Pfad angepasst werden
+        dest: "{{dir_nfs_root}}{{dir_mounted_kickstart_configs}}{{kickstart_file}}" # Hier muss noch der Pfad verifiziert werden
       tags:
         - create
+
+    - name: "Wait a Second..."
+      wait_for:
+        timeout: 1
 
 # Erstelle VM-Instanz Terraform "main.tf"-file
     - name: "01 --- Create main.tf-file from vm.tf.j2"
@@ -142,6 +163,16 @@
       delegate_to: pi
       notify: "restart dnsmasq"
 
+# Unmounting NFS-Share
+    - name: "Unmounting NFS-Share"
+      mount:
+        fstype: nfs
+        opts: defaults
+        state: absent
+        src: "{{ nfs_server }}{{ nfs_mount_path }}"
+        path: "{{ dir_nfs_root }}"
+        backup: yes
+
 # Starte den DNS-Dienst erneut, wenn sich etwas an der DNS-Konfiguration geändert hat.
   handlers:
     - name: "restart dnsmasq"
@@ -151,3 +182,4 @@
         name: dnsmasq
         state: restarted
       delegate_to: pi
+
