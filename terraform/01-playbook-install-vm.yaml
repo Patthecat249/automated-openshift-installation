@@ -169,6 +169,7 @@
 
 # Unmounting NFS-Share
     - name: "Unmounting NFS-Share"
+      become: "true"
       mount:
         fstype: nfs
         opts: defaults
