@@ -35,7 +35,7 @@
 
 
 # Erstelle Arbeitsverzeichnisse
-    - name: "00 --- Create Working-Directories"
+    - name: "01 --- Create Working-Directories"
       file:
         path: "{{ item }}"
         state: "directory"
@@ -48,7 +48,7 @@
       tags:
         - create
 
-    - name: "00a --- Create Working-Directories with sudo"
+    - name: "02 --- Create Working-Directories with sudo"
       become: "true"
       file:
         path: "{{ item }}"
@@ -60,19 +60,19 @@
         - create
 
 # Install some Software
-    - name: "01 --- Installiere nfs-utils.x86_64"
+    - name: "03 --- Installiere nfs-utils.x86_64"
       become: "true"
       yum:
         name: nfs-utils.x86_64
         state: present
-    - name: "02 --- Installiere libnfs-utils.x86_64"
+    - name: "04 --- Installiere libnfs-utils.x86_64"
       become: "true"
       yum:
         name: libnfs-utils.x86_64
         state: present
 
 # Prüfe, ob die IP-Adresse bereits in /etc/dnsmasq.conf existiert.
-    - name: "03 --- Check whether /etc/dnsmasq.conf contains {{ ip }}"
+    - name: "05 --- Prüfe, ob die IP-Adresse {{ip}} in /etc/dnsmasq.conf existiert."
       command: "grep \"{{ ip }}\" /etc/dnsmasq.conf"
       register: checkmyconf
       check_mode: no
@@ -82,18 +82,38 @@
       tags:
         - checker
 
-    - name: "04 --- Stop Ansible-Playbook, if /etc/dnsmasq.conf contains {{ ip }}"
+    - name: "06 --- Stop Ansible-Playbook, if /etc/dnsmasq.conf contains {{ ip }}"
       debug: msg="Die IP-Adresse {{ip}} existiert bereits in /etc/dnsmasq.conf!"
       when: checkmyconf.rc == 0
+      tags:
+        - checker
+
+# Prüfe, ob der Hostname {{hostname}} bereits in /etc/dnsmasq.conf existiert.
+    - name: "07 --- Prüfe, ob der Hostname: {{hostname}} in /etc/dnsmasq.conf existiert."
+      command: "grep \"{{ hostname }}\" /etc/dnsmasq.conf"
+      register: checkmyconf2
+      check_mode: no
+      ignore_errors: yes
+      changed_when: no
+      delegate_to: "pi"
+      tags:
+        - checker
+
+    - name: "08 --- Stop Ansible-Playbook, if /etc/dnsmasq.conf contains {{ hostname }}"
+      debug: msg="Der Hostanem {{hostname}} existiert bereits in /etc/dnsmasq.conf!"
+      when: checkmyconf2.rc == 0
       tags:
         - checker
 
 # Beende das Playbook, wenn die IP-Adresse bereits in /etc/dnsmasq.conf existiert
     - meta: end_play
       when: checkmyconf.rc == 0
+# Beende das Playbook, wenn die IP-Adresse bereits in /etc/dnsmasq.conf existiert
+    - meta: end_play
+      when: checkmyconf2.rc == 0
 
 # Mounte das NFS-Verzeichnis /volume1/nfs-iso nach /mnt/sva
-    - name: "05 --- Mounting NFS-Share"
+    - name: "09 --- Mounting NFS-Share"
       become: "true"
       mount:
         fstype: nfs
@@ -104,7 +124,7 @@
         backup: yes
 
 # Erstelle aus einem Template eine Kickstart-Datei und speichere sie auf dem NFS-Share
-    - name: "06 --- Create kickstart.cfg from kickstart.j2"
+    - name: "10 --- Create kickstart.cfg from kickstart.j2"
       become: "true"
       template:
         src: "templates/kickstart.j2"
@@ -112,12 +132,12 @@
       tags:
         - create
 
-    - name: "07 --- Wait a Second..."
+    - name: "11 --- Wait a Second..."
       wait_for:
         timeout: 1
 
 # Erstelle VM-Instanz Terraform "main.tf"-file
-    - name: "08 --- Create main.tf-file from vm.tf.j2"
+    - name: "12 --- Create main.tf-file from vm.tf.j2"
       template:
         src: "templates/tf-vm-module.j2"
         dest: "{{ dir_terraform }}{{ hostname }}/main.tf"
@@ -125,7 +145,7 @@
         - create
 
 # Erzeuge und kopiere das output.tf-file in den VM-Instanz-Ordner
-    - name: "09 --- Create output.tf-file from jinja-template output.tf"
+    - name: "13 --- Create output.tf-file from jinja-template output.tf"
       template:
         src: "templates/output.j2"
         dest: "{{ dir_terraform }}{{ hostname }}/output.tf"
@@ -133,7 +153,7 @@
         - create
 
 # Erstelle und kopiere das vars.tf-file in den Terraform-Module Ordner
-    - name: "10 --- Create vars.tf-file from jinja-template vars.tf"
+    - name: "14 --- Create vars.tf-file from jinja-template vars.tf"
       template:
         src: "modules/vm-vsphere/vars.tf"
         dest: "{{ dir_terraform_module_vm }}vars.tf"
@@ -141,7 +161,7 @@
         - create
 
 # Erstelle und kopiere das main.tf-file in den Terraform-Module Ordner
-    - name: "11 --- Create main.tf-file from jinja-template main.tf"
+    - name: "15 --- Create main.tf-file from jinja-template main.tf"
       template:
         src: "modules/vm-vsphere/main.tf"
         dest: "{{ dir_terraform_module_vm }}main.tf"
@@ -149,7 +169,7 @@
         - create
 
 # Erzeuge und kopiere das output.tf-file in den Terraform-Module Ordner 
-    - name: "12 --- Create output.tf-file from jinja-template output.tf"
+    - name: "16 --- Create output.tf-file from jinja-template output.tf"
       template:
         src: "modules/vm-vsphere/output.tf"
         dest: "{{ dir_terraform_module_vm }}output.tf"
@@ -157,16 +177,16 @@
         - create
 
 # Erzeuge die virtuelle Maschine
-    - name: "13 --- Create virtual machine with terraform"
+    - name: "17 --- Create virtual machine with terraform"
       raw: "cd {{ dir_terraform }}{{ hostname }} && terraform init && terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM
-    - name: "14 --- Retrieve mac-address from created virtual machine"
+    - name: "18 --- Retrieve mac-address from created virtual machine"
       raw: "cd {{ dir_terraform }}{{ hostname }} && terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
 
 # Erstelle für diese VM, anhand der MAC-Adresse ein PXELINUX-Config-File im TFTPROOT-Dir vom PXE-SERVER
-    - name: "15 --- Create pxelinux-config-file with mac-address-filename on tftproot on pxe-server"
+    - name: "19 --- Create pxelinux-config-file with mac-address-filename on tftproot on pxe-server"
       become: "true"
       become_user: "root"
       template:
@@ -178,7 +198,7 @@
       delegate_to: pxe-server
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DHCP-Eintrag in DNSMASQ
-    - name: "16 --- Add DHCP-entry to dnsmasq.conf"
+    - name: "20 --- Add DHCP-entry to dnsmasq.conf"
       become: "true"
       become_user: "root"
       lineinfile:
@@ -189,7 +209,7 @@
       notify: "restart dnsmasq"
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DNS-Lookup-Eintrag in DNSMASQ
-    - name: "17 --- Add DNS-Lookup-entry to dnsmasq.conf"
+    - name: "21 --- Add DNS-Lookup-entry to dnsmasq.conf"
       become: "true"
       become_user: "root"
       lineinfile:
@@ -200,7 +220,7 @@
       notify: "restart dnsmasq"
 
 # Unmounting NFS-Share
-    - name: "18 --- Unmounting NFS-Share"
+    - name: "22 --- Unmounting NFS-Share"
       become: "true"
       mount:
         fstype: nfs
