@@ -36,7 +36,6 @@
 
 # Erstelle Arbeitsverzeichnisse
     - name: "00 --- Create Working-Directories"
-      become: "true"
       file:
         path: "{{ item }}"
         state: "directory"
@@ -46,6 +45,16 @@
         - "{{ dir_terraform }}"
         - "{{ dir_terraform }}{{ hostname }}"
         - "{{ dir_terraform_module_vm }}"
+      tags:
+        - create
+
+    - name: "00a --- Create Working-Directories with sudo"
+      become: "true"
+      file:
+        path: "{{ item }}"
+        state: "directory"
+        recurse: "true"
+      with_items:
         - "{{ dir_nfs_root }}"
       tags:
         - create
