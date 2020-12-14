@@ -31,31 +31,13 @@ data "vsphere_host" "host" {
   datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
 
+# Create/Deploy a Distributed Virtual Switch
 resource "vsphere_distributed_virtual_switch" "dvs" {
   name          = "vds-openshift"
   datacenter_id = data.vsphere_datacenter.dc.id
-
-#  uplinks         = ["uplink1", "uplink2", "uplink3", "uplink4"]
-#  active_uplinks  = ["uplink3"]
-#  standby_uplinks = ["uplink3", "uplink4"]
-
-#  host {
-#    host_system_id = data.vsphere_host.host.0.id
-#    devices        = ["${var.network_interfaces}"]
-#  }
-
-#  host {
-#    host_system_id = data.vsphere_host.host.1.id
-#    devices        = ["${var.network_interfaces}"]
-#  }
-
-#   pvlan_mapping {
-#   primary_vlan_id = 21
-#   secondary_vlan_id = 22
-#   pvlan_type = "isolated"
-#   }
 }
 
+# Deploy a Distributed Port Group on the Distributed Virtual Switch created above
 resource "vsphere_distributed_port_group" "pg" {
   name                            = "dpg-openshift"
   distributed_virtual_switch_uuid = vsphere_distributed_virtual_switch.dvs.id
