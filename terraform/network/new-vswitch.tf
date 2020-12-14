@@ -1,3 +1,10 @@
+provider "vsphere" {
+  vsphere_server = var.vsphere_server
+  user = var.vsphere_user
+  password = var.vsphere_pass
+  allow_unverified_ssl = true
+}
+
 variable "esxi_hosts" {
   default = [
     "esx01",
