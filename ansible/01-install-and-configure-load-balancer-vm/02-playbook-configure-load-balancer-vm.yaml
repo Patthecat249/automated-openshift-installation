@@ -1,5 +1,5 @@
 ---
-- name: "Installation and Configuration of a load-balancer"
+- name: "Configuration of a load-balancer"
   hosts: "localhost"
   gather_facts: "false"
   tasks:
