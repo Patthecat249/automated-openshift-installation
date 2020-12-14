@@ -1,5 +1,5 @@
 # Projektbeschreibung
-Diese Scriptsammlung hat zum Ziel voll automatisiert einen OpenShift-Cluster in einer VMware-Umgebung mit vCenter zu installieren. 
+Diese Script-Sammlung hat zum Ziel voll automatisiert einen OpenShift-Cluster in einer VMware-Umgebung mit vCenter zu installieren. 
 
 # Voraussetzungen
 - Es muss entweder eine Linux-VM existieren z.B. CentOS 7.6 - Minimal (Install-Server/Install-VM) oder ein Laptop mit Linux vorhanden sein.
@@ -7,8 +7,8 @@ Diese Scriptsammlung hat zum Ziel voll automatisiert einen OpenShift-Cluster in 
 # Anleitung
 - Download Github-Repository "pxe-server"
 - Erstellen einer Install-VM 
- 
-# Ablauf zum Erstellung der Install-VM (wenn Install-VM noch nicht existiert) vom Terraform-Host
+
+## Ablauf zum Erstellung der Install-VM (wenn Install-VM noch nicht existiert) vom Terraform-Host
 ```bash
 ssh terraform
 mypath=$(pwd)
