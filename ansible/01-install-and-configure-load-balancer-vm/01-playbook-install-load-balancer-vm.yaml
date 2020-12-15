@@ -8,6 +8,7 @@
     - ram: "{{ lb.ram }}"
     - hostname: "{{ lb.hostname }}"
     - ip: "{{ lb.ip }}"
+    - kickstart_file: "{{ lb.hostname }}.cfg"
  
   tasks:
 # Erstelle Arbeitsverzeichnisse
