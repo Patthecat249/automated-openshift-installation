@@ -31,11 +31,8 @@ data "vsphere_network" "network" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-variable "ocp-folder" {
-  default = "/dc-home/vm/spielwiese"
-}
 
-# --- Create VM OCP-Bastion-Host --- #
+# --- Create VM {{ hostname }} --- #
 resource "vsphere_virtual_machine" "{{ hostname }}" {
 
   name = var.vm_name
