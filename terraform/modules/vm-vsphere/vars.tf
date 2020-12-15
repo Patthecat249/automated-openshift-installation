@@ -5,8 +5,8 @@ variable "ocp-folder" {
 }
 
 # VMware Tag
-variable "master_guest_id_tag" {
-  default = "centos8_64Guest"
+variable "guest_id_tag" {
+  default = "centos7_64Guest"
 }
 
 # VMware User
