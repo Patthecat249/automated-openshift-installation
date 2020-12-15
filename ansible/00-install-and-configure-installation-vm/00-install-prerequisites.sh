@@ -17,5 +17,9 @@ mypath=/home/pi
 # Clone Github-Repository and Type Credentials
 mkdir $mypath/git && cd $mypath/git && git config --global credential.helper store && git clone https://github.com/Patthecat249/automated-openshift-installation.git
 chown -R pi:wheel /home/pi/git
+mkdir /opt/sva
+chgrp wheel /opt/sva
+chmod 775 /opt/sva
+echo "%wheel        ALL=(ALL)       NOPASSWD: ALL" > /etc/sudoers.d/wheel
 su - pi
 # ssh-copy-id -o StrictHostKeyChecking=no pi@pi

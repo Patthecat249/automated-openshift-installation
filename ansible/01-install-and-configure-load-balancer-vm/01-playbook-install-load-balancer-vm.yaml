@@ -98,7 +98,7 @@
     - name: "10 --- Create kickstart.cfg from kickstart.j2"
       become: "true"
       template:
-        src: "templates/kickstart.j2"
+        src: "../99-jinja-templates/kickstart/kickstart.j2"
         dest: "{{dir_nfs_root}}{{dir_mounted_kickstart_configs}}{{kickstart_file}}" # Hier muss noch der Pfad verifiziert werden
       tags:
         - create

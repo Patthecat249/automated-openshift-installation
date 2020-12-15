@@ -15,7 +15,7 @@ mypath=$(pwd)
 mkdir $mypath/git && cd $mypath/git && git clone https://github.com/Patthecat249/pxe-server.git
 
 # Create new VM with 2x vCPU and 2GB RAM
-cd $mypath/git/pxe-server/playbooks && time ansible-playbook 11_create_vm_from_clone.yaml -e "hostname=install-vm cpu=4 ram=4096"
+cd $mypath/git/pxe-server/playbooks && time ansible-playbook 11_create_vm_from_clone.yaml -e "hostname=install-vm cpu=4 ram=8192"
 
 # SSH into new created "install-vm"
 ssh root@install-vm
@@ -33,6 +33,7 @@ mkdir $mypath/git && cd $mypath/git && git clone https://github.com/Patthecat249
 cd $mypath/git/automated-openshift-installation/ansible/00-install-and-configure-installation-vm/ && chmod +x 00-install-prerequisites.sh && ./00-install-prerequisites.sh
 
 # (Optional) Only neccessary on my environment! Create a user "pi" and add to sudoers
+ssh-copy-id -o StrictHostKeyChecking=no pi@pi
 
 # Install-VM is now completly prepared
 ```
