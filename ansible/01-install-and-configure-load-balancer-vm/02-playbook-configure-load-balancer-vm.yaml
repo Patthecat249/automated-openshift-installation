@@ -19,7 +19,7 @@
         group: "root"
         mode: "0644"
         force: "true"
-        validate: "/usr/sbin/haproxy -f %s -c -q"
+        #validate: "/usr/sbin/haproxy -f %s -c -q"
       notify:
         - restart haproxy
 
