@@ -43,7 +43,7 @@
         state: present
 
 # Prüfe, ob die IP-Adresse bereits in /etc/dnsmasq.conf existiert.
-    - name: "05 --- Prüfe, ob die IP-Adresse {{ip}} in /etc/dnsmasq.conf existiert."
+    - name: "05 --- Check, if IP-Address {{ip}} exists in /etc/dnsmasq.conf"
       command: "grep \"{{ ip }}\" /etc/dnsmasq.conf"
       register: checkmyconf
       check_mode: no
@@ -53,14 +53,14 @@
       tags:
         - checker
 
-    - name: "06 --- Stop Ansible-Playbook, if /etc/dnsmasq.conf contains {{ ip }}"
+    - name: "06 --- If /etc/dnsmasq.conf contains {{ ip }}, Stop Ansible-Playbook"
       debug: msg="Die IP-Adresse {{ip}} existiert bereits in /etc/dnsmasq.conf!"
       when: checkmyconf.rc == 0
       tags:
         - checker
 
 # Prüfe, ob der Hostname {{lb.hostname}} bereits in /etc/dnsmasq.conf existiert.
-    - name: "07 --- Prüfe, ob der Hostname: {{lb.hostname}} in /etc/dnsmasq.conf existiert."
+    - name: "07 --- Check, if IP-Address {{lb.hostname}} exists in /etc/dnsmasq.conf"
       command: "grep \"{{ lb.hostname }}\" /etc/dnsmasq.conf"
       register: checkmyconf2
       check_mode: no
@@ -70,7 +70,7 @@
       tags:
         - checker
 
-    - name: "08 --- Stop Ansible-Playbook, if /etc/dnsmasq.conf contains {{ lb.hostname }}"
+    - name: "08 --- If /etc/dnsmasq.conf contains {{ lb.hostname }}, Stop Ansible-Playbook"
       debug: msg="Der Hostname {{lb.hostname}} existiert bereits in /etc/dnsmasq.conf!"
       when: checkmyconf2.rc == 0
       tags:
@@ -84,7 +84,7 @@
       when: checkmyconf2.rc == 0
 
 # Mounte das NFS-Verzeichnis /volume1/nfs-iso nach /mnt/sva
-    - name: "09 --- Mounting NFS-Share"
+    - name: "09 --- Mounting NFS-Share {{ nfs_server }}:{{ nfs_mount_path }}"
       become: "true"
       mount:
         fstype: nfs
@@ -104,7 +104,7 @@
       become: "true"
       template:
         src: "../../terraform/templates/kickstart.j2"
-        dest: "{{dir_nfs_root}}{{dir_mounted_kickstart_configs}}{{kickstart_file}}" # Hier muss noch der Pfad verifiziert werden
+        dest: "{{dir_nfs_root}}{{dir_mounted_kickstart_configs}}{{lb.hostname}}.cfg" # Hier muss noch der Pfad verifiziert werden
       tags:
         - create
 
