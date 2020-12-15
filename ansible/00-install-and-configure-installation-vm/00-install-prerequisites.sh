@@ -6,6 +6,7 @@ yum install wget -y
 yum install git -y
 yum install unzip -y
 yum install sshpass -y
+yum install jq -y
 cd $mypath
 wget https://releases.hashicorp.com/terraform/0.14.2/terraform_0.14.2_linux_amd64.zip
 unzip terraform_0.14.2_linux_amd64.zip
