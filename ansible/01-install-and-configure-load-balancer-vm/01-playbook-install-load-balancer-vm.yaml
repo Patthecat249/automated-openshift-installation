@@ -3,6 +3,11 @@
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
+  vars:
+    - cpu: "{{ lb.cpu }}"
+    - ram: "{{ lb.ram }}"
+    - hostname: "{{ lb.hostname }}"
+    - ip: "{{ lb.ip }}"
  
   tasks:
 # Erstelle Arbeitsverzeichnisse
