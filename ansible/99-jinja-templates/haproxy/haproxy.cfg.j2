@@ -8,7 +8,7 @@ global
     stats   socket  /var/lib/haproxy/stats
 
 frontend
-    bind        {{ openshift_api_server.frontend.ip }}{% if openshift_api_server.frontend.port is defined %}:{{ openshift_api_server.frontend.port }}{% endif %}{% if openshift_api_server.frontend.ssl_crt is defined %} ssl crt {{ openshift_api_server.frontend.ssl_crt }{% endif %}}{{- '\n'}}
+    bind        {{ openshift_api_server.frontend.ip }}{% if openshift_api_server.frontend.port is defined %}:{{ openshift_api_server.frontend.port }}{% endif %}{% if openshift_api_server.frontend.ssl_crt is defined %} ssl crt {{ openshift_api_server.frontend.ssl_crt }}{% endif %}}{{- '\n'}}
     default_backend openshift-api-server
     mode        tcp
     option      tcplog
@@ -21,7 +21,7 @@ backend openshift-api-server
 {% endfor %}
 
 frontend machine-config-server
-    bind        {{ machine_config_server.frontend.ip }}{% if machine_config_server.frontend.port is defined %}:{{ machine_config_server.frontend.port }}{% endif %}{% if machine_config_server.frontend.ssl_crt is defined %} ssl crt {{ machine_config_server.frontend.ssl_crt }{% endif %}}{{- '\n'}}
+    bind        {{ machine_config_server.frontend.ip }}{% if machine_config_server.frontend.port is defined %}:{{ machine_config_server.frontend.port }}{% endif %}{% if machine_config_server.frontend.ssl_crt is defined %} ssl crt {{ machine_config_server.frontend.ssl_crt }}{% endif %}}{{- '\n'}}
     default_backend machine-config-server
     mode        tcp
     option      tcplog
@@ -34,7 +34,7 @@ backend machine-config-server
 {% endfor %}  
 
 frontend ingress-http
-    bind        {{ ingress_http.frontend.ip }}{% if ingress_http.frontend.port is defined %}:{{ ingress_http.frontend.port }}{% endif %}{% if ingress_http.frontend.ssl_crt is defined %} ssl crt {{ ingress_http.frontend.ssl_crt }{% endif %}}{{- '\n'}}
+    bind        {{ ingress_http.frontend.ip }}{% if ingress_http.frontend.port is defined %}:{{ ingress_http.frontend.port }}{% endif %}{% if ingress_http.frontend.ssl_crt is defined %} ssl crt {{ ingress_http.frontend.ssl_crt }}{% endif %}}{{- '\n'}}
     default_backend ingress-http
     mode        tcp
     option      tcplog
@@ -47,7 +47,7 @@ backend ingress-http
 {% endfor %}
 
 frontend ingress-https
-    bind        {{ ingress_https.frontend.ip }}{% if ingress_https.frontend.port is defined %}:{{ ingress_https.frontend.port }}{% endif %}{% if ingress_https.frontend.ssl_crt is defined %} ssl crt {{ ingress_https.frontend.ssl_crt }{% endif %}}{{- '\n'}}
+    bind        {{ ingress_https.frontend.ip }}{% if ingress_https.frontend.port is defined %}:{{ ingress_https.frontend.port }}{% endif %}{% if ingress_https.frontend.ssl_crt is defined %} ssl crt {{ ingress_https.frontend.ssl_crt }}{% endif %}}{{- '\n'}}
     default_backend ingress-https
     mode        tcp
     option      tcplog
@@ -60,7 +60,7 @@ backend ingress-https
 {% endfor %} 
 
 frontend image-registry
-    bind        {{ image_registry.frontend.ip }}{% if image_registry.frontend.port is defined %}:{{ image_registry.frontend.port }}{% endif %}{% if image_registry.frontend.ssl_crt is defined %} ssl crt {{ image_registry.frontend.ssl_crt }{% endif %}}{{- '\n'}}
+    bind        {{ image_registry.frontend.ip }}{% if image_registry.frontend.port is defined %}:{{ image_registry.frontend.port }}{% endif %}{% if image_registry.frontend.ssl_crt is defined %} ssl crt {{ image_registry.frontend.ssl_crt }}{% endif %}}{{- '\n'}}
     default_backend image-registry
     mode        tcp
     option      tcplog
