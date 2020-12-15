@@ -32,6 +32,8 @@ mkdir $mypath/git && cd $mypath/git && git clone https://github.com/Patthecat249
 # Switch into working directory and 
 cd $mypath/git/automated-openshift-installation/ansible/00-install-and-configure-installation-vm/ && chmod +x 00-install-prerequisites.sh && ./00-install-prerequisites.sh
 
+# (Optional) Only neccessary on my environment! Create a user "pi" and add to sudoers
+
 # Install-VM is now completly prepared
 ```
 
