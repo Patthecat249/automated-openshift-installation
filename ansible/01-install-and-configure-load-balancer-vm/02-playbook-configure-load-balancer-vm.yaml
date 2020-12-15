@@ -1,10 +1,36 @@
 ---
 - name: "Configuration of a load-balancer"
-  hosts: "localhost"
+  hosts: "{{ lb.hostname }}"
   gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
   tasks:
-    - name: "01 - Render terraform-template for load-balancer-vm"
+    - name: "01 - Install haproxy-software"
+      yum:
+        name: "haproxy"
+        state: "present"
+
+    - name: "02 - Render haproxy-template for load-balancer-vm"
       template:
-        src: ""
-        dest: ""
+        src: "../99-jinja-templates/haproxy/haproxy.cfg.j2"
+        dest: "/etc/haproxy/haproxy.cfg"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+        force: "true"
+        validate: "/usr/sbin/haproxy -f %s -c -q"
+      notify:
+        - restart haproxy
+
+    - name: "03 - Start and enable service haproxy"
+      systemd:
+        name: "haproxy"
+        state: "started"
+        enabled: "true"
+
+  handlers:
+    - name: "restart haproxy"
+      systemd:
+        name: "haproxy"
+        state: "restarted"
 ...

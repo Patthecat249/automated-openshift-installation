@@ -14,7 +14,7 @@
       with_items:
         - "{{ dir_root }}"
         - "{{ dir_terraform }}"
-        - "{{ dir_terraform }}{{ hostname }}"
+        - "{{ dir_terraform }}{{ lb.hostname }}"
         - "{{ dir_terraform_module_vm }}"
       tags:
         - create
@@ -59,9 +59,9 @@
       tags:
         - checker
 
-# Prüfe, ob der Hostname {{hostname}} bereits in /etc/dnsmasq.conf existiert.
-    - name: "07 --- Prüfe, ob der Hostname: {{hostname}} in /etc/dnsmasq.conf existiert."
-      command: "grep \"{{ hostname }}\" /etc/dnsmasq.conf"
+# Prüfe, ob der Hostname {{lb.hostname}} bereits in /etc/dnsmasq.conf existiert.
+    - name: "07 --- Prüfe, ob der Hostname: {{lb.hostname}} in /etc/dnsmasq.conf existiert."
+      command: "grep \"{{ lb.hostname }}\" /etc/dnsmasq.conf"
       register: checkmyconf2
       check_mode: no
       ignore_errors: yes
@@ -70,8 +70,8 @@
       tags:
         - checker
 
-    - name: "08 --- Stop Ansible-Playbook, if /etc/dnsmasq.conf contains {{ hostname }}"
-      debug: msg="Der Hostname {{hostname}} existiert bereits in /etc/dnsmasq.conf!"
+    - name: "08 --- Stop Ansible-Playbook, if /etc/dnsmasq.conf contains {{ lb.hostname }}"
+      debug: msg="Der Hostname {{lb.hostname}} existiert bereits in /etc/dnsmasq.conf!"
       when: checkmyconf2.rc == 0
       tags:
         - checker
@@ -113,7 +113,7 @@
     - name: "12 --- Create main.tf-file from vm.tf.j2"
       template:
         src: "../../terraform/templates/tf-vm-module.j2"
-        dest: "{{ dir_terraform }}{{ hostname }}/main.tf"
+        dest: "{{ dir_terraform }}{{ lb.hostname }}/main.tf"
       tags:
         - create
 
@@ -121,7 +121,7 @@
     - name: "13 --- Create output.tf-file from jinja-template output.tf"
       template:
         src: "../../terraform/templates/output.j2"
-        dest: "{{ dir_terraform }}{{ hostname }}/output.tf"
+        dest: "{{ dir_terraform }}{{ lb.hostname }}/output.tf"
       tags:
         - create
 
@@ -161,11 +161,11 @@
 
 # Erzeuge die virtuelle Maschine
     - name: "17 --- Create virtual machine with terraform"
-      raw: "cd {{ dir_terraform }}{{ hostname }} && terraform init && terraform apply -auto-approve"
+      raw: "cd {{ dir_terraform }}{{ lb.hostname }} && terraform init && terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM
     - name: "18 --- Retrieve mac-address from created virtual machine"
-      raw: "cd {{ dir_terraform }}{{ hostname }} && terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
+      raw: "cd {{ dir_terraform }}{{ lb.hostname }} && terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
 
 # Erstelle für diese VM, anhand der MAC-Adresse ein PXELINUX-Config-File im TFTPROOT-Dir vom PXE-SERVER
@@ -187,7 +187,7 @@
       lineinfile:
         path: /etc/dnsmasq.conf
         insertafter: "^# OpenShift-Nodes"         
-        line: "dhcp-host={{ mac.stdout | trim }},{{hostname}},{{ ip }},set:ocp43"
+        line: "dhcp-host={{ mac.stdout | trim }},{{lb.hostname}},{{ ip }},set:ocp43"
       delegate_to: pi
       notify: "restart dnsmasq"
 
@@ -198,7 +198,7 @@
       lineinfile:
         path: "/etc/dnsmasq.conf"
         insertafter: "^# Static-DNS-Assignements" 
-        line: "address=/{{hostname}}.{{domain}}/{{ ip }}"
+        line: "address=/{{lb.hostname}}.{{domain}}/{{ ip }}"
       delegate_to: pi
       notify: "restart dnsmasq"
 

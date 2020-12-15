@@ -21,6 +21,99 @@ dir_terraform: "{{dir_root}}terraform/"
 dir_terraform_vsphere_plugin: "{{dir_terraform}}vsphere_plugin"
 dir_tools: "{{dir_root}}tools/"
 
+# Netzwerk / IPs / Hostnames
+masters:
+  - name: "master01"
+    hostname: "ocp-master-01"
+    ip: "10.0.249.111"
+  - name: "master02"
+    hostname: "ocp-master-02"
+    ip: "10.0.249.112"
+  - name: "master03"
+    hostname: "ocp-master-03"
+    ip: "10.0.249.113"
+
+workers:
+  - name: "worker01"
+    hostname: "ocp-worker-01"
+    ip: "10.0.249.114"
+  - name: "worker02"
+    hostname: "ocp-worker-02"
+    ip: "10.0.249.115"
+  - name: "worker03"
+    hostname: "ocp-worker-03"
+    ip: "10.0.249.116"
+
+bstrp:
+  name: "bootstrap"
+  hostname: "ocp-bootstrap"
+  ip: "10.0.249.117"
+
+bastion:
+  name: "bastion"
+  hostname: "ocp-bastion"
+  ip: "10.0.249.117"
+
+registry:
+  name: "registry"
+  hostname: "ocp-registry"
+  ip: "10.0.249.118"
+
+lb:
+  name: "load-balancer"
+  hostname: "ocp-lb-01"
+  app:
+    ip: "10.0.249.119"
+  api:
+    ip: "10.0.249.119"
+  api_int:
+    ip: "10.0.249.119"
+
+# DNSMASQ-Settings
+dhcp_range: "10.0.249.40,10.0.249.250,255.255.255.0,12h"
+dhcp_subnetmask: "255.255.255.0"
+dhcp_gateway: "10.0.249.1"
+ntpserver: "10.0.249.1"
+interface: "ens192"
+listen_address: "{{ bastion.ip }}"
+boot_script: "pxelinux.0"
+
+# HAPROXY-Settings
+openshift_api_server:
+  frontend:
+    ip: "*"
+    port: "6443"
+  backend:
+    servers: "{{ masters + [ bstrp ] }}"
+
+machine_config_server:
+  frontend:
+    ip: "*"
+    port: "22623"
+  backend:
+    servers: "{{ masters + [ bstrp ] }}"
+
+ingress_http:
+  frontend:
+    ip: "*"
+    port: "80"
+  backend:
+    servers: "{{ workers }}"
+
+ingress_https:
+  frontend:
+    ip: "*"
+    port: "443"
+  backend:
+    servers: "{{ workers }}"
+
+image_registry:
+  frontend:
+    ip: "*"
+    port: "5000"
+  backend:
+    servers: "{{ workers }}"
+
 hostname: "default"
 domain: "home.local"
 dns_server_ip: "10.0.249.53"
@@ -31,7 +124,7 @@ ip: "10.0.249.111"
 cpu: "1"
 ram: "1024"
 disksize: "120"
-boot_delay: "60000"
+boot_delay: "20000"
 dir_root: "/opt/sva/"
 dir_terraform: "{{dir_root}}terraform/"
 dir_terraform_modules: "{{dir_terraform}}modules/"
