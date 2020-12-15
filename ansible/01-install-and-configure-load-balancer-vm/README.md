@@ -1,14 +1,9 @@
 # Install and Configure "Load-Balancer"
 
 ```bash
-# SSH into terraform-host
-ssh root@install-vm
-
-# Set current Path as variable
-mypath=$(pwd)
-cd $mypath/git && git clone https://github.com/Patthecat249/automated-openshift-installation.git
+# Prerequisite: Finish Install-VM
 
 # Execute Playbook to install a load-balancer
-ansible-playbook 01-playbook-install-load-balancer-vm.yaml -e "hostname=ocp-lb"
+cd $mypath/git/automated-openshift-installation/ansible/01-install-and-configure-load-balancer-vm/ && ansible-playbook 01-playbook-install-load-balancer-vm.yaml -e "cpu=2 ram=4096 hostname=ocp-lb ip=10.0.249.111"
 ```
 
