@@ -15,7 +15,7 @@ mypath=$(pwd)
 mkdir $mypath/git && cd $mypath/git && git clone https://github.com/Patthecat249/pxe-server.git
 
 # Create new VM with 2x vCPU and 2GB RAM
-cd $mypath/git/pxe-server/playbooks && time ansible-playbook 11_create_vm_from_clone.yaml -e "hostname=install-vm cpu=2 ram=2048"
+cd $mypath/git/pxe-server/playbooks && time ansible-playbook 11_create_vm_from_clone.yaml -e "hostname=install-vm cpu=4 ram=4096"
 
 # SSH into new created "install-vm"
 ssh root@install-vm
