@@ -48,8 +48,8 @@
         state: present
 
 # Prüfe, ob die IP-Adresse bereits in /etc/dnsmasq.conf existiert.
-    - name: "05 --- Check, if IP-Address {{ip}} exists in /etc/dnsmasq.conf"
-      command: "grep \"{{ ip }}\" /etc/dnsmasq.conf"
+    - name: "05 --- Check, if IP-Address {{ lb.ip }} exists in /etc/dnsmasq.conf"
+      command: "grep \"{{ lb.ip }}\" /etc/dnsmasq.conf"
       register: checkmyconf
       check_mode: no
       ignore_errors: yes
@@ -58,14 +58,14 @@
       tags:
         - checker
 
-    - name: "06 --- If /etc/dnsmasq.conf contains {{ ip }}, Stop Ansible-Playbook"
-      debug: msg="Die IP-Adresse {{ip}} existiert bereits in /etc/dnsmasq.conf!"
+    - name: "06 --- If /etc/dnsmasq.conf contains {{ lb.ip }}, Stop Ansible-Playbook"
+      debug: msg="Die IP-Adresse {{ lb.ip }} existiert bereits in /etc/dnsmasq.conf!"
       when: checkmyconf.rc == 0
       tags:
         - checker
 
 # Prüfe, ob der Hostname {{lb.hostname}} bereits in /etc/dnsmasq.conf existiert.
-    - name: "07 --- Check, if IP-Address {{lb.hostname}} exists in /etc/dnsmasq.conf"
+    - name: "07 --- Check, if IP-Address {{ lb.hostname }} exists in /etc/dnsmasq.conf"
       command: "grep \"{{ lb.hostname }}\" /etc/dnsmasq.conf"
       register: checkmyconf2
       check_mode: no
@@ -76,7 +76,7 @@
         - checker
 
     - name: "08 --- If /etc/dnsmasq.conf contains {{ lb.hostname }}, Stop Ansible-Playbook"
-      debug: msg="Der Hostname {{lb.hostname}} existiert bereits in /etc/dnsmasq.conf!"
+      debug: msg="Der Hostname {{ lb.hostname }} existiert bereits in /etc/dnsmasq.conf!"
       when: checkmyconf2.rc == 0
       tags:
         - checker
@@ -109,13 +109,13 @@
       become: "true"
       template:
         src: "../../terraform/templates/kickstart.j2"
-        dest: "{{dir_nfs_root}}{{dir_mounted_kickstart_configs}}{{lb.hostname}}.cfg" # Hier muss noch der Pfad verifiziert werden
+        dest: "{{ dir_nfs_root }}{{ dir_mounted_kickstart_configs }}{{ lb.hostname }}.cfg" # Hier muss noch der Pfad verifiziert werden
       tags:
         - create
 
 # Erstelle VM-Instanz Terraform "main.tf"-file
 # In dieser Datei wird auf auf das Terraform-Modul verwiesen
-    - name: "12 --- Create main.tf-file from vm.tf.j2"
+    - name: "12 --- Create main.tf-file from tf-vm-module.j2"
       template:
         src: "../../terraform/templates/tf-vm-module.j2"
         dest: "{{ dir_terraform }}{{ lb.hostname }}/main.tf"

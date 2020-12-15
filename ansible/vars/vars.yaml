@@ -150,7 +150,7 @@ image_registry:
   backend:
     servers: "{{ workers }}"
 
-hostname: "default"
+#hostname: "default"
 domain: "home.local"
 dns_server_ip: "10.0.249.53"
 
@@ -182,4 +182,4 @@ nfs_path_os_rhel77: "CentOS-7-x86_64-DVD-1908.iso"
 pxe_vmlinux_kernel: "kernels_initrd/centos77/vmlinuz"
 pxe_initrd_image: "kernels_initrd/centos77/initrd.img"
 ntp_server: "router.home.local"
-kickstart_file: "{{hostname}}.cfg"
+#kickstart_file: "{{hostname}}.cfg"
