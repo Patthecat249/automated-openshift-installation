@@ -31,7 +31,7 @@
       become_user: "root"
       lineinfile:
         path: "/etc/dnsmasq.conf"
-        line: "address=/{{ lb.hostname }}.ocp43-patrick.home.local/{{ ip }}"
+        line: "address=/{{ lb.hostname }}.{{ domain }}/{{ lb.ip }}"
         state: "absent"
       delegate_to: pi
       notify: 

@@ -193,7 +193,7 @@
       lineinfile:
         path: /etc/dnsmasq.conf
         insertafter: "^# OpenShift-Nodes"         
-        line: "dhcp-host={{ mac.stdout | trim }},{{lb.hostname}},{{ ip }},set:ocp43"
+        line: "dhcp-host={{ mac.stdout | trim }},{{ lb.hostname }},{{ lb.ip }},set:ocp43"
       delegate_to: pi
       notify: "restart dnsmasq"
 
@@ -204,7 +204,7 @@
       lineinfile:
         path: "/etc/dnsmasq.conf"
         insertafter: "^# Static-DNS-Assignements" 
-        line: "address=/{{lb.hostname}}.{{domain}}/{{ ip }}"
+        line: "address=/{{ lb.hostname }}.{{domain}}/{{ lb.ip }}"
       delegate_to: pi
       notify: "restart dnsmasq"
 
