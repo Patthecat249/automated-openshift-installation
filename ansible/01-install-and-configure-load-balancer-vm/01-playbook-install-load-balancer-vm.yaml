@@ -98,7 +98,7 @@
     - name: "10 --- Create kickstart.cfg from kickstart.j2"
       become: "true"
       template:
-        src: "../99-jinja-templates/kickstart/kickstart.j2"
+        src: "99-jinja-templates/kickstart/kickstart.j2"
         dest: "{{dir_nfs_root}}{{dir_mounted_kickstart_configs}}{{kickstart_file}}" # Hier muss noch der Pfad verifiziert werden
       tags:
         - create
@@ -110,7 +110,7 @@
 # Erstelle VM-Instanz Terraform "main.tf"-file
     - name: "12 --- Create main.tf-file from vm.tf.j2"
       template:
-        src: "../99-jinja-templates/terraform/main.tf"
+        src: "99-jinja-templates/terraform/main.tf"
         dest: "{{ dir_terraform }}{{ hostname }}/main.tf"
       tags:
         - create
@@ -118,7 +118,7 @@
 # Erzeuge und kopiere das output.tf-file in den VM-Instanz-Ordner
     - name: "13 --- Create output.tf-file from jinja-template output.tf"
       template:
-        src: "../99-jinja-templates/terraform/output.tf"
+        src: "99-jinja-templates/terraform/output.tf"
         dest: "{{ dir_terraform }}{{ hostname }}/output.tf"
       tags:
         - create
