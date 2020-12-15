@@ -1,6 +1,7 @@
 ---
 - name: "Configuration of a load-balancer"
   hosts: "{{ lb.hostname }}"
+  become: "true"
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
