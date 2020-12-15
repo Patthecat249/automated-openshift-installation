@@ -109,6 +109,7 @@
         - create
 
 # Erstelle VM-Instanz Terraform "main.tf"-file
+# In dieser Datei wird auf auf das Terraform-Modul verwiesen
     - name: "12 --- Create main.tf-file from vm.tf.j2"
       template:
         src: "../../terraform/templates/tf-vm-module.j2"
@@ -133,12 +134,22 @@
         - create
 
 # Erstelle und kopiere das main.tf-file in den Terraform-Module Ordner
-    - name: "15 --- Create main.tf-file from jinja-template main.tf"
+#    - name: "15a --- Create main.tf-file from jinja-template main.tf"
+#      template:
+#        src: "../../terraform/modules/vm-vsphere/main.tf"
+#        dest: "{{ dir_terraform_module_vm }}main.tf"
+#      tags:
+#        - create
+
+# Erstelle und kopiere das main.tf-file in den Terraform-Module Ordner
+# Clone-Modul: Die VM wird aus einem Clone erzeugt.
+    - name: "15b --- Create main.tf-file from jinja-template main.tf"
       template:
-        src: "../../terraform/modules/vm-vsphere/main.tf"
+        src: "../../terraform/templates/clone.tf.j2"
         dest: "{{ dir_terraform_module_vm }}main.tf"
       tags:
         - create
+
 
 # Erzeuge und kopiere das output.tf-file in den Terraform-Module Ordner 
     - name: "16 --- Create output.tf-file from jinja-template output.tf"
