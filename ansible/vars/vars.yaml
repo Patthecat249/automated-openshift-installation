@@ -95,6 +95,7 @@ registry:
 lb:
   name: "load-balancer"
   hostname: "ocp-lb-01"
+  ip: "10.0.249.119"
   cpu: "1"
   ram: "1024"
   disk: "200"
