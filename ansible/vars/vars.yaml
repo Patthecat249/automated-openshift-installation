@@ -15,11 +15,11 @@ download_tf: "https://releases.hashicorp.com/terraform/{{tf_version}}/terraform_
 download_tf_vsphere_plugin: "https://releases.hashicorp.com/terraform-provider-vsphere/{{tf_vsphere_plugin_version}}/terraform-provider-vsphere_{{tf_vsphere_plugin_version}}_linux_amd64.zip"
 
 # Working directories >> always end with Slash /
-dir_root: "/opt/patrick/"
-dir_cluster: "{{dir_root}}{{clustername}}/"
-dir_terraform: "{{dir_root}}terraform/"
-dir_terraform_vsphere_plugin: "{{dir_terraform}}vsphere_plugin"
-dir_tools: "{{dir_root}}tools/"
+#dir_root: "/opt/patrick/"
+#dir_cluster: "{{dir_root}}{{clustername}}/"
+#dir_terraform: "{{dir_root}}terraform/"
+#dir_terraform_vsphere_plugin: "{{dir_terraform}}vsphere_plugin"
+#dir_tools: "{{dir_root}}tools/"
 
 # Netzwerk / IPs / Hostnames
 # OpenShift-Master-Nodes
