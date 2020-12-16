@@ -93,6 +93,7 @@
     - name: "11 --- Create Git-Directory for User PI"
       file:
         path: "{{ dir_pi_home }}git"
+        shell: "/bin/bash"
         state: "directory"
         owner: "pi"
         group: "wheel"
