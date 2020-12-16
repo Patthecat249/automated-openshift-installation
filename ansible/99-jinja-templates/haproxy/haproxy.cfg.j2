@@ -7,7 +7,7 @@ global
     daemon
     stats   socket  /var/lib/haproxy/stats
 
-frontend
+frontend openshift-api-server
     bind        {{ openshift_api_server.frontend.ip }}{% if openshift_api_server.frontend.port is defined %}:{{ openshift_api_server.frontend.port }}{% endif %}{% if openshift_api_server.frontend.ssl_crt is defined %} ssl crt {{ openshift_api_server.frontend.ssl_crt }}{% endif %}{{- '\n'}}
     default_backend openshift-api-server
     mode        tcp
