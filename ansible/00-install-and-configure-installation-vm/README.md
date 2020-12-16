@@ -32,7 +32,7 @@ mypath=$(pwd)
 # Download and Install git-client and clone Repository
 yum install epel-release -y && yum install centos-release-ansible-29.noarch -y && yum install ansible -y && yum install -y git && mkdir $mypath/git && cd $mypath/git && git clone https://github.com/Patthecat249/automated-openshift-installation.git
 
-# New-Way Execute Ansible-Playbook
+# Execute Ansible-Playbook
 cd $mypath/git/automated-openshift-installation/ansible/00-install-and-configure-installation-vm/ && ansible-playbook 01-playbook-configure-install-vm.yaml
 
 # Proceed with the next step "Install a load-balancer"

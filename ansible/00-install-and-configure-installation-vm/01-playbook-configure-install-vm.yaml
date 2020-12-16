@@ -61,7 +61,7 @@
       copy:
         src: "{{ dir_tools }}terraform"
         dest: "/usr/local/bin/terraform"
-        mode: "0755"
+        mode: "0775"
         remote_src: "true"
 
 # Create SSH-Key for root-user
@@ -74,8 +74,8 @@
       become: "true"
       raw: "sshpass -f rootpassword ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@localhost"
 
-# Create User PI
-    - name: "09 - Create User PI"
+# Create User pi
+    - name: "09 - Create User pi"
       user:
         name: "pi" 
         group: "wheel"
@@ -84,6 +84,19 @@
         generate_ssh_key: "true" 
         ssh_key_bits: "2048"
         ssh_key_file: ".ssh/id_rsa"
+
+# Create Working-Directories for User pi
+    - name: "09a --- Create Working-Directories for user pi"
+      become: "true"
+      become_user: "pi"
+      file:
+        path: "{{ item }}"
+        state: "directory"
+        recurse: "true"
+        group: "wheel"
+        #mode: "0775"
+      with_items:
+        - "{{ dir_pi_home }}git"
 
 # Add right to wheel in sudoers.d
     - name: "10 - add wheel to sudoers.d"
