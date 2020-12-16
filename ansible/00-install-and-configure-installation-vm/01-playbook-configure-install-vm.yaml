@@ -6,6 +6,7 @@
     - "../vars/vars.yaml"
   tasks:
     - name: "01 - Install necassary software programs"
+      become: "true"
       yum:
         name:
           - epel-release
@@ -54,6 +55,7 @@
 
 # Make Terraform executable >> copy to /usr/local/bin/terraform
     - name: "06 - Terraform nach /usr/bin kopieren und ausführbar machen"
+      become: "true"
       copy:
         src: "{{ dir_tools }}terraform"
         dest: "/usr/local/bin/terraform"
@@ -62,14 +64,17 @@
 
 # Create SSH-Key for root-user
     - name: "07 - Create SSH-Key for root-user"
-      raw: "ssh-keygen -t rsa -N '' -f /root/.ssh/id_rsa"
+      become: "true"
+      raw: "ssh-keygen -q -t rsa -N '' -f /root/.ssh/id_rsa <<<y 2>&1 >/dev/null"
 
 # Copy SSH-Key to localhost
     - name: "08 - SSH-COPY-ID"
+      become: "true"
       raw: "sshpass -f rootpassword ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@localhost"
 
 # Create User PI
     - name: "09 - Create User PI"
+      become: "true"
       user:
         name: "pi" 
         group: "wheel" 
@@ -80,25 +85,23 @@
 
 # Add right to wheel in sudoers.d
     - name: "10 - add wheel to sudoers.d"
+      become: "true"
       raw: "echo '%wheel        ALL=(ALL)       NOPASSWD: ALL' > /etc/sudoers.d/wheel"
 
 # Create Working-Directories for User pi
     - name: "12 --- Create Git-Directory for User PI"
+      become: "true"
       file:
-        path: "{{ item }}"
+        path: "{{ dir_pi_home }}git"
         state: "directory"
-        user: "pi"
+        owner: "pi"
         group: "wheel"
-        mode: "0775"
-        recurse: "true"
-      with_items:
-        - "{{ dir_pi_home }}git"
 
 # Clone Github-Repo automation... to /home/pi/git/ Directory and set permissions for user pi and group wheel
     - name: "13 - Clone Github-Repository https://github.com/Patthecat249/automated-openshift-installation.git"
       git:
         repo: "https://github.com/Patthecat249/automated-openshift-installation.git"
-        dest: "{{ dir_pi_home }}git"
+        dest: "{{ dir_pi_home }}git/automated-openshift-installation/"
         clone: "true"
         update: "true"
 
