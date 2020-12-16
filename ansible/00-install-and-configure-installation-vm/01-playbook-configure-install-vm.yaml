@@ -21,7 +21,7 @@
           - unzip
         state: "present"
 
-# Erstelle Arbeitsverzeichnisse
+# Create Working-Directories
     - name: "02 --- Create Working-Directories"
       file:
         path: "{{ item }}"
@@ -31,25 +31,28 @@
         - "{{ dir_root }}"
         - "{{ dir_terraform }}"
         - "{{ dir_tools }}"
+        - "{{ dir_pi_home }}git"
         
-    
+# Download terraform software from internet    
     - name: "03 - Download terraform"
       get_url:
         url: "{{ download_tf }}"
         dest: "{{ dir_terraform }}"
 
+# Download terraform vSphere-Provider-Plugin from internet
     - name: "04 - Download terraform vSphere-Provider-Plugin"
       get_url:
         url: "{{ download_tf_vsphere_plugin }}"
         dest: "{{ dir_terraform_vsphere_plugin }}"
 
-
+# Extraction of zip-archive
     - name: "05 - Entpacken von terraform"
       unarchive:
         src: "{{ dir_terraform }}terraform_{{ tf_version }}_linux_amd64.zip"
         dest: "{{ dir_tools }}"
         remote_src: "true"
 
+# Make Terraform executable >> copy to /usr/local/bin/terraform
     - name: "06 - Terraform nach /usr/bin kopieren und ausführbar machen"
       copy:
         src: "{{ dir_tools }}terraform"
@@ -57,25 +60,53 @@
         mode: "0755"
         remote_src: "true"
 
-    - name: "07 - /etc/exports bearbeiten"
-      lineinfile:
-        path: /etc/exports
-        line: "{{ dir_nfs_data }} *(rw,sync,no_subtree_check,no_root_squash)" 
-        
-    - name: "08 - NFS-Server - Service starten"
-      service:
-        name: "nfs-server.service"
-        state: "started"
-        enabled: "true"
+# Create SSH-Key for root-user
+    - name: "07 - Create SSH-Key for root-user"
+      raw: "ssh-keygen -t rsa -N '' -f /root/.ssh/id_rsa"
 
-    - name: "09 - Lege Links in NFS-Share-Verzeichnis ab"
+# Copy SSH-Key to localhost
+    - name: "08 - SSH-COPY-ID"
+      raw: "sshpass -f rootpassword ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@localhost"
+
+# Create User PI
+    - name: "09 - Create User PI"
+      user:
+        name: "pi" 
+        group: "wheel" 
+        password: "{{'Test1234' | password_hash('sha512', '')}}"
+        generate_ssh_key: "true" 
+        ssh_key_bits: "2048"
+        ssh_key_file: ".ssh/id_rsa"
+
+# Add right to wheel in sudoers.d
+    - name: "10 - add wheel to sudoers.d"
+      raw: "echo '%wheel        ALL=(ALL)       NOPASSWD: ALL' > /etc/sudoers.d/wheel"
+
+# Create Working-Directories for User pi
+    - name: "12 --- Create Git-Directory for User PI"
       file:
-        src: "/root/git/automated-openshift-installation/ansible/98-download/{{ item.src }}"
-        dest: "/nfs-data/{{ item.dest }}"
-        state: "link"
+        path: "{{ item }}"
+        state: "directory"
+        user: "pi"
+        group: "wheel"
+        mode: "0775"
+        recurse: "true"
       with_items:
-        - { src: '{{ coreos_initram }}', dest: '{{ coreos_initram }}'}
-        - { src: '{{ coreos_kernel }}', dest: '{{ coreos_kernel }}'}
-        - { src: '{{ coreos_iso }}', dest: '{{ coreos_iso }}'}
-        - { src: '{{ coreos_raw }}', dest: '{{ coreos_raw }}'}
+        - "{{ dir_pi_home }}git"
+
+# Clone Github-Repo automation... to /home/pi/git/ Directory and set permissions for user pi and group wheel
+    - name: "13 - Clone Github-Repository https://github.com/Patthecat249/automated-openshift-installation.git"
+      git:
+        repo: "https://github.com/Patthecat249/automated-openshift-installation.git"
+        dest: "{{ dir_pi_home }}git"
+        clone: "true"
+        update: "true"
+
+# Do task as pi: ssh-copy-id
+    - name: "14 - ssh-copy-id as user-pi"
+      become: "true"
+      become_user: "pi"
+      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pi"
+
+
 ...

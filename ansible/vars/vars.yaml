@@ -1,10 +1,17 @@
 # OpenShift
 clustername: "ocp-patrick"
+domain: "home.local"
+dns_server_ip: "10.0.249.53"
 
 # VMware-Settings
 vsphere_server: "vcenter.home.local"
 vsphere_user: "administrator@home.local"
 vsphere_pass: "Test1234!"
+cpu: "1"
+ram: "1024"
+disksize: "120"
+boot_delay: "30000"
+vm_type: "worker"
 
 # Terraform
 tf_version: "0.13.5"
@@ -31,6 +38,7 @@ dir_vmware: "/dc-home/vm/spielwiese"
 dir_nfs_root: "/mnt/sva/"
 dir_mounted_kickstart_configs: "kickstart-configs/"
 dir_tftproot: "/tftproot/pxelinux.cfg/"
+dir_pi_home: "/home/pi/"
 
 # Netzwerk / IPs / Hostnames
 # OpenShift-Master-Nodes
@@ -173,14 +181,9 @@ image_registry:
     servers: "{{ workers }}"
 
 #hostname: "default"
-domain: "home.local"
-dns_server_ip: "10.0.249.53"
-vm_type: "worker"
-ip: "10.0.249.111"
-cpu: "1"
-ram: "1024"
-disksize: "120"
-boot_delay: "30000"
+
+
+
 
 # NFS-Settings
 nfs_server: "nas.home.local"
