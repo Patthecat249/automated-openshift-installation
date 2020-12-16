@@ -78,7 +78,8 @@
     - name: "09 - Create User PI"
       user:
         name: "pi" 
-        group: "wheel" 
+        group: "wheel"
+        shell: "/bin/bash"
         password: "{{'Test1234' | password_hash('sha512', '')}}"
         generate_ssh_key: "true" 
         ssh_key_bits: "2048"
@@ -109,7 +110,6 @@
     - name: "13 - Change Owner and Group of {{ dir_pi_home }}git"
       file:
         path: "{{ dir_pi_home }}git"
-        shell: "/bin/bash"
         owner: "pi"
         group: "wheel"
         mode: "0664"
