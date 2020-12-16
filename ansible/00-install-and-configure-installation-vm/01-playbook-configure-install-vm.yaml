@@ -34,7 +34,7 @@
         - "{{ dir_root }}"
         - "{{ dir_terraform }}"
         - "{{ dir_tools }}"
-        - "{{ dir_pi_home }}git"
+        #- "{{ dir_pi_home }}git"
         
 # Download terraform software from internet    
     - name: "03 - Download terraform"
