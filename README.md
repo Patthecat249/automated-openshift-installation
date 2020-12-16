@@ -1,38 +1,27 @@
 # Projektbeschreibung
 Diese Script-Sammlung hat zum Ziel voll automatisiert einen OpenShift-Cluster in einer VMware-Umgebung mit vCenter zu installieren. 
 
-# Voraussetzungen
-- Es muss entweder eine Linux-VM existieren z.B. CentOS 7.6 - Minimal (Install-Server/Install-VM) oder ein Laptop mit Linux vorhanden sein.
 
-# Anleitung
-- Download Github-Repository "pxe-server"
-- Erstellen einer Install-VM 
 
-## Ablauf zum Erstellung der Install-VM (wenn Install-VM noch nicht existiert) vom Terraform-Host
-```bash
-ssh terraform
-mypath=$(pwd)
-mkdir $mypath/git && cd $mypath/git && git clone https://github.com/Patthecat249/pxe-server.git
-cd $mypath/git/pxe-server/playbooks && ansible-playbook 11_create_vm_from_clone.yaml -e "hostname=install-vm cpu=2 ram=2048"
-```
+# How to read this Guide
 
-# Git installieren
-```bash
-yum install -y git
-```
+Read this Guide and follow step-by-step *(Next step)* . Always follow the instructions in the README-files included in the ansible-folder. 
 
-# Download des GIT-Repositories (automated-openshift-installation)
-```bash
-cd $mypath/git && git clone https://github.com/Patthecat249/automated-openshift-installation.git
 
-```
-# Grundkonfiguration der Install-VM
-```bash
-cd $mypath/git/
-```
 
-# Installieren von essentieller Software
-- terraform + vsphere-provider plugin
-- ansible
-- nfsutils
-- git
+# Requirements
+- vSphere ESXi 6.7 + vCenter 6.7 
+- Internet-Access (only for the Install-VM)
+
+
+
+# Guide
+Everything starts with the creation of an **Install-VM**. This is the central Starting-Point of this guide. This **Install-VM** must be connected to the internet.
+
+
+
+# Next step
+
+Start reading the README in `ansible/00-install-and-configure-installation-vm` 
+
+ 

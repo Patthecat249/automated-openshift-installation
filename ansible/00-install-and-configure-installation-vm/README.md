@@ -2,7 +2,7 @@
 
 If you have no linux system, here is how to create one with terraform on a vsphere-environment.
 
-## Deploy a new virtual Machine called "Install-VM" with terraform on vsphere ESXi
+## Install the Install-VM
 
 ```bash
 # SSH into terraform-host
@@ -16,7 +16,13 @@ mkdir $mypath/git && cd $mypath/git && git clone https://github.com/Patthecat249
 
 # Create new VM with 2x vCPU and 2GB RAM
 cd $mypath/git/pxe-server/playbooks && time ansible-playbook 11_create_vm_from_clone.yaml -e "hostname=install-vm cpu=4 ram=8192"
+```
 
+
+
+## Configure the Install-VM
+
+```bash
 # SSH into new created "install-vm"
 ssh root@install-vm
 
@@ -34,26 +40,24 @@ cd $mypath/git/automated-openshift-installation/ansible/00-install-and-configure
 
 # (Optional) Only neccessary on my environment! Create a user "pi" and add to sudoers
 ssh-copy-id -o StrictHostKeyChecking=no pi@pi
+ssh-copy-id -o StrictHostKeyChecking=no pi@pxe-server
 
 # Install-VM is now completly prepared
 ```
 
-Proceed with Step "Install and Configure a Load-Balancer-VM"
 
-# Install and Configure a Load-Balancer-VM
 
-```bash
-# Switch into working directory and execute Ansible-Playbook
-cd $mypath/git/automated-openshift-installation/ansible/01-install-and-configure-load-balancer-vm/ && ansible-playbook 01-playbook-install-load-balancer-vm.yaml -e "hostname='load-balancer' ip='10.0.249.111'"
-```
 
+
+# Next Step
+
+Proceed with Step **Install and Configure a Load-Balancer-VM** 
 
 
 
 
 
-
-## Description
+## Description Install and configure an Install-VM
 
 Mit diesem Playbook wird eine virtuelle Maschine vorbereitet, welche als Ausgangspunkt für die folgende Installation dient. Dies kann in Wirklichkeit ein Linux-Arbeitslaptop eines System-Engineers, oder eine Admin-VM beim Kunden sein, die später dazu verwendet wird, um die OpenShift-Installation und aller benötigten Komponenten zu steuern. 
 
@@ -71,6 +75,8 @@ Dieser Rechner hat zum Zeitpunkt der Einrichtung Internet-Zugang!
 - 2 vCPU
 - 2048 MB RAM
 - 16 GB Thin provisioned disk
+
+
 
 # Software
 This software packages will be installed through a script

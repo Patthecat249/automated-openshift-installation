@@ -8,6 +8,11 @@
     - name: "01 - Install necassary software programs"
       yum:
         name:
+          - epel-release
+          - centos-release-ansible-29.noarch
+          - ansible
+          - git
+          - sshpass
           - wget.x86_64
           - jq.x86_64
           - podman.x86_64
@@ -16,17 +21,17 @@
           - unzip
         state: "present"
 
-    - name: "02 - Create Working-Directories"
+# Erstelle Arbeitsverzeichnisse
+    - name: "02 --- Create Working-Directories"
       file:
         path: "{{ item }}"
-        state: directory
+        state: "directory"
+        recurse: "true"
       with_items:
         - "{{ dir_root }}"
-        - "{{ dir_cluster }}"
         - "{{ dir_terraform }}"
-        - "{{ dir_terraform_vsphere_plugin }}"
         - "{{ dir_tools }}"
-        - "{{ dir_nfs_data }}" 
+        
     
     - name: "03 - Download terraform"
       get_url:
