@@ -93,7 +93,6 @@
     - name: "11 --- Create Git-Directory for User PI"
       file:
         path: "{{ dir_pi_home }}git"
-        shell: "/bin/bash"
         state: "directory"
         owner: "pi"
         group: "wheel"
@@ -110,6 +109,7 @@
     - name: "13 - Change Owner and Group of {{ dir_pi_home }}git"
       file:
         path: "{{ dir_pi_home }}git"
+        shell: "/bin/bash"
         owner: "pi"
         group: "wheel"
         mode: "0664"
