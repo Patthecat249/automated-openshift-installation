@@ -23,7 +23,19 @@
       notify:
         - restart haproxy
 
-    - name: "03 - Start and enable service haproxy"
+    - name: "03 - SELinux - Check Status"
+      command: "/usr/sbin/getenforce"
+      register: "getenforce_res"
+
+    - name: "04 - Configure SELinux with enforcing mode"
+      seport:
+        ports: "6443,22623"
+        proto: "tcp"
+        setype: "commplex_main_port_t"
+        state: "present"
+      when: getenforce_res.stdout == 'Enforcing'
+
+    - name: "05 - Start and enable service haproxy"
       systemd:
         name: "haproxy"
         state: "started"
