@@ -40,11 +40,8 @@ exit
 # Copy the SSH-KEY from the User "pi" from the Install-VM to the load-balancer
 ssh-copy-id pi@ocp-lb-01
 
-# SSH into Load-Balancer-VM
-ssh ocp-lb-01
-
-# Install requirements for Python-Library + SELinux
-sudo yum install -y policycoreutils-python
+# Remote Install requirements for Python-Library + SELinux
+ssh pi@ocp-lb-01 "sudo yum install -y policycoreutils-python"
 
 # Execute Playbook to configure the load-balancer
 cd $mypath/git/automated-openshift-installation/ansible/01-install-and-configure-load-balancer-vm/ && ansible-playbook 02-playbook-configure-load-balancer-vm.yaml -k

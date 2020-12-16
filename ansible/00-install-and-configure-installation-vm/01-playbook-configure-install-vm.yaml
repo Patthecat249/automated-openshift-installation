@@ -28,6 +28,8 @@
         path: "{{ item }}"
         state: "directory"
         recurse: "true"
+        group: "wheel"
+        mode: "0775"
       with_items:
         - "{{ dir_root }}"
         - "{{ dir_terraform }}"
@@ -74,7 +76,6 @@
 
 # Create User PI
     - name: "09 - Create User PI"
-      become: "true"
       user:
         name: "pi" 
         group: "wheel" 
@@ -89,8 +90,7 @@
       raw: "echo '%wheel        ALL=(ALL)       NOPASSWD: ALL' > /etc/sudoers.d/wheel"
 
 # Create Working-Directories for User pi
-    - name: "12 --- Create Git-Directory for User PI"
-      become: "true"
+    - name: "11 --- Create Git-Directory for User PI"
       file:
         path: "{{ dir_pi_home }}git"
         state: "directory"
@@ -98,18 +98,25 @@
         group: "wheel"
 
 # Clone Github-Repo automation... to /home/pi/git/ Directory and set permissions for user pi and group wheel
-    - name: "13 - Clone Github-Repository https://github.com/Patthecat249/automated-openshift-installation.git"
+    - name: "12 - Clone Github-Repository https://github.com/Patthecat249/automated-openshift-installation.git"
       git:
         repo: "https://github.com/Patthecat249/automated-openshift-installation.git"
         dest: "{{ dir_pi_home }}git/automated-openshift-installation/"
         clone: "true"
         update: "true"
 
+# chown -R pi:wheel /home/pi/git
+    - name: "13 - Change Owner and Group of {{ dir_pi_home }}git"
+      file:
+        path: "{{ dir_pi_home }}git"
+        owner: "pi"
+        group: "wheel"
+        mode: "0664"
+        recurse: "true"
+
 # Do task as pi: ssh-copy-id
     - name: "14 - ssh-copy-id as user-pi"
       become: "true"
       become_user: "pi"
       raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pi"
-
-
 ...

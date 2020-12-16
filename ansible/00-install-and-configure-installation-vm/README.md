@@ -31,9 +31,20 @@ mypath=$(pwd)
 
 # Download and Install git-client
 yum install -y git
+yum install epel-release -y
+yum install centos-release-ansible-29.noarch -y
+yum install ansible -y
 
 # Create new working directory and clone Github-Repository
 mkdir $mypath/git && cd $mypath/git && git clone https://github.com/Patthecat249/automated-openshift-installation.git
+
+# New-Way Execute Ansible-Playbook
+cd $mypath/git/automated-openshift-installation/ansible/00-install-and-configure-installation-vm/ && ansible-playbook 01-playbook-configure-install-vm.yaml
+
+
+
+
+
 
 # Switch into working directory and 
 cd $mypath/git/automated-openshift-installation/ansible/00-install-and-configure-installation-vm/ && chmod +x 00-install-prerequisites.sh && ./00-install-prerequisites.sh

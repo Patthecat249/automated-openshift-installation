@@ -14,7 +14,7 @@ boot_delay: "30000"
 vm_type: "worker"
 
 # Terraform
-tf_version: "0.13.5"
+tf_version: "0.14.2"
 tf_zip_filename: "terraform_{{tf_version}}_linux_amd64.zip"
 
 ## Terraform - vSphere-Plugin
