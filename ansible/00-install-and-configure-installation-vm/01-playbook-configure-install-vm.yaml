@@ -93,7 +93,7 @@
         path: "{{ item }}"
         state: "directory"
         recurse: "true"
-        group: "wheel"
+        #group: "wheel"
         #mode: "0775"
       with_items:
         - "{{ dir_pi_home }}git"
@@ -103,16 +103,10 @@
       become: "true"
       raw: "echo '%wheel        ALL=(ALL)       NOPASSWD: ALL' > /etc/sudoers.d/wheel"
 
-# Create Working-Directories for User pi
-    - name: "11 --- Create Git-Directory for User PI"
-      file:
-        path: "{{ dir_pi_home }}git"
-        state: "directory"
-        owner: "pi"
-        group: "wheel"
-
 # Clone Github-Repo automation... to /home/pi/git/ Directory and set permissions for user pi and group wheel
     - name: "12 - Clone Github-Repository https://github.com/Patthecat249/automated-openshift-installation.git"
+      become: "true"
+      become_user: "pi"     
       git:
         repo: "https://github.com/Patthecat249/automated-openshift-installation.git"
         dest: "{{ dir_pi_home }}git/automated-openshift-installation/"
