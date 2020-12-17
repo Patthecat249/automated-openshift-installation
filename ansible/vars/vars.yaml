@@ -36,6 +36,12 @@ pull_secret: "/root/pull-secret"
 registry_user: "reguser" # No underscore allowed!
 registry_pass: "Test1234"
 registry_port: "5000"
+local_registry: "{{registry.hostname}}{{domain}}:{{registry_port}}"
+product_repo: "openshift-release-dev"
+local_repository: "ocp4/openshift4"
+release_name: "ocp-release"
+ocp_release: "{{version_openshift}}-x86_64"
+pull_secret_for_mirror: "/root/pull-secret.json"
 
 # Terraform
 tf_version: "0.14.2"

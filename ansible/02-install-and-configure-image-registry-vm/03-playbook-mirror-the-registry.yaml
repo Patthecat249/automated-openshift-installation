@@ -1,0 +1,25 @@
+---
+- name: "Mirror the registry"
+  hosts: "{{ registry.hostname }}"
+  become: "true"
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+  tasks:
+# Time Begin
+    - name: "--- Starte Playbook: {{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+      debug: msg="{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+
+    - name: "01 - Copy pull-secret from install-vm to ocp-registry"
+      copy:
+        src: "{{pull_secret_for_mirror}}"
+        dest: "{{ dir_tools }}pull-secret"
+        mode: "0600"
+
+# Mirror images from Red Hat to mirror-registry
+    - name: "02 - Mirror the Images from Red Hat into mirror-registry"
+      raw: "oc adm -a {{ dir_tools }}pull-secret release mirror --from=quay.io/{{product_repo}}/{{release_name}}:{{ocp_release}} --to={{local_registry}}/{{local_repository}} --to-release-image={{local_registry}}/{{local_repository}}:{{ocp_release}}"
+
+# Time End
+    - name: "--- Ende Playbook: {{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+      debug: msg="{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
