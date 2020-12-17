@@ -100,7 +100,7 @@
 
 # Create the mirror-registry
     - name: "12 - Start Registry with podman as mirror-registry"
-      command: "podman run --name mirror-registry -p {{registry.hostname}}:{{registry_port}} \ 
+      command: "podman run --name mirror-registry -p {{registry_port}}:{{registry_port}} \ 
      -v {{dir_registry_data}}:/var/lib/registry:z \
      -v {{dir_registry_auth}}:/auth:z \
      -e 'REGISTRY_AUTH=htpasswd' \
