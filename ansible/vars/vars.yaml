@@ -2,6 +2,9 @@
 clustername: "ocp-patrick"
 domain: "home.local"
 dns_server_ip: "10.0.249.53"
+version_openshift: "4.5.23"
+version_core_os: "4.5.6"
+version_major: "4.5"
 
 # VMware-Settings
 vsphere_server: "vcenter.home.local"
@@ -13,6 +16,21 @@ dir_vmware: "/dc-home/vm/openshift"
 disksize: "120"
 boot_delay: "30000"
 vm_type: "worker"
+
+# Clients / Software
+link_to_oc: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{version_openshift}}/openshift-client-linux-{{version_openshift}}.tar.gz"
+link_to_openshift_installer: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{version_openshift}}/openshift-install-linux-{{version_openshift}}.tar.gz"
+link_to_coreos_kernel: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/{{version_major}}/{{version_core_os}}/rhcos-{{version_core_os}}-x86_64-installer-kernel-x86_64"
+link_to_coreos_initrd: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/{{version_major}}/{{version_core_os}}/rhcos-{{version_core_os}}-x86_64-installer-initramfs.x86_64.img"
+link_to_coreos_raw_gz: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/{{version_major}}/{{version_core_os}}/rhcos-{{version_core_os}}-x86_64-metal.x86_64.raw.gz"
+
+# Red Hat
+pull_secret: "/root/pull-secret"
+
+# Mirror-Registry
+registry_user: "reg_user"
+registry_pass: "Test1234"
+registry_port: "5000"
 
 # Terraform
 tf_version: "0.14.2"
@@ -35,11 +53,14 @@ dir_terraform_module_vm: "{{dir_terraform_modules}}vm-vsphere/"
 dir_terraform_vsphere_plugin: "{{dir_terraform}}vsphere_plugin"
 dir_tools: "{{dir_root}}tools/"
 dir_root: "/opt/sva/"
-
+dir_downloads: "{{dir_tools}}downloads/"
 dir_nfs_root: "/mnt/sva/"
 dir_mounted_kickstart_configs: "kickstart-configs/"
 dir_tftproot: "/tftproot/pxelinux.cfg/"
 dir_pi_home: "/home/pi/"
+dir_registry_auth: "{{dir_root}}registry/auth"
+dir_registry_certs: "{{dir_root}}registry/certs"
+dir_registry_data: "{{dir_root}}registry/data"
 
 # Netzwerk / IPs / Hostnames
 # OpenShift-Master-Nodes

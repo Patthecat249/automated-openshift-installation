@@ -1,0 +1,130 @@
+---
+- name: "Configuration of a load-balancer"
+  hosts: "{{ registry.hostname }}"
+  become: "true"
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+  tasks:
+    - name: "00 - ssh-copy-id as user-root to {{registry.hostname}}"
+      become: "true"
+      become_user: "root"
+      raw: "ssh-copy-id -o StrictHostKeyChecking=no root@{{registry.hostname}}"
+      delegate_to: "localhost"
+
+# Install some software
+    - name: "01 - Install podman"
+      yum:
+        name: 
+          - "podman"
+          - "wget"
+          - "openssl"
+          - "httpd-tools"
+        state: "present"
+
+# Create Working-Directories on Install-VM
+    - name: "01 --- Create Working-Directories on Install-VM"
+      file:
+        path: "{{ item }}"
+        state: "directory"
+        recurse: "true"
+      with_items:
+        - "{{ dir_downloads }}"
+      delegate_to: "localhost"
+
+# Create Working-Directories on {{ registry.hostname }}
+    - name: "01 --- Create Working-Directories on {{ registry.hostname }}"
+      file:
+        path: "{{ item }}"
+        state: "directory"
+        recurse: "true"
+      with_items:
+        - "{{dir_registry_auth}}"
+        - "{{dir_registry_certs}}"
+        - "{{dir_registry_data}}"
+
+# Download terraform software from internet    
+    - name: "02 - Download OpenShift-Software"
+      get_url:
+        url: "{{ item }}"
+        dest: "{{ dir_downloads }}"
+      with_items:
+        - "{{ link_to_oc }}"
+        - "{{ link_to_openshift_installer }}"
+        - "{{ link_to_coreos_kernel }}"
+        - "{{ link_to_coreos_initrd }}"
+        - "{{ link_to_coreos_raw_gz }}"
+      delegate_to: "localhost"
+
+# Extraction of zip-archive
+    - name: "03 - Extract the oc-client"
+      unarchive:
+        src: "{{ dir_downloads }}openshift-client-linux-{{version_openshift}}.tar.gz"
+        dest: "{{ dir_downloads }}"
+        remote_src: "true"
+
+# Extraction of zip-archive
+    - name: "04 - Extract the openshift-installer"
+      unarchive:
+        src: "{{ dir_downloads }}openshift-install-linux-{{version_openshift}}.tar.gz"
+        dest: "{{ dir_downloads }}"
+        remote_src: "true"
+
+# Make oc executable >> copy to /usr/local/bin/oc
+    - name: "05 - copy oc to /usr/local/bin and make executable"
+      copy:
+        src: "{{ dir_downloads }}oc"
+        dest: "/usr/local/bin/oc"
+        mode: "0755"
+        remote_src: "true"
+
+# Make openshift-installer executable >> copy to /usr/local/bin/openshift-install
+    - name: "05 - copy oc to /usr/local/bin and make executable"
+      copy:
+        src: "{{ dir_downloads }}openshift-install"
+        dest: "/usr/local/bin/openshift-install"
+        mode: "0755"
+        remote_src: "true"
+
+# Create SSL-Cert for Registry >>> Interactive to unattended mode check
+# cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt
+    - name: "06 - Create SSL-Cert for Registry"
+      raw: "cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt"
+
+
+
+# Create User for registry
+# htpasswd -bBc /opt/registry/auth/htpasswd {{registry_user}} {{registry_pass}}  
+    - name: "06 - Create User {{registry_user}} for Registry"
+      raw: "htpasswd -bBc {{dir_registry_auth}}htpasswd {{registry_user}} {{registry_pass}}"
+
+
+# Create the mirror-registry
+    - name: "06 - Start Registry with podman as mirror-registry"
+      raw: "podman run --name mirror-registry -p {{registry.hostname}}:{{registry_port}} \ 
+     -v {{dir_registry_data}}:/var/lib/registry:z \
+     -v {{dir_registry_auth}}:/auth:z \
+     -e 'REGISTRY_AUTH=htpasswd' \
+     -e 'REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm' \
+     -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
+     -v {{dir_registry_certs}}:/certs:z \
+     -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
+     -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
+     -e REGISTRY_COMPATIBILITY_SCHEMA1_ENABLED=true \
+     -d docker.io/library/registry:2"
+
+
+    - name: "05 - Configure firewalld to open port 5000 for mirror-registry"
+      firewalld:
+        permanent: "true"
+        state: "enabled"
+        port: "5000"
+      notify:
+        - restart firewalld
+
+  handlers:
+    - name: "restart firewalld"
+      systemd:
+        name: "haproxy"
+        state: "restarted"
+...
