@@ -58,9 +58,9 @@ dir_nfs_root: "/mnt/sva/"
 dir_mounted_kickstart_configs: "kickstart-configs/"
 dir_tftproot: "/tftproot/pxelinux.cfg/"
 dir_pi_home: "/home/pi/"
-dir_registry_auth: "{{dir_root}}registry/auth"
-dir_registry_certs: "{{dir_root}}registry/certs"
-dir_registry_data: "{{dir_root}}registry/data"
+dir_registry_auth: "{{dir_root}}registry/auth/"
+dir_registry_certs: "{{dir_root}}registry/certs/"
+dir_registry_data: "{{dir_root}}registry/data/"
 
 # Netzwerk / IPs / Hostnames
 # OpenShift-Master-Nodes
