@@ -172,7 +172,7 @@
 
 # Erzeuge die virtuelle Maschine
     - name: "17 --- Create virtual machine with terraform"
-      raw: "cd {{ dir_terraform }}{{ registry.hostname }} && terraform init && terraform apply -auto-approve"
+      raw: "cd {{ dir_terraform }}{{ registry.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM
     - name: "18 --- Retrieve mac-address from created virtual machine"
