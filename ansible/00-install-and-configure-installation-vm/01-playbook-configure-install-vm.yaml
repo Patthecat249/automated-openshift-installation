@@ -111,14 +111,19 @@
       become_user: "pi"
       raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pxe-server"
 
+    - name: "13 - ssh-copy-id as user-root to {{lb.hostname}}"
+      become: "true"
+      become_user: "root"
+      raw: "ssh-copy-id -o StrictHostKeyChecking=no root@{{lb.hostname}}"
+
 # Create .ansible.cfg in /root-dir
-    - name: "13 --- Create .ansible.cfg and inventory-file in /root"
+    - name: "14 --- Create .ansible.cfg and inventory-file in /root"
       become: "true"
       template:
         src: "../99-jinja-templates/ansible/ansible.cfg.j2"
         dest: "/root/.ansible.cfg" 
 # Create inventory file in /root-dir
-    - name: "13 --- Create .ansible.cfg and inventory-file in /root"
+    - name: "15 --- Create .ansible.cfg and inventory-file in /root"
       become: "true"
       template:
         src: "../99-jinja-templates/ansible/inventory.j2"
