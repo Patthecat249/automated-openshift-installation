@@ -23,39 +23,24 @@ cd $mypath/git/pxe-server/playbooks && time ansible-playbook 11_create_vm_from_c
 ## Configure the Install-VM
 
 ```bash
-# SSH into new created "install-vm"
+# 01 - SSH into new created "install-vm"
 ssh root@install-vm
 
-# Set current Path as variable
+# 02 - Set current Path as variable
 mypath=$(pwd)
 
-# Download and Install git-client and clone Repository
+# 03 - Download and Install git-client and clone Repository
 yum install epel-release -y && yum install centos-release-ansible-29.noarch -y && yum install ansible -y && yum install -y git && mkdir $mypath/git && cd $mypath/git && git clone https://github.com/Patthecat249/automated-openshift-installation.git
 
-# Execute Ansible-Playbook
+# 04 - Execute Ansible-Playbook
 cd $mypath/git/automated-openshift-installation/ansible/00-install-and-configure-installation-vm/ && ansible-playbook 01-playbook-configure-install-vm.yaml
 
-# Proceed with the next step "Install a load-balancer"
-
-
-
-
-
-
-
-# (OLD) Execute prerequisites 
-cd $mypath/git/automated-openshift-installation/ansible/00-install-and-configure-installation-vm/ && chmod +x 00-install-prerequisites.sh && ./00-install-prerequisites.sh
-
-
-
-
-
-
-# (Optional) Only neccessary on my environment! Create a user "pi" and add to sudoers
+# 05 - (Optional) Only neccessary on my environment! Create a user "pi" and add to sudoers
 ssh-copy-id -o StrictHostKeyChecking=no pi@pi
 ssh-copy-id -o StrictHostKeyChecking=no pi@pxe-server
 
-# Install-VM is now completly prepared
+# 06 - Install-VM is now completly prepared
+# 07 - Proceed with the next step "Install a load-balancer"
 ```
 
 

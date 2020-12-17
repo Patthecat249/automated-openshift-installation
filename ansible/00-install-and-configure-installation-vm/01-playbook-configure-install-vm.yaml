@@ -75,7 +75,7 @@
 #      raw: "sshpass -f rootpassword ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@localhost"
 
 # Create User pi
-    - name: "09 - Create User pi"
+    - name: "07 - Create User pi"
       user:
         name: "pi" 
         group: "wheel"
@@ -86,25 +86,23 @@
         ssh_key_file: ".ssh/id_rsa"
 
 # Create Working-Directories for User pi
-    - name: "09a --- Create Working-Directories for user pi"
+    - name: "08 --- Create Working-Directories for user pi"
       become: "true"
       become_user: "pi"
       file:
         path: "{{ item }}"
         state: "directory"
         recurse: "true"
-        #group: "wheel"
-        #mode: "0775"
       with_items:
         - "{{ dir_pi_home }}git"
 
 # Add right to wheel in sudoers.d
-    - name: "10 - add wheel to sudoers.d"
+    - name: "09 - add wheel to sudoers.d"
       become: "true"
       raw: "echo '%wheel        ALL=(ALL)       NOPASSWD: ALL' > /etc/sudoers.d/wheel"
 
 # Clone Github-Repo automation... to /home/pi/git/ Directory and set permissions for user pi and group wheel
-    - name: "12 - Clone Github-Repository https://github.com/Patthecat249/automated-openshift-installation.git"
+    - name: "10 - Clone Github-Repository https://github.com/Patthecat249/automated-openshift-installation.git"
       become: "true"
       become_user: "pi"     
       git:
@@ -114,17 +112,23 @@
         update: "true"
 
 # chown -R pi:wheel /home/pi/git
-    - name: "13 - Change Owner and Group of {{ dir_pi_home }}git"
-      file:
-        path: "{{ dir_pi_home }}git"
-        owner: "pi"
-        group: "wheel"
-        mode: "0664"
-        recurse: "true"
+#    - name: "13 - Change Owner and Group of {{ dir_pi_home }}git"
+#      file:
+#        path: "{{ dir_pi_home }}git"
+#        owner: "pi"
+#        group: "wheel"
+#        mode: "0664"
+#        recurse: "true"
 
 # Do task as pi: ssh-copy-id
-    - name: "14 - ssh-copy-id as user-pi"
+    - name: "11 - ssh-copy-id as user-pi to pi-server"
       become: "true"
       become_user: "pi"
       raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pi"
+
+    - name: "12 - ssh-copy-id as user-pi to pxe-server"
+      become: "true"
+      become_user: "pi"
+      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pxe-server"
+
 ...
