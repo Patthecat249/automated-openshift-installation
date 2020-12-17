@@ -89,8 +89,7 @@
 # Create SSL-Cert for Registry >>> Interactive to unattended mode check
 # cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt
     - name: "06 - Create SSL-Cert for Registry"
-      raw: "cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt"
-
+      raw: "cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt -subj '/C=DE/ST=Brandenburg/L=Cottbus/O=Home/OU=local/CN={{registry.hostname}}.{{domain}}'"
 
 
 # Create User for registry
