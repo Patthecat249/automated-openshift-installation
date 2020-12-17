@@ -85,14 +85,14 @@
         url="{{link_to_coreos_raw_gz}}"
         dest="{{ dir_downloads }}{{file_coreos_raw_gz}}"
       register: get_rawgz
-     tags:
-       - downloads
+      tags:
+        - downloads
 
     - debug: 
         msg="{{file_coreos_kernel}} was downloaded"
       when: get_rawgz|changed
-     tags:
-       - downloads
+      tags:
+        - downloads
 
     - name: "05 - Download OpenShift-Software"
       get_url:
