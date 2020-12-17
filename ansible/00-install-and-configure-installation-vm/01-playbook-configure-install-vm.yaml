@@ -115,10 +115,16 @@
       become_user: "pi"
       raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pi"
 
-    - name: "12 - ssh-copy-id as user-pi to pxe-server"
+    - name: "12a - ssh-copy-id as user-pi to {{ pxe.hostname }}"
       become: "true"
       become_user: "pi"
-      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pxe-server"
+      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@{{ pxe.hostname }}"
+
+    - name: "12b - ssh-copy-id as user-root to {{ pxe.hostname }}"
+      become: "true"
+      become_user: "root"
+      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@{{ pxe.hostname }}"
+
 
     - name: "13 - ssh-copy-id as user-root to {{lb.hostname}}"
       become: "true"
