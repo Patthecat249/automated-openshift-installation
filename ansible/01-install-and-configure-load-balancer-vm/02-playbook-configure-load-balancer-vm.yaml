@@ -6,9 +6,11 @@
   vars_files:
     - "../vars/vars.yaml"
   tasks:
-    - name: "01 - Install haproxy-software"
+    - name: "01 - Install haproxy-software and policycoreutils-python"
       yum:
-        name: "haproxy"
+        name: 
+          - "haproxy"
+          - "policycoreutils-python"
         state: "present"
 
     - name: "02 - Render haproxy-template for load-balancer-vm"
