@@ -1,5 +1,5 @@
 ---
-- name: "Installation and Configuration of a central-installation-vm"
+- name: "Configuration of Install-VM"
   hosts: 127.0.0.1
   gather_facts: "false"
   vars_files:
@@ -28,13 +28,10 @@
         path: "{{ item }}"
         state: "directory"
         recurse: "true"
-        group: "wheel"
-        mode: "0775"
       with_items:
         - "{{ dir_root }}"
         - "{{ dir_terraform }}"
         - "{{ dir_tools }}"
-        #- "{{ dir_pi_home }}git"
         
 # Download terraform software from internet    
     - name: "03 - Download terraform"
@@ -57,11 +54,10 @@
 
 # Make Terraform executable >> copy to /usr/local/bin/terraform
     - name: "06 - Terraform nach /usr/bin kopieren und ausführbar machen"
-      become: "true"
       copy:
         src: "{{ dir_tools }}terraform"
         dest: "/usr/local/bin/terraform"
-        mode: "0775"
+        mode: "0755"
         remote_src: "true"
 
 # Create SSH-Key for root-user
@@ -131,11 +127,6 @@
       become_user: "root"
       raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@{{ pxe.hostname }}"
 
-
-    - name: "13 - ssh-copy-id as user-root to {{lb.hostname}}"
-      become: "true"
-      become_user: "root"
-      raw: "ssh-copy-id -o StrictHostKeyChecking=no root@{{lb.hostname}}"
 
 # Create .ansible.cfg in /root-dir
     - name: "14 --- Create .ansible.cfg and inventory-file in /root"
