@@ -110,10 +110,16 @@
         clone: "true"
         update: "true"
 # Do task as pi: ssh-copy-id
-    - name: "11 - ssh-copy-id as user-pi to pi-server"
+    - name: "11a - ssh-copy-id as user-pi to pi-server"
       become: "true"
       become_user: "pi"
       raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pi"
+
+    - name: "11b - ssh-copy-id as user-root to pi-server"
+      become: "true"
+      become_user: "root"
+      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pi"
+
 
     - name: "12a - ssh-copy-id as user-pi to {{ pxe.hostname }}"
       become: "true"
