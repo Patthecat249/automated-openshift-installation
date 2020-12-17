@@ -6,6 +6,8 @@
   vars_files:
     - "../vars/vars.yaml"
   tasks:
+
+# Do ssh-copy-id to localhost, so that ansible can communicate with localhost
     - name: "01 - ssh-copy-id as user-root to {{registry.hostname}}"
       become: "true"
       become_user: "root"
@@ -86,19 +88,17 @@
         dest: "/usr/local/bin/openshift-install"
         mode: "0755"
 
-# Create SSL-Cert for Registry >>> Interactive to unattended mode check
-# cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt
+# Create SSL-Cert for Registry
     - name: "10 - Create SSL-Cert for Registry"
       raw: "cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt -subj '/C=DE/ST=Brandenburg/L=Cottbus/O=Home/OU=local/CN={{registry.hostname}}.{{domain}}'"
 
 
 # Create User for registry
-# htpasswd -bBc /opt/registry/auth/htpasswd {{registry_user}} {{registry_pass}}  
     - name: "11 - Create User {{registry_user}} for Registry"
       raw: "htpasswd -bBc {{dir_registry_auth}}htpasswd {{registry_user}} {{registry_pass}}"
 
 
-# Create the mirror-registry
+# Run the mirror-registry with Podman
     - name: "12 - Start Registry with podman as mirror-registry"
       command: "podman run --name mirror-registry -p {{registry_port}}:{{registry_port}} \ 
      -v {{dir_registry_data}}:/var/lib/registry:z \
@@ -113,24 +113,22 @@
      -d docker.io/library/registry:2"
 
 # Copy certs to trust-store
-# cp /opt/registry/certs/domain.crt /etc/pki/ca-trust/source/anchors/
-# update-ca-trust
     - name: "13 - Copy registry-certificate to linux-trust-store"
       copy:
         src: "{{dir_registry_certs}}domain.crt"
         dest: "/etc/pki/ca-trust/source/anchors/domain.crt"
-#        mode: "0755"
         remote_src: "true"
 
 # Update the Trust-Store
     - name: "14 - Update Linux Trust-Store"
       raw: "update-ca-trust" 
 
+# Copy the registry-cert from registry-vm to install-vm
     - name: "15 - Copy registry-certificate to local Linux Trust-Store"
       raw: "scp {{registry.hostname}}:{{dir_registry_certs}}domain.crt /etc/pki/ca-trust/source/anchors/domain.crt" 
       delegate_to: "localhost"
 
-# Update the Trust-Store
+# Update the Trust-Store of install-vm
     - name: "16 - Update local Linux Trust-Store"
       raw: "update-ca-trust" 
       delegate_to: "localhost"
