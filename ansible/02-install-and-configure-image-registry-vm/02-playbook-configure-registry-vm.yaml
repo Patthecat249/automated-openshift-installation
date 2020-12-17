@@ -130,7 +130,7 @@
       firewalld:
         permanent: "true"
         state: "enabled"
-        port: "5000"
+        port: "5000/tcp"
       notify:
         - restart firewalld
 
