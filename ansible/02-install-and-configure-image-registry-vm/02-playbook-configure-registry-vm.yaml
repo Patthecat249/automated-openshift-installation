@@ -6,6 +6,9 @@
   vars_files:
     - "../vars/vars.yaml"
   tasks:
+# Zeitausgabe
+    - name: "--- Starte Playbook: {{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+      debug: msg="{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
 
 # Do ssh-copy-id to localhost, so that ansible can communicate with localhost
     - name: "01 - ssh-copy-id as user-root to {{registry.hostname}}"
@@ -141,6 +144,11 @@
         port: "5000/tcp"
       notify:
         - restart firewalld
+
+# Zeitausgabe
+    - name: "--- Ende Playbook: {{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+      debug: msg="{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+
 
   handlers:
     - name: "restart firewalld"
