@@ -29,6 +29,7 @@
 
     - name: "02 --- Create Working-Directories with sudo"
       become: "true"
+      become_user: "root"
       file:
         path: "{{ item }}"
         state: "directory"
@@ -94,6 +95,7 @@
 # Mounte das NFS-Verzeichnis /volume1/nfs-iso nach /mnt/sva
     - name: "09 --- Mounting NFS-Share {{ nfs_server }}:{{ nfs_mount_path }}"
       become: "true"
+      become_user: "root"
       mount:
         fstype: nfs
         opts: defaults
@@ -110,6 +112,7 @@
 # Erstelle aus einem Template eine Kickstart-Datei und speichere sie auf dem NFS-Share
     - name: "11 --- Create kickstart.cfg from kickstart.j2"
       become: "true"
+      become_user: "root"
       template:
         src: "../../terraform/templates/kickstart.j2"
         dest: "{{ dir_nfs_root }}{{ dir_mounted_kickstart_configs }}{{ registry.hostname }}.cfg" # Hier muss noch der Pfad verifiziert werden
