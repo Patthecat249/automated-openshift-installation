@@ -28,7 +28,7 @@ link_to_coreos_raw_gz: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dep
 pull_secret: "/root/pull-secret"
 
 # Mirror-Registry
-registry_user: "reguser"
+registry_user: "reguser" # No underscore allowed!
 registry_pass: "Test1234"
 registry_port: "5000"
 
