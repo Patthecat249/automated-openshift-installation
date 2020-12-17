@@ -57,12 +57,14 @@
       register: get_kernel
       tags:
         - downloads
+      delegate_to: "localhost"
 
     - debug: 
         msg="{{file_coreos_kernel}} was downloaded"
       when: get_kernel|changed
       tags:
         - downloads
+      delegate_to: "localhost"
 
 # Download Initrd
     - name: "05 - Download CoreOS - Initrd"
@@ -72,12 +74,14 @@
       register: get_initrd
       tags:
         - downloads
+      delegate_to: "localhost"
 
     - debug: 
         msg="{{file_coreos_kernel}} was downloaded"
       when: get_initrd|changed
       tags:
         - downloads
+      delegate_to: "localhost"
 
 # Download RAW_GZ
     - name: "05 - Download CoreOS - raw_gz"
@@ -87,12 +91,14 @@
       register: get_rawgz
       tags:
         - downloads
+      delegate_to: "localhost"
 
     - debug: 
         msg="{{file_coreos_kernel}} was downloaded"
       when: get_rawgz|changed
       tags:
         - downloads
+      delegate_to: "localhost"
 
     - name: "05 - Download OpenShift-Software"
       get_url:
