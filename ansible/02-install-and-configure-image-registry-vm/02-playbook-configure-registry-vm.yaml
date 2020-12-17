@@ -62,6 +62,7 @@
         src: "{{ dir_downloads }}openshift-client-linux-{{version_openshift}}.tar.gz"
         dest: "{{ dir_downloads }}"
         remote_src: "true"
+      delegate_to: "localhost"
 
 # Extraction of zip-archive
     - name: "04 - Extract the openshift-installer"
@@ -69,6 +70,7 @@
         src: "{{ dir_downloads }}openshift-install-linux-{{version_openshift}}.tar.gz"
         dest: "{{ dir_downloads }}"
         remote_src: "true"
+      delegate_to: "localhost"
 
 # Make oc executable >> copy to /usr/local/bin/oc
     - name: "05 - copy oc to /usr/local/bin and make executable"
@@ -76,7 +78,6 @@
         src: "{{ dir_downloads }}oc"
         dest: "/usr/local/bin/oc"
         mode: "0755"
-        remote_src: "true"
 
 # Make openshift-installer executable >> copy to /usr/local/bin/openshift-install
     - name: "05 - copy oc to /usr/local/bin and make executable"
@@ -84,7 +85,6 @@
         src: "{{ dir_downloads }}openshift-install"
         dest: "/usr/local/bin/openshift-install"
         mode: "0755"
-        remote_src: "true"
 
 # Create SSL-Cert for Registry >>> Interactive to unattended mode check
 # cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt
