@@ -137,6 +137,6 @@
   handlers:
     - name: "restart firewalld"
       systemd:
-        name: "haproxy"
+        name: "firewalld"
         state: "restarted"
 ...
