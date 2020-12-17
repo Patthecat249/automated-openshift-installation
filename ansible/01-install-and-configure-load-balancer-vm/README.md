@@ -10,6 +10,7 @@ The Steps **Install an Install-VM** and **Configure an Install-VM** must be comp
 
 ```bash
 # Switch to User pi or ssh pi@install-vm
+# install-vm
 su - pi
 mypath=$(pwd)
 
@@ -24,7 +25,12 @@ cd $mypath/git/automated-openshift-installation/ansible/01-install-and-configure
 ## Configure a Load-Balancer
 
 ```bash
-# SSH into Load-Balancer-VM  
+# SSH into Install-VM
+ssh root@install-vm
+mypath=$(pwd)
+cd $mypath/git/automated-openshift-installation/ansible/01-install-and-configure-load-balancer-vm && ansible-playbook 02-playbook-configure-load-balancer-vm.yaml
+
+
 ssh root@ocp-lb-01
 
 # Execute some initial-setup-tasks

@@ -15,7 +15,7 @@ mypath=$(pwd)
 mkdir $mypath/git && cd $mypath/git && git clone https://github.com/Patthecat249/pxe-server.git
 
 # Create new VM with 2x vCPU and 2GB RAM
-cd $mypath/git/pxe-server/playbooks && time ansible-playbook 11_create_vm_from_clone.yaml -e "hostname=install-vm cpu=4 ram=8192"
+cd $mypath/git/pxe-server/playbooks && time ansible-playbook 11_create_vm_from_clone.yaml -e "hostname=install-vm cpu=16 ram=16384"
 ```
 
 
@@ -35,12 +35,8 @@ yum install epel-release -y && yum install centos-release-ansible-29.noarch -y &
 # 04 - Execute Ansible-Playbook
 cd $mypath/git/automated-openshift-installation/ansible/00-install-and-configure-installation-vm/ && ansible-playbook 01-playbook-configure-install-vm.yaml
 
-# 05 - (Optional) Only neccessary on my environment! Create a user "pi" and add to sudoers
-ssh-copy-id -o StrictHostKeyChecking=no pi@pi
-ssh-copy-id -o StrictHostKeyChecking=no pi@pxe-server
-
-# 06 - Install-VM is now completly prepared
-# 07 - Proceed with the next step "Install a load-balancer"
+# 05 - Install-VM is now completly prepared
+# 06 - Proceed with the next step "Install a load-balancer"
 ```
 
 
