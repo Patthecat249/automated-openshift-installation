@@ -48,7 +48,52 @@
         - "{{dir_registry_certs}}"
         - "{{dir_registry_data}}"
 
-# Download terraform software from internet    
+# Download openshift software from internet
+# Download Kernel
+    - name: "05 - Download CoreOS - Kernel"
+      get_url:
+        url="{{link_to_coreos_kernel}}"
+        dest="{{ dir_downloads }}{{file_coreos_kernel}}"
+      register: get_kernel
+      tags:
+        - downloads
+
+    - debug: 
+        msg="{{file_coreos_kernel}} was downloaded"
+      when: get_kernel|changed
+      tags:
+        - downloads
+
+# Download Initrd
+    - name: "05 - Download CoreOS - Initrd"
+      get_url:
+        url="{{link_to_coreos_initrd}}"
+        dest="{{ dir_downloads }}{{file_coreos_initrd}}"
+      register: get_initrd
+      tags:
+        - downloads
+
+    - debug: 
+        msg="{{file_coreos_kernel}} was downloaded"
+      when: get_initrd|changed
+      tags:
+        - downloads
+
+# Download RAW_GZ
+    - name: "05 - Download CoreOS - raw_gz"
+      get_url:
+        url="{{link_to_coreos_raw_gz}}"
+        dest="{{ dir_downloads }}{{file_coreos_raw_gz}}"
+      register: get_rawgz
+     tags:
+       - downloads
+
+    - debug: 
+        msg="{{file_coreos_kernel}} was downloaded"
+      when: get_rawgz|changed
+     tags:
+       - downloads
+
     - name: "05 - Download OpenShift-Software"
       get_url:
         url: "{{ item }}"

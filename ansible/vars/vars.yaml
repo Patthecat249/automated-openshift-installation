@@ -23,6 +23,11 @@ link_to_openshift_installer: "https://mirror.openshift.com/pub/openshift-v4/clie
 link_to_coreos_kernel: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/{{version_major}}/{{version_core_os}}/rhcos-{{version_core_os}}-x86_64-installer-kernel-x86_64"
 link_to_coreos_initrd: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/{{version_major}}/{{version_core_os}}/rhcos-{{version_core_os}}-x86_64-installer-initramfs.x86_64.img"
 link_to_coreos_raw_gz: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/{{version_major}}/{{version_core_os}}/rhcos-{{version_core_os}}-x86_64-metal.x86_64.raw.gz"
+file_coreos_kernel: "rhcos-{{version_core_os}}-x86_64-installer-kernel-x86_64"
+file_coreos_initrd: "rhcos-{{version_core_os}}-x86_64-installer-initramfs.x86_64.img"
+file_coreos_raw_gz: "rhcos-{{version_core_os}}-x86_64-metal.x86_64.raw.gz"
+file_oc: "openshift-client-linux-{{version_openshift}}.tar.gz"
+file_openshift_installer: "openshift-install-linux-{{version_openshift}}.tar.gz"
 
 # Red Hat
 pull_secret: "/root/pull-secret"
