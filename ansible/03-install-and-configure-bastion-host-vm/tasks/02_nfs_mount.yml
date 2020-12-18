@@ -8,7 +8,7 @@
     dump: 0
     passno: 0
     state: mounted
-    src: "{{ src_nas_mount }}"
+    src: "{{ nfs_mount_path }}"
     path: "{{ dir_mnt }}"
 
 - name: "### --- 05 - Wait a Second..."
