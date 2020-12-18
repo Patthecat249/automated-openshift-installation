@@ -65,5 +65,13 @@
     - "{{ key_to_nodes_name }}"
     - "{{ key_to_nodes_name }}.pub"
 
+- name: "07 - Copy CoreOS-Images to tftproot"
+  copy:
+    src: "{{item}}"
+    dest: "{{ dir_tftp_root }}{{ dir_coreos_files }}"  
+  loop:
+    - "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
+    - "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
+    #- "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
 
 
