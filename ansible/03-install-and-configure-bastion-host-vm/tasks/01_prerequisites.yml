@@ -1,7 +1,12 @@
 ---
 # Dieses Playbook erstellt die Arbeitsverzeichnisse auf dem Bastion-Host
+- name: "00 - Copy file to /root-Home"
+  copy:
+    src: "/root/rootpassword"
+    dest: "/root/rootpassword"
+
 - name: "### --- 01 - Run 00_create_ssh_keys.sh"
-  script: templates/00_create_ssh_keys.sh
+  command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@localhost"
   tags:
     - debug
 
@@ -15,7 +20,7 @@
     state: directory
     recurse: true
   with_items:
-    - "{{ dir_working }}"
+    - "{{ dir_root }}"
     - "{{ dir_tools }}"
     - "{{ dir_cluster }}"
     - "{{ dir_install_config }}"
@@ -34,7 +39,7 @@
 
 # 21.09.2020 - New Feature to backup the SSH-Key-Folder-Content
 - name: "### --- 03 - Backup SSH-Keys to /opt/sva/backup"
-  command: cp "{{ key_to_nodes_dir }}{{ item }}" "{{ dir_backup_ssh_keys }}"
+  command: cp "{{ dir_key_to_nodes }}{{ item }}" "{{ dir_backup_ssh_keys }}"
   with_items:
     - "{{ key_to_nodes_name }}"
     - "{{ key_to_nodes_name }}.pub"
