@@ -15,7 +15,7 @@ su - pi
 mypath=$(pwd)
 
 # Execute Playbook to install a load-balancer
-cd $mypath/git/automated-openshift-installation/ansible/01-install-and-configure-load-balancer-vm/ && ansible-playbook 01-playbook-install-load-balancer-vm.yaml
+cd $mypath/git/automated-openshift-installation/ansible/01-install-and-configure-load-balancer-vm/ && ansible-playbook 01-playbook-install-lb-vm.yaml
 
 # Wait a few minutes for the new Load-Balancer-VM
 ```
