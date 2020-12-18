@@ -73,5 +73,6 @@
     - "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
     - "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
     #- "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
-
+  tags:
+    - test
 
