@@ -1,5 +1,22 @@
 ---
 # Dieses Playbook erstellt die Arbeitsverzeichnisse auf dem Bastion-Host
+- name: "01 - Install necassary software programs"
+  become: "true"
+  yum:
+    name:
+      - epel-release
+      - centos-release-ansible-29.noarch
+      - ansible
+      - git
+      - sshpass
+      - wget.x86_64
+      - jq.x86_64
+      - podman.x86_64
+      - skopeo.x86_64
+      - nfs-utils.x86_64
+      - unzip
+    state: "present"
+
 - name: "### --- 01 - Create SSH-Connection to {{bastion.hostname}}"
   command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no {{bastion.hostname}}"
   delegate_to: "localhost"
