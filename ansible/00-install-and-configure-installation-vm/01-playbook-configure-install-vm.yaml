@@ -32,8 +32,30 @@
         - "{{ dir_root }}"
         - "{{ dir_terraform }}"
         - "{{ dir_tools }}"
+        - "{{ dir_downloaded_images }}" 
         
-# Download terraform software from internet    
+# Download terraform software from internet   
+    - name: "03a - Download CoreOS-Kernel"
+      get_url:
+        url: "{{ link_to_coreos_kernel }}"
+        dest: "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
+      tags:
+        - download
+
+    - name: "03b - Download CoreOS-Initrd"
+      get_url:
+        url: "{{ link_to_coreos_initrd }}"
+        dest: "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
+      tags:
+        - download
+
+    - name: "03c - Download CoreOS-RawGz"
+      get_url:
+        url: "{{ link_to_coreos_raw_gz }}"
+        dest: "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
+      tags:
+        - download
+
     - name: "03 - Download terraform"
       get_url:
         url: "{{ download_tf }}"
