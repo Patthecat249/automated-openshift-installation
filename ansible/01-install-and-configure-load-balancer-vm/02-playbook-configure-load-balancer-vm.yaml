@@ -17,6 +17,7 @@
         name: 
           - "haproxy"
           - "policycoreutils-python"
+          - "chrony.x86_64"
         state: "present"
 
     - name: "02 - Render haproxy-template for load-balancer-vm"
