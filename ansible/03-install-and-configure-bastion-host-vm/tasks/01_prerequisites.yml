@@ -6,7 +6,7 @@
     name:
       - epel-release
       - centos-release-ansible-29.noarch
-      - ansible
+      - ansible.noarch
       - git
       - sshpass
       - wget.x86_64
