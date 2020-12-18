@@ -1,20 +1,21 @@
 ---
 # Dieses Playbook erstellt die Arbeitsverzeichnisse auf dem Bastion-Host
 - name: "### --- 01 - Create SSH-Connection to {{bastion.hostname}}"
-  command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@{{bastion.hostname}}"
+  command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no {{bastion.hostname}}"
   delegate_to: "localhost"
-
 
 - name: "02 - Copy password-file  to /root/"
   copy:
     src: "/root/rootpassword"
     dest: "/root/rootpassword"
 
-- name: "03 - Create SSH-Connection on {{bastion.hostname}} itself"
-  command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@localhost"
+- name: "03 - Create SSH-Keypair"
+  raw: "ssh-keygen -q -t rsa -N '' -f /root/.ssh/id_rsa <<<y 2>&1 >/dev/null"
 
+- name: "04 - Create SSH-Connection on {{bastion.hostname}} itself"
+  command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no localhost"
 
-- name: "04 - Create working directories" 
+- name: "05 - Create working directories" 
   file:
     path: "{{ item }}"
     owner: root
@@ -41,7 +42,7 @@
     - "{{ dir_backup_dnsmasq }}"
 
 # 21.09.2020 - New Feature to backup the SSH-Key-Folder-Content
-- name: "05 - Backup SSH-Keys to /opt/sva/backup"
+- name: "06 - Backup SSH-Keys to /opt/sva/backup"
   command: cp "{{ dir_key_to_nodes }}{{ item }}" "{{ dir_backup_ssh_keys }}"
   with_items:
     - "{{ key_to_nodes_name }}"
