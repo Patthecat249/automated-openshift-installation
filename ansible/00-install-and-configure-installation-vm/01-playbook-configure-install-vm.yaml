@@ -33,7 +33,8 @@
         - "{{ dir_terraform }}"
         - "{{ dir_tools }}"
         - "{{ dir_downloaded_images }}" 
-        
+      tags:
+        - download
 # Download terraform software from internet   
     - name: "03a - Download CoreOS-Kernel"
       get_url:
