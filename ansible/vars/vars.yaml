@@ -28,6 +28,7 @@ file_coreos_initrd: "rhcos-{{version_core_os}}-x86_64-installer-initramfs.x86_64
 file_coreos_raw_gz: "rhcos-{{version_core_os}}-x86_64-metal.x86_64.raw.gz"
 file_oc: "openshift-client-linux-{{version_openshift}}.tar.gz"
 file_openshift_installer: "openshift-install-linux-{{version_openshift}}.tar.gz"
+dir_mnt_to_core_os: "{{dir_mnt}}downloaded-iso/linux/"
 
 # Red Hat
 pull_secret: "/root/pull-secret"

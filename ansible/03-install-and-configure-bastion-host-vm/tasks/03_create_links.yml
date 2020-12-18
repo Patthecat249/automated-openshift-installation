@@ -9,14 +9,14 @@
     # mode: '0755'
     state: link
   with_items:
-    - "{{ coreos_initramfs }}"
-    - "{{ coreos_kernel }}"
+    - "{{ file_coreos_initrd }}"
+    - "{{ file_coreos_kernel }}"
 
 
 - name: "### --- 07 - Create links to CoreOS files in http server"
   file:
-    src: "{{ dir_mnt }}{{ coreos_compressed_metal_raw_image }}"
-    dest: "{{ dir_http_server }}{{ coreos_compressed_metal_raw_image }}"
+    src: "{{ dir_mnt_to_core_os }}{{ file_coreos_raw_gz }}"
+    dest: "{{ dir_http_server }}{{ file_coreos_raw_gz }}"
     owner: root
     group: root
     # mode: '0755'
