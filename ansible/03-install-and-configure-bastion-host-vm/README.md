@@ -9,13 +9,12 @@ The Steps **Install an Install-VM** and **Configure an Install-VM** must be comp
 ## Install a Bastion-VM
 
 ```bash
-# Switch to User pi or ssh pi@install-vm
-# install-vm
-su - pi
+# Login into install-vm
+ssh root@install-vm
 mypath=$(pwd)
 
 # Execute Playbook to install a load-balancer
-cd $mypath/git/automated-openshift-installation/ansible/02-install-and-configure-image-registry-vm/ && ansible-playbook 01-playbook-install-bastion-vm.yaml
+cd $mypath/git/automated-openshift-installation/ansible/03-install-and-configure-bastion-host-vm/ && ansible-playbook 01-playbook-install-bastion-vm.yaml
 
 # Wait a few minutes for the new Bastion-Host-VM
 ```

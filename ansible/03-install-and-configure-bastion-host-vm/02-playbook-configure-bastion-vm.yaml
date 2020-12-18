@@ -1,5 +1,5 @@
 ---
-- hosts: 127.0.0.1
+- hosts: "{{bastion.hostname}}"
   
   become: yes
 
@@ -17,5 +17,5 @@
     # - import_tasks: "tasks/08_manifest_ignition.yml"
 #    - import_tasks: "../ocp-master-worker-nodes/01-create-terraform-main-tf.yaml"
 
-  handlers:
-    - import_tasks: handlers.yml 
+  # handlers:
+  #   - import_tasks: handlers.yml 

@@ -43,6 +43,7 @@
   with_items:
     - "{{ key_to_nodes_name }}"
     - "{{ key_to_nodes_name }}.pub"
+  remote_src: "true"
 
 
 
