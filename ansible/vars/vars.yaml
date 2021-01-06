@@ -141,6 +141,11 @@ bstrp:
   ram: "16384"
   disk: "200"
 
+# Install-VM
+install_vm:
+  name: "Install-VM"
+  hostname: "install-vm"
+
 # Bastion-Host
 bastion:
   name: "bastion"
@@ -172,7 +177,7 @@ pxe:
 # Load-Balancer
 lb:
   name: "load-balancer"
-  hostname: "ocp-lb-01"
+  hostname: "ocp-lb01"
   ip: "10.0.249.119"
   cpu: "1"
   ram: "1024"

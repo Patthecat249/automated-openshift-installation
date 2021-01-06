@@ -28,7 +28,7 @@
         state: "present"
 
 # Create Working-Directories on Install-VM
-    - name: "03 --- Create Working-Directories on Install-VM"
+    - name: "03 --- Create Working-Directories on {{ install_vm.hostname }}"
       file:
         path: "{{ item }}"
         state: "directory"
