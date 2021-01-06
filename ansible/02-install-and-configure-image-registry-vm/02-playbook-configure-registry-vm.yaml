@@ -50,7 +50,7 @@
 
 # Download openshift software from internet
 # Download oc-client
-    - name: "05 - Download OpenShift - oc-client"
+    - name: "05 - Download OpenShift - oc-client on {{ install_vm.hostname }}"
       get_url:
         url="{{link_to_oc}}"
         dest="{{ dir_downloads }}{{file_oc}}"
@@ -60,7 +60,7 @@
       delegate_to: "localhost"
 
 # Download openshift-installer
-    - name: "06 - Download OpenShift - openshift-installer"
+    - name: "06 - Download OpenShift - openshift-installer on {{ install_vm.hostname }}"
       get_url:
         url="{{link_to_openshift_installer}}"
         dest="{{ dir_downloads }}{{file_openshift_installer}}"
@@ -71,7 +71,7 @@
 
 
 # Download Kernel
-    - name: "07 - Download CoreOS - Kernel"
+    - name: "07 - Download CoreOS - Kernel on {{ install_vm.hostname }}"
       get_url:
         url="{{link_to_coreos_kernel}}"
         dest="{{ dir_downloads }}{{file_coreos_kernel}}"
@@ -88,7 +88,7 @@
     #   delegate_to: "localhost"
 
 # Download Initrd
-    - name: "08 - Download CoreOS - Initrd"
+    - name: "08 - Download CoreOS - Initrd on {{ install_vm.hostname }}"
       get_url:
         url="{{link_to_coreos_initrd}}"
         dest="{{ dir_downloads }}{{file_coreos_initrd}}"
@@ -105,7 +105,7 @@
     #   delegate_to: "localhost"
 
 # Download RAW_GZ
-    - name: "09 - Download CoreOS - raw_gz"
+    - name: "09 - Download CoreOS - raw_gz on {{ install_vm.hostname }}"
       get_url:
         url="{{link_to_coreos_raw_gz}}"
         dest="{{ dir_downloads }}{{file_coreos_raw_gz}}"
@@ -134,7 +134,7 @@
     #   delegate_to: "localhost"
 
 # Extraction of zip-archive
-    - name: "10 - Extract the oc-client"
+    - name: "10 - Extract the oc-client on {{ install_vm.hostname }}"
       unarchive:
         src: "{{ dir_downloads }}openshift-client-linux-{{version_openshift}}.tar.gz"
         dest: "{{ dir_downloads }}"
@@ -142,7 +142,7 @@
       delegate_to: "localhost"
 
 # Extraction of zip-archive
-    - name: "11 - Extract the openshift-installer"
+    - name: "11 - Extract the openshift-installer on {{ install_vm.hostname }}"
       unarchive:
         src: "{{ dir_downloads }}openshift-install-linux-{{version_openshift}}.tar.gz"
         dest: "{{ dir_downloads }}"
