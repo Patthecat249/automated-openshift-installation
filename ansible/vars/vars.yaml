@@ -33,6 +33,7 @@ dir_mnt_to_core_os: "{{dir_mnt}}downloaded-iso/linux/"
 # Red Hat / Password-Files
 pull_secret: "/root/pull-secret"
 rootpw: "/root/rootpassword"
+pull_secret_file_name: "pull-secret"
 
 # Mirror-Registry
 registry_user: "reguser" # No underscore allowed!

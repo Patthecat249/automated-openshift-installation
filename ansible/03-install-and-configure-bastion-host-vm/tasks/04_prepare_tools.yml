@@ -51,10 +51,10 @@
 
 - name: "### --- 13 - Copy pull-secret-original to '{{ dir_cluster }}'"
   copy: 
-    src: "{{ sw_pool }}{{ pull_secret_file_name }}"
+    src: "{{pull_secret}}"
     dest: "{{ dir_cluster }}{{ pull_secret_file_name }}" 
     owner: root
     group: root
     mode: '0644'
-    remote_src: yes
+    #remote_src: yes
     force: yes
