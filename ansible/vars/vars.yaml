@@ -100,21 +100,21 @@ masters:
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "to be done"
+    mac: "11:22:33:44:55:66"
   - name: "master02"
     hostname: "ocp-master-02"
     ip: "10.0.249.112"
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "to be done"
+    mac: "11:22:33:44:55:66"
   - name: "master03"
     hostname: "ocp-master-03"
     ip: "10.0.249.113"
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "to be done"
+    mac: "11:22:33:44:55:66"
 
 # OpenShift-Worker-Nodes
 workers:
@@ -124,21 +124,21 @@ workers:
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "to be done"
+    mac: "11:22:33:44:55:66"
   - name: "worker02"
     hostname: "ocp-worker-02"
     ip: "10.0.249.115"
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "to be done"
+    mac: "11:22:33:44:55:66"
   - name: "worker03"
     hostname: "ocp-worker-03"
     ip: "10.0.249.116"
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "to be done"
+    mac: "11:22:33:44:55:66"
 
 # Temporary Bootstrap-VM
 bstrp:
@@ -148,7 +148,7 @@ bstrp:
   cpu: "8"
   ram: "16384"
   disk: "200"
-  mac: "to be done"
+  mac: "11:22:33:44:55:66"
 
 # Install-VM
 install_vm:
@@ -163,7 +163,7 @@ bastion:
   cpu: "2"
   ram: "4096"
   disk: "200"
-  mac: "to be done"
+  mac: "11:22:33:44:55:66"
 
 # Image-Registry
 registry:
@@ -173,7 +173,7 @@ registry:
   cpu: "2"
   ram: "2048"
   disk: "200"
-  mac: "to be done"
+  mac: "11:22:33:44:55:66"
 
 # Raspi
 pi:
@@ -193,7 +193,7 @@ lb:
   cpu: "1"
   ram: "1024"
   disk: "200"
-  mac: "to be done"
+  mac: "11:22:33:44:55:66"
   app:
     ip: "10.0.249.119"
   api:
