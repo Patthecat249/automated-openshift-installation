@@ -1,5 +1,14 @@
 ---
 # Dieses Playbook erstellt die Arbeitsverzeichnisse auf dem Bastion-Host
+- name: "### --- 01 - Create SSH-Connection to {{bastion.hostname}}"
+  command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no {{bastion.hostname}}"
+  delegate_to: "localhost"
+
+- name: "02 - Copy password-file  to /root/"
+  copy:
+    src: "{{rootpw}}"
+    dest: "{{rootpw}}"
+
 - name: "01 - Install necassary software programs"
   become: "true"
   yum:
@@ -17,14 +26,7 @@
       - unzip
     state: "present"
 
-- name: "### --- 01 - Create SSH-Connection to {{bastion.hostname}}"
-  command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no {{bastion.hostname}}"
-  delegate_to: "localhost"
 
-- name: "02 - Copy password-file  to /root/"
-  copy:
-    src: "{{rootpw}}"
-    dest: "{{rootpw}}"
 
 - name: "03 - Create SSH-Keypair"
   raw: "ssh-keygen -q -t rsa -N '' -f /root/.ssh/{{key_to_nodes_name}} <<<y 2>&1 >/dev/null"
