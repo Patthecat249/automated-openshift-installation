@@ -86,7 +86,7 @@ dhcp-range={{ dhcp_range }}
 dhcp-option=3,{{ dhcp_gateway }}
 
 ## DNS-Server (Option=6)
-dhcp-option=6,{{ dnsserver }}
+dhcp-option=6,{{ bastion.ip }}
 
 {% if ntpserver is defined %}
 ## NTP Server (Option=42)
