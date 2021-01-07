@@ -39,6 +39,6 @@
 
 - name: "### --- 19 - Add DNS server and search domain"
   shell: |
-    nmcli con mod eth0 +ipv4.dns-search "{{ clustername }}.{{ domain }}"
-    nmcli con mod eth0 +ipv4.dns "{{ bastion.ip }}"
-    nmcli connection up eth0 
+    nmcli con mod {{interface}} +ipv4.dns-search "{{ clustername }}.{{ domain }}"
+    nmcli con mod {{interface}} +ipv4.dns "{{ bastion.ip }}"
+    nmcli connection up {{interface}} 
