@@ -43,6 +43,14 @@
   tags:
     - installed
 
+- name: "06 - Create User DNSMASQ in Group wheel"
+  user:
+    name: "dnsmasq"
+    groups: "wheel"
+    state: "present"
+  tags:
+    - userdnsmasq
+
 - name: "06 - Create SSH-Keypair"
   raw: "ssh-keygen -q -t rsa -N '' -f /root/.ssh/{{key_to_nodes_name}} <<<y 2>&1 >/dev/null"
 
