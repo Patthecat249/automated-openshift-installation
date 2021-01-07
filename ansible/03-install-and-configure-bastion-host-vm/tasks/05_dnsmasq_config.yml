@@ -31,6 +31,21 @@
     dest: "{{ dir_backup_dnsmasq }}dnsmasq.conf"
     remote_src: yes
 
+# Setup SELinux for tftproot-Folder so that dnsmasq works with SELinux
+- name: "17a - setsebool -P tftp_anon_write 1"
+  raw: "setsebool -P tftp_anon_write 1"
+
+- name: "17b - setsebool -P tftp_home_dir 1"
+  raw: "setsebool -P tftp_home_dir 1"
+
+- name: "17c - semanage fcontext -a -t tftpdir_t '/{{dir_tftp_root}}(/.*)?'"
+  raw: "semanage fcontext -a -t tftpdir_t '{{dir_tftp_root}}(/.*)?'"
+
+- name: "17d - restorecon -Rv {{dir_tftp_root}}"
+  raw: "restorecon -Rv {{dir_tftp_root}}"
+
+
+
 - name: "### --- 18 - Ensure dnsmasq is running"
   systemd: 
     name: dnsmasq
