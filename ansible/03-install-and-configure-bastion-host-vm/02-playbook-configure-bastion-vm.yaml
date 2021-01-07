@@ -6,8 +6,8 @@
     - "../vars/vars.yaml"
   tasks:
     #- import_tasks: "tasks/01_prerequisites.yml"
-    - import_tasks: "tasks/02_nfs_mount.yml"
-    #- import_tasks: "tasks/03_create_links.yml"
+    #- import_tasks: "tasks/02_nfs_mount.yml"
+    - import_tasks: "tasks/03_create_links.yml"
     # - import_tasks: "tasks/04_prepare_tools.yml"
     # - import_tasks: "tasks/05_dnsmasq_config.yml"
     # - import_tasks: "tasks/06_prepare_install_config.yml"
