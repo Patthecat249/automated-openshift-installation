@@ -1,6 +1,6 @@
 ---
 # Dieses Playbook erstellt die Arbeitsverzeichnisse auf dem Bastion-Host
-- name: "### --- 01 - Create SSH-Connection to {{bastion.hostname}}"
+- name: "01 - Create SSH-Connection to {{bastion.hostname}}"
   command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no {{bastion.hostname}}"
   delegate_to: "localhost"
 
@@ -9,13 +9,13 @@
     src: "{{rootpw}}"
     dest: "{{rootpw}}"
 
-- name: "01 - Install necassary software programs"
+- name: "03 - Install necassary software programs"
   become: "true"
   yum:
     name:
       - epel-release
       - centos-release-ansible-29.noarch
-      - ansible.noarch
+      - ansible
       - git
       - sshpass
       - wget.x86_64
@@ -26,15 +26,13 @@
       - unzip
     state: "present"
 
-
-
-- name: "03 - Create SSH-Keypair"
+- name: "04 - Create SSH-Keypair"
   raw: "ssh-keygen -q -t rsa -N '' -f /root/.ssh/{{key_to_nodes_name}} <<<y 2>&1 >/dev/null"
 
-- name: "04 - Create SSH-Connection on {{bastion.hostname}} itself"
+- name: "05 - Create SSH-Connection on {{bastion.hostname}} itself"
   command: "sshpass -f '{{rootpw}}' ssh-copy-id -i /root/.ssh/{{key_to_nodes_name}} -o StrictHostKeyChecking=no localhost"
 
-- name: "05 - Create working directories" 
+- name: "06 - Create working directories" 
   file:
     path: "{{ item }}"
     owner: root
