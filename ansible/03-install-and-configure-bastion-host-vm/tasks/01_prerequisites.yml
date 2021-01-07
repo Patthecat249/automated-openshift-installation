@@ -17,7 +17,7 @@
       - "centos-release-ansible-29.noarch"
     state: "present"
 
-- name: "03 - Update yum-repos centos-release-ansible-29.noarch"
+- name: "04 - Update yum-repos centos-release-ansible-29.noarch"
   become: "true"
   yum:
     name:
@@ -25,7 +25,7 @@
     state: "present"
 
 
-- name: "04 - Install necassary software programs"
+- name: "05 - Install necassary software programs"
   become: "true"
   yum:
     name:
@@ -40,13 +40,13 @@
       - unzip
     state: "present"
 
-- name: "05 - Create SSH-Keypair"
+- name: "06 - Create SSH-Keypair"
   raw: "ssh-keygen -q -t rsa -N '' -f /root/.ssh/{{key_to_nodes_name}} <<<y 2>&1 >/dev/null"
 
-- name: "06 - Create SSH-Connection on {{bastion.hostname}} itself"
+- name: "07 - Create SSH-Connection on {{bastion.hostname}} itself"
   command: "sshpass -f '{{rootpw}}' ssh-copy-id -i /root/.ssh/{{key_to_nodes_name}} -o StrictHostKeyChecking=no localhost"
 
-- name: "07 - Create working directories" 
+- name: "08 - Create working directories" 
   file:
     path: "{{ item }}"
     owner: root
@@ -73,13 +73,13 @@
     - "{{ dir_backup_dnsmasq }}"
 
 # 21.09.2020 - New Feature to backup the SSH-Key-Folder-Content
-- name: "08 - Backup SSH-Keys to /opt/sva/backup"
+- name: "09 - Backup SSH-Keys to /opt/sva/backup"
   command: cp "{{ dir_key_to_nodes }}{{ item }}" "{{ dir_backup_ssh_keys }}"
   with_items:
     - "{{ key_to_nodes_name }}"
     - "{{ key_to_nodes_name }}.pub"
 
-- name: "09 - Copy CoreOS-Images to tftproot"
+- name: "10 - Copy CoreOS-Images to tftproot"
   copy:
     src: "{{item}}"
     dest: "{{ dir_tftp_root }}{{ dir_coreos_files }}"  
@@ -87,6 +87,14 @@
     - "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
     - "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
     #- "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
-  tags:
-    - test
+
+- name: "11 - Copy CoreOS-Raw-GZ to {{dir_http_server}}"
+  copy:
+    src: "{{item}}"
+    dest: "{{ dir_http_server }}"  
+  loop:
+    #- "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
+    #- "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
+    - "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
+
 
