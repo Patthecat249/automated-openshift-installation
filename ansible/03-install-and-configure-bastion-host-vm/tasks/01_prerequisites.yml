@@ -39,6 +39,7 @@
       - nfs-utils.x86_64
       - unzip
       - dnsmasq
+      - policycoreutils-python
     state: "present"
   tags:
     - installed
