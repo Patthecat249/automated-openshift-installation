@@ -23,14 +23,14 @@
 
 - name: "02 - Copy password-file  to /root/"
   copy:
-    src: "/root/rootpassword"
-    dest: "/root/rootpassword"
+    src: "{{rootpw}}"
+    dest: "{{rootpw}}"
 
 - name: "03 - Create SSH-Keypair"
   raw: "ssh-keygen -q -t rsa -N '' -f /root/.ssh/{{key_to_nodes_name}} <<<y 2>&1 >/dev/null"
 
 - name: "04 - Create SSH-Connection on {{bastion.hostname}} itself"
-  command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/{{key_to_nodes_name}} -o StrictHostKeyChecking=no localhost"
+  command: "sshpass -f '{{rootpw}}' ssh-copy-id -i /root/.ssh/{{key_to_nodes_name}} -o StrictHostKeyChecking=no localhost"
 
 - name: "05 - Create working directories" 
   file:

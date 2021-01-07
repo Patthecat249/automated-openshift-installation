@@ -32,7 +32,7 @@ mypath=$(pwd)
 # Execute Playbook to configure the load-balancer
 cd $mypath/git/automated-openshift-installation/ansible/02-install-and-configure-image-registry-vm/ && ansible-playbook 02-playbook-configure-registry-vm.yaml
 
-# Proceed with the Next Step "Install-Bastion-Host-VM"
+# Proceed with the Next Step "Mirror the Red Hat Registry into local-Registry"
 ```
 
 ## Mirror the Red Hat Registry into local-Registry
@@ -45,6 +45,6 @@ mypath=$(pwd)
 # Execute Playbook to configure the load-balancer
 cd $mypath/git/automated-openshift-installation/ansible/02-install-and-configure-image-registry-vm/ && ansible-playbook 03-playbook-mirror-the-registry.yaml
 
-# Proceed with the Next Step "-------------------"
+# Proceed with the Next Step "Install-Bastion-Host-VM"
 ```
 

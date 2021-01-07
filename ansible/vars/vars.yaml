@@ -30,8 +30,9 @@ file_oc: "openshift-client-linux-{{version_openshift}}.tar.gz"
 file_openshift_installer: "openshift-install-linux-{{version_openshift}}.tar.gz"
 dir_mnt_to_core_os: "{{dir_mnt}}downloaded-iso/linux/"
 
-# Red Hat
+# Red Hat / Password-Files
 pull_secret: "/root/pull-secret"
+rootpw: "/root/rootpassword"
 
 # Mirror-Registry
 registry_user: "reguser" # No underscore allowed!
