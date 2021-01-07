@@ -8,7 +8,7 @@
     owner: root
     group: root
     mode: '0755'
-    remote_src: yes
+    #remote_src: yes
     force: yes
   with_items:
     - '{{file_openshift_installer}}'
