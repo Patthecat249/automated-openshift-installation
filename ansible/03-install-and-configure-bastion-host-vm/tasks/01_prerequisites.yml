@@ -38,7 +38,10 @@
       - skopeo.x86_64
       - nfs-utils.x86_64
       - unzip
+      - dnsmasq
     state: "present"
+  tags:
+    - installed
 
 - name: "06 - Create SSH-Keypair"
   raw: "ssh-keygen -q -t rsa -N '' -f /root/.ssh/{{key_to_nodes_name}} <<<y 2>&1 >/dev/null"
