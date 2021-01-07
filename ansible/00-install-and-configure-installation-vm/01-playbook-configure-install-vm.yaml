@@ -35,7 +35,8 @@
         - "{{ dir_downloaded_images }}" 
       tags:
         - download
-# Download terraform software from internet   
+
+# Download some OpenShift-Software (Kernel, initrd, rawgz, oc, openshift-install)
     - name: "03a - Download CoreOS-Kernel"
       get_url:
         url: "{{ link_to_coreos_kernel }}"
@@ -57,6 +58,22 @@
       tags:
         - download
 
+    - name: "03d - Download oc-client"
+      get_url:
+        url: "{{ link_to_oc }}"
+        dest: "{{ dir_downloaded_images }}{{file_oc}}"
+      tags:
+        - downloada
+
+    - name: "03e - Download openshift-installer"
+      get_url:
+        url: "{{ link_to_openshift_installer }}"
+        dest: "{{ dir_downloaded_images }}{{file_openshift_installer}}"
+      tags:
+        - downloada
+
+
+# Download terraform software from internet
     - name: "03 - Download terraform"
       get_url:
         url: "{{ download_tf }}"
