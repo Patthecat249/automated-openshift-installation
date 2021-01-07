@@ -31,7 +31,7 @@ file_openshift_installer: "openshift-install-linux-{{version_openshift}}.tar.gz"
 dir_mnt_to_core_os: "{{dir_mnt}}downloaded-iso/linux/"
 
 # Red Hat / Password-Files
-pull_secret: "/root/pull-secret"
+pull_secret: "/root/pull-secret.json"
 rootpw: "/root/rootpassword"
 pull_secret_file_name: "pull-secret"
 
