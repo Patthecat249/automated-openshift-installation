@@ -14,7 +14,7 @@
   yum:
     name:
       - epel-release
-      - centos-release-ansible-29.noarch
+      - "centos-release-ansible-29.noarch"
       - ansible
       - git
       - sshpass
