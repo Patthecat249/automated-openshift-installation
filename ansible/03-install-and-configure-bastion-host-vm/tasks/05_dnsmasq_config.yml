@@ -32,14 +32,32 @@
     remote_src: yes
 
 # Setup SELinux for tftproot-Folder so that dnsmasq works with SELinux
-- name: "17a - setsebool -P tftp_anon_write 1"
-  raw: "setsebool -P tftp_anon_write 1"
+#- name: "17a - setsebool -P tftp_anon_write 1"
+#  raw: "setsebool -P tftp_anon_write 1"
 
-- name: "17b - setsebool -P tftp_home_dir 1"
-  raw: "setsebool -P tftp_home_dir 1"
+- name: "17a - Set SELinux boolean tftp_anon_write to true"
+  seboolean: 
+    name: "tftp_anon_write"
+    state: "true"
+    persistent: "true"
+
+#- name: "17b - setsebool -P tftp_home_dir 1"
+#  raw: "setsebool -P tftp_home_dir 1"
+- name: "17b - Set SELinux boolean tftp_home_dir to true"
+  seboolean: 
+    name: "tftp_home_dir"
+    state: "true"
+    persistent: "true"
+
+#- name: "17c - semanage fcontext -a -t tftpdir_t '/{{dir_tftp_root}}(/.*)?'"
+#  raw: "semanage fcontext -a -t tftpdir_t '{{dir_tftp_root}}(/.*)?'"
 
 - name: "17c - semanage fcontext -a -t tftpdir_t '/{{dir_tftp_root}}(/.*)?'"
-  raw: "semanage fcontext -a -t tftpdir_t '{{dir_tftp_root}}(/.*)?'"
+  sefcontext: 
+    target: "{{dir_tftp_root}}(/.*)?"
+    setype: "tftpdir_t"
+    state: "present"
+
 
 - name: "17d - restorecon -Rv {{dir_tftp_root}}"
   raw: "restorecon -Rv {{dir_tftp_root}}"
