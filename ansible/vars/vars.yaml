@@ -193,6 +193,7 @@ lb:
   cpu: "1"
   ram: "1024"
   disk: "200"
+  mac: "to be done"
   app:
     ip: "10.0.249.119"
   api:
@@ -252,6 +253,7 @@ image_registry:
 
 # NFS-Settings
 nfs_server: "nas.home.local"
+nfs_server_ip: "10.0.249.150"
 nfs_server_name: "nas.home.local"
 nfs_path: "/volume1/nfs-iso/downloaded-iso/linux/"
 nfs_mount_path: "/volume1/nfs-iso/"

@@ -35,12 +35,7 @@ address=/api-int.{{ clustername }}.{{ domainname }}/{{ lb.api_int.ip }}
 address=/api.{{ clustername }}.{{ domainname }}/{{ lb.api.ip }}
 
 # VMware, vCenter, vSphere
-address=/{{ vsphere_server }}/172.16.146.184
-
-# Artifactory-BaFin
-address=/artifactory.fags.dir/172.16.128.151
-address=/ocp-docker-download-ffm.artifactory.fags.dir/172.16.128.151
-address=/trusted_docker_virtual.artifactory.fags.dir/172.16.128.151
+address=/{{ vsphere_server }}/10.0.249.205
 
 ### SRV-Records für ETCD im OpenShift-Cluster
 {% for i in range( 0,masters | length ) %}
@@ -70,7 +65,7 @@ address=/{{ workers[i].hostname }}.{{ clustername }}.{{ domainname }}/{{ workers
 {% endfor %}
 
 ### Auflösung für GPFS-Cluster-IP
-address=/{{ nfs_name }}/{{ nfs_server }}
+address=/{{ nfs_name }}/{{ nfs_server_ip }}
 
 {#
 ### Auflösung Load-Balancer
