@@ -65,7 +65,7 @@ address=/{{ workers[i].hostname }}.{{ clustername }}.{{ domain }}/{{ workers[i].
 {% endfor %}
 
 ### Auflösung für GPFS-Cluster-IP
-address=/{{ nfs_name }}/{{ nfs_server_ip }}
+address=/{{ nfs_server_name }}/{{ nfs_server_ip }}
 
 {#
 ### Auflösung Load-Balancer
