@@ -11,7 +11,7 @@
       debug: msg="{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
 
 # Create Working-Directories on Install-VM
-    - name: "02 --- Create Working-Directories on Install-VM"
+    - name: "01 --- Create Working-Directories on Install-VM"
       file:
         path: "{{ item }}"
         state: "directory"
@@ -20,7 +20,7 @@
         - "{{ dir_tools }}"
 
 # Copy pull-secret from install-vm to registry-vm
-    - name: "01 - Copy pull-secret from install-vm to ocp-registry"
+    - name: "02 - Copy pull-secret from install-vm to ocp-registry"
       copy:
         src: "{{pull_secret_for_mirror}}"
         dest: "{{ dir_tools }}pull-secret"
