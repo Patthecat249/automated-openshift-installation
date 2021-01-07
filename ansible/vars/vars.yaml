@@ -100,21 +100,21 @@ masters:
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "11:22:33:44:55:66"
+    mac: "11:22:33:44:55:61"
   - name: "master02"
     hostname: "ocp-master-02"
     ip: "10.0.249.112"
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "11:22:33:44:55:66"
+    mac: "11:22:33:44:55:62"
   - name: "master03"
     hostname: "ocp-master-03"
     ip: "10.0.249.113"
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "11:22:33:44:55:66"
+    mac: "11:22:33:44:55:63"
 
 # OpenShift-Worker-Nodes
 workers:
@@ -124,14 +124,14 @@ workers:
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "11:22:33:44:55:66"
+    mac: "11:22:33:44:55:64"
   - name: "worker02"
     hostname: "ocp-worker-02"
     ip: "10.0.249.115"
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "11:22:33:44:55:66"
+    mac: "11:22:33:44:55:65"
   - name: "worker03"
     hostname: "ocp-worker-03"
     ip: "10.0.249.116"
@@ -148,7 +148,7 @@ bstrp:
   cpu: "8"
   ram: "16384"
   disk: "200"
-  mac: "11:22:33:44:55:66"
+  mac: "11:22:33:44:55:60"
 
 # Install-VM
 install_vm:
@@ -163,7 +163,7 @@ bastion:
   cpu: "2"
   ram: "4096"
   disk: "200"
-  mac: "11:22:33:44:55:66"
+  mac: "00:50:56:a6:83:ae"
 
 # Image-Registry
 registry:
@@ -173,7 +173,7 @@ registry:
   cpu: "2"
   ram: "2048"
   disk: "200"
-  mac: "11:22:33:44:55:66"
+  mac: "00:50:56:a6:bf:52"
 
 # Raspi
 pi:
@@ -193,7 +193,7 @@ lb:
   cpu: "1"
   ram: "1024"
   disk: "200"
-  mac: "11:22:33:44:55:66"
+  mac: "00:50:56:a6:cb:f9"
   app:
     ip: "10.0.249.119"
   api:
