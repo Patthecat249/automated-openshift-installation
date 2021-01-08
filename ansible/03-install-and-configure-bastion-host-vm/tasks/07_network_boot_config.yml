@@ -6,7 +6,7 @@
     state: enabled
 
 
-- name: "### --- 32 - Make sure pxelinux.0 and menu.c32 exists in '{{ dir_tftp_root }}'"
+- name: "### --- 32 - Copy pxelinux.0 and menu.c32 to '{{ dir_tftp_root }}'"
   copy:
     src: "/usr/share/syslinux/{{ item }}"
     dest: "{{ dir_tftp_root }}{{ item }}"
@@ -26,6 +26,10 @@
     group: wheel
     mode: '0755'
 
+# Hinweis !!!
+
+### --- Diese Aufgaben sollte bei Erstellen der Core-OS-VM-Erstellung mit Terraform ausgeführt werden
+# damit die MAC-Adressen verwendet werden können. 
 - name: "### --- 34 - Render pxelinux.cfg from templates for masters"
   template:
     src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
