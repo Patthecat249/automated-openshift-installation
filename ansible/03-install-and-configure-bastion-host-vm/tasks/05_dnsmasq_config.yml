@@ -44,9 +44,11 @@
     state: "true"
     persistent: "true"
 
-- name: "17c - semanage fcontext -a -t tftpdir_t '{{ dir_tftp_root | regex_replace('$')}}(/.*)?'"
+# /TFTPROOT must be labeled with "tftpdir_t"
+# Important. the trailing slash must be cut off at the end of the var-string /tftproot/
+- name: "17c - semanage fcontext -a -t tftpdir_t '{{ dir_tftp_root | regex_replace('/$')}}(/.*)?'"
   sefcontext: 
-    target: "{{ dir_tftp_root | regex_replace('$')}}(/.*)?"
+    target: "{{ dir_tftp_root | regex_replace('/$')}}(/.*)?"
     setype: "tftpdir_t"
     state: "present"
 
