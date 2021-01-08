@@ -44,7 +44,7 @@
     state: "true"
     persistent: "true"
 
-- name: "17c - semanage fcontext -a -t tftpdir_t '{{dir_tftp_root}}(/.*)?'"
+- name: "17c - semanage fcontext -a -t tftpdir_t '{{ dir_tftp_root | regex_replace('$')}}(/.*)?'"
   sefcontext: 
     target: "{{ dir_tftp_root | regex_replace('$')}}(/.*)?"
     setype: "tftpdir_t"
