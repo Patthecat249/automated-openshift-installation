@@ -41,6 +41,7 @@
       - dnsmasq
       - policycoreutils-python
       - syslinux
+      - httpd
     state: "present"
   tags:
     - installed
