@@ -98,6 +98,8 @@
 
 - name: "08b - Copy syslinux-file to {{dir_tftp_root}}"
   copy:
+    owner: "dnsmasq"
+    group: "wheel"
     src: "{{ item }}"
     dest: "{{ dir_tftp_root }}"
     remote_src: "true"
