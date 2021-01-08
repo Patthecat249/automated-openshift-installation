@@ -94,6 +94,7 @@
   with_items:
     - "{{ dir_tftp_root }}"
     - "{{ dir_tftp_root }}{{ dir_coreos_files }}"
+    - "{{ dir_tftp_root }}pxelinux.cfg"
 
 
 # 21.09.2020 - New Feature to backup the SSH-Key-Folder-Content
