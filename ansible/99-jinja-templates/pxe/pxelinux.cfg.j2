@@ -9,5 +9,5 @@ ONTIMEOUT coreOS
 
 LABEL coreOS
 menu label Add {{ item.name }} {{ item.hostname }} Node
-kernel {{ dir_coreos_files }}{{ coreos_kernel }}
-append ip=dhcp rd.neednet=1 initrd={{ dir_coreos_files }}{{ coreos_initramfs }} console=tty0 console=ttyS0 coreos.inst=yes coreos.inst.install_dev=sda coreos.inst.image_url=http://{{ bastion.ip }}/{{ dir_http_server_subdir }}{{ coreos_compressed_metal_raw_image }} coreos.inst.ignition_url=http://{{ bastion.ip }}/{{ dir_http_server_subdir }}{{ ignition_file }}
+kernel {{ dir_coreos_files }}{{ file_coreos_kernel }}
+append ip=dhcp rd.neednet=1 initrd={{ dir_coreos_files }}{{ file_coreos_initrd }} console=tty0 console=ttyS0 coreos.inst=yes coreos.inst.install_dev=sda coreos.inst.image_url=http://{{ bastion.ip }}/{{ clustername }}{{ file_coreos_raw_gz }} coreos.inst.ignition_url=http://{{ bastion.ip }}/{{ clustername }}{{ ignition_file }}
