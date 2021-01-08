@@ -22,7 +22,7 @@
   no_log: True
 
 - name: "### --- 23 - Show ssh public key content"
-  shell: "cat {{ key_to_nodes_dir }}{{ key_to_nodes_name }}.pub"
+  shell: "cat {{ dir_key_to_nodes }}{{ key_to_nodes_name }}.pub"
   register: ssh_public_key_details
 
 - name: "### --- 24 - Add ssh-public-key-content to install-config.yaml"
