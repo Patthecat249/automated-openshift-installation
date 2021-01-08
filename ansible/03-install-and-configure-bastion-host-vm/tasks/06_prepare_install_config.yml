@@ -2,7 +2,7 @@
 # Dieses Playbook bereitet die OpenShift-Installation, inbesondere die install-config.yaml vor.
 - name: "### --- 20 - Render basic install-config.yaml from template"
   template:
-    src: templates/install-config.yaml.j2
+    src: ../99-jinja-templates/install-config/install-config.yaml.j2
     dest: "{{ dir_cluster }}install-config.yaml"
     owner: root
     group: root
@@ -33,14 +33,14 @@
 
 - name: "### --- 25 - Show certificate of JFrog"
   shell: |
-    openssl s_client -connect artifactory.fags.dir:443 \
+    openssl s_client -connect {{local_registry}}:{{registry_port}} \
      -showcerts < /dev/null 2>/dev/null \
      | awk '/BEGIN/{p=1}p;/END/{p=0}' \
-     > "{{ dir_cluster }}{{ cert_file_name }}"
+     > "{{ dir_cluster }}{{local_registry}}.crt"
 
 - name: "### --- 26 - Add two blank spaces in"
   shell: |
-    cat "{{ dir_cluster }}{{ cert_file_name }}" \
+    cat "{{ dir_cluster }}{{local_registry}}.crt" \
      | sed 's/^/  /' \
      | sed '1 i\additionalTrustBundle: |'
   register: cert_details
