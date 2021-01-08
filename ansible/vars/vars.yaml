@@ -270,3 +270,12 @@ pxe_initrd_image: "kernels_initrd/centos77/initrd.img"
 ntp_server: "router.home.local"
 
 #kickstart_file: "{{hostname}}.cfg"
+
+image_block: |
+  imageContentSources:
+  - mirrors:
+    - ocpregistry.{{ clustername }}.{{ domain }}:{{ registry_port }}/ocp4/openshift4
+    source: quay.io/openshift-release-dev/ocp-release
+  - mirrors:
+    - ocpregistry.{{ clustername }}.{{ domain }}:{{ registry_port }}/ocp4/openshift4
+    source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
