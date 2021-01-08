@@ -274,8 +274,8 @@ ntp_server: "router.home.local"
 image_block: |
   imageContentSources:
   - mirrors:
-    - ocpregistry.{{ clustername }}.{{ domain }}:{{ registry_port }}/ocp4/openshift4
+    - {{ registry.hostname }}.{{ clustername }}.{{ domain }}:{{ registry_port }}/ocp4/openshift4
     source: quay.io/openshift-release-dev/ocp-release
   - mirrors:
-    - ocpregistry.{{ clustername }}.{{ domain }}:{{ registry_port }}/ocp4/openshift4
+    - {{ registry.hostname }}.{{ clustername }}.{{ domain }}:{{ registry_port }}/ocp4/openshift4
     source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
