@@ -10,8 +10,8 @@
   copy:
     src: "/usr/share/syslinux/{{ item }}"
     dest: "{{ dir_tftp_root }}{{ item }}"
-    owner: root
-    group: root
+    owner: dnsmasq
+    group: wheel
     mode: '0644'
   with_items: 
     - 'pxelinux.0'
@@ -21,16 +21,16 @@
   file:
     path: "{{ dir_tftp_root }}pxelinux.cfg"
     state: directory
-    owner: root
-    group: root
+    owner: dnsmasq
+    group: wheel
     mode: '0755'
 
 - name: "### --- 34 - Render pxelinux.cfg from templates for masters"
   template:
     src: templates/pxelinux.cfg.j2
     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
-    owner: root
-    group: root
+    owner: dnsmasq
+    group: wheel
     mode: '0755'
   vars: 
     ignition_file: master.ign
@@ -40,8 +40,8 @@
   template:
     src: templates/pxelinux.cfg.j2
     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
-    owner: root
-    group: root
+    owner: dnsmasq
+    group: wheel
     mode: '0755'
   vars: 
     ignition_file: worker.ign
@@ -51,8 +51,8 @@
   template:
     src: templates/pxelinux.cfg.j2
     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
-    owner: root
-    group: root
+    owner: dnsmasq
+    group: wheel
     mode: '0755'
   vars: 
     ignition_file: bootstrap.ign

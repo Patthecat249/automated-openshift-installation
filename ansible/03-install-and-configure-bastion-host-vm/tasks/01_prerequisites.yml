@@ -100,12 +100,12 @@
   copy:
     owner: "dnsmasq"
     group: "wheel"
-    src: "{{ item }}"
-    dest: "{{ dir_tftp_root }}"
+    src: "/usr/share/syslinux/{{ item }}"
+    dest: "{{ dir_tftp_root }}{{ item }}"
     remote_src: "true"
   with_items:
-    - "/usr/share/syslinux/pxelinux.0"
-    - "/usr/share/syslinux/menu.c32"
+    - "pxelinux.0"
+    - "menu.c32"
 
 # 21.09.2020 - New Feature to backup the SSH-Key-Folder-Content
 - name: "09 - Backup SSH-Keys to /opt/sva/backup"
