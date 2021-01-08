@@ -13,6 +13,7 @@
     owner: dnsmasq
     group: wheel
     mode: '0644'
+    remote_src: "true"
   with_items: 
     - 'pxelinux.0'
     - 'menu.c32'
