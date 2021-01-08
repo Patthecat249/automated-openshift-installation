@@ -96,6 +96,14 @@
     - "{{ dir_tftp_root }}{{ dir_coreos_files }}"
     - "{{ dir_tftp_root }}pxelinux.cfg"
 
+- name: "08b - Copy syslinux-file to {{dir_tftp_root}}"
+  copy:
+    src: "{{ item }}"
+    dest: "{{ dir_tftp_root }}"
+    remote_src: "true"
+  with_items:
+    - "/usr/share/syslinux/pxelinux.0"
+    - "/usr/share/syslinux/menu.c32"
 
 # 21.09.2020 - New Feature to backup the SSH-Key-Folder-Content
 - name: "09 - Backup SSH-Keys to /opt/sva/backup"
