@@ -28,7 +28,7 @@
 
 - name: "### --- 34 - Render pxelinux.cfg from templates for masters"
   template:
-    src: templates/pxelinux.cfg.j2
+    src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
     owner: dnsmasq
     group: wheel
@@ -39,7 +39,7 @@
 
 - name: "### --- 35 - Render pxelinux.cfg from templates for workers"
   template:
-    src: templates/pxelinux.cfg.j2
+    src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
     owner: dnsmasq
     group: wheel
@@ -50,7 +50,7 @@
 
 - name: "### --- 36 - Render pxelinux.cfg from templates for bootstrap"
   template:
-    src: templates/pxelinux.cfg.j2
+    src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
     owner: dnsmasq
     group: wheel
