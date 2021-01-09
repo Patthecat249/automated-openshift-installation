@@ -1,7 +1,7 @@
 ---
 # Dieses Playbook erzeugt die manifest- und ignition-config-files
 - name: "### --- 39 - Create manifest-files"
-  shell: "openshift-install create manifests --dir={{ dir_install_config }}"
+  shell: "/usr/local/bin/openshift-install create manifests --dir={{ dir_install_config }}"
 
 # 21.09.2020 - New Feature to backup the manifest-files to /opt/sva/backup
 - name: "### --- 40 - Backup manifest-files to /opt/sva/backup"
@@ -24,7 +24,7 @@
 #    - 'openshift/99_openshift-machineconfig_99-worker-ssh.yaml' 
 
 - name: "### --- 43 - Obtain the Ignition config files"
-  shell: "openshift-install create ignition-configs --dir={{ dir_install_config }}"
+  shell: "/usr/local/bin/openshift-install create ignition-configs --dir={{ dir_install_config }}"
 
 # 21.09.2020 - New Feature to backup the ignition-files to /opt/sva/backup
 - name: "### --- 44 - Backup ignition-files to /opt/sva/backup"
