@@ -5,8 +5,8 @@ dns_server_ip: "10.0.249.53"
 version_openshift: "4.5.23"
 version_core_os: "4.5.6"
 version_major: "4.5"
-clusternetwork: "10.128.0.0/14"
-servicenetwork: "172.30.0.0/16"
+clusternetwork: "10.254.0.0/16"
+servicenetwork: "10.255.0.0/16"
 
 # VMware-Settings
 vsphere_server: "vcenter.home.local"
