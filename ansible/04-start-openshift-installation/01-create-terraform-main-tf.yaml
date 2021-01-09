@@ -6,6 +6,7 @@
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
+  tasks:
 
 # Dieses Playbook erstellt die Arbeitsverzeichnisse auf dem Bastion-Host
     - name: "47a --- Create Working-Directories"
