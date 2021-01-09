@@ -103,8 +103,8 @@ resource "vsphere_virtual_machine" "vm_{{ bstrp.hostname }}" {
   resource_pool_id             = data.vsphere_resource_pool.pool.id
   firmware                     = "bios"
   datastore_id                 = data.vsphere_datastore.datastore_{{ bstrp.name }}.id
-  num_cpus                     = 8
-  memory                       = 32768
+  num_cpus                     = "{{ vsphere_bstrp_cpu }}"
+  memory                       = "{{ vsphere_bstrp_ram }}"
   wait_for_guest_ip_timeout    = 0
   wait_for_guest_net_timeout   = 0
   network_interface {
@@ -116,6 +116,6 @@ resource "vsphere_virtual_machine" "vm_{{ bstrp.hostname }}" {
 
   disk {
     label                      = "disk0"
-    size                       = 120
+    size                       = "{{ vsphere_bstrp_disksize }}"
   }
 }

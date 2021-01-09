@@ -1,8 +1,25 @@
 ---
+- name: "Create-Openshift-VMs"
+  become: "true"
+  become_user: "root"
+  hosts: 127.0.0.1
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+
 # Dieses Playbook erstellt die Arbeitsverzeichnisse auf dem Bastion-Host
-- name: "### --- 47 - Prepare Terraform-Plan-File: Render jinja-template to main.tf-file"
-  template:
-    src: "../ocp-master-worker-nodes/{{ tf_jinja_template }}"
-    dest: "{{ dir_terraform }}{{ tf_filename_main_tf }}"    
-  tags:
-    - terraform
+    - name: "47a --- Create Working-Directories"
+      file:
+        path: "{{ item }}"
+        state: "directory"
+        recurse: "true"
+      with_items:
+        - "{{ dir_root }}"
+        - "{{ dir_terraform }}"
+        - "{{ dir_terraform }}openshift_vms/"
+
+
+    - name: "47b - Prepare Terraform-Plan-File: Render jinja-template to main.tf-file"
+      template:
+        src: "../99-jinja-templates/terraform/{{ tf_jinja_template }}"
+        dest: "{{ dir_terraform }}openshift_vms/main.tf"    
