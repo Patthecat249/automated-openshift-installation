@@ -1,4 +1,4 @@
-- name: "Install-Openshift"
+- name: "Install-Openshift-VMs"
   become: "true"
   become_user: "root"
   hosts: 127.0.0.1
@@ -8,9 +8,9 @@
   # vars:
   #   - cpu: "{{ lb.cpu }}"
   #   - ram: "{{ lb.ram }}"
-  #   - hostname: "{{ lb.hostname }}"
+  #   - hostname: "{{ masters.master01.hostname }}"
   #   - ip: "{{ lb.ip }}"
-  #   - kickstart_file: "{{ lb.hostname }}.cfg"
+  #   - kickstart_file: "{{ masters.master01.hostname }}.cfg"
  
   tasks:
 # Erstelle Arbeitsverzeichnisse
@@ -37,25 +37,26 @@
       file:
         path: "{{ item }}"
         state: "directory"
-        recurse: "true"
+        # recurse: "true"
       with_items:
         - "{{ dir_nfs_root }}"
-      tags:
-        - create
+      # tags:
+      #   - create
 
 # Install some Software
     - name: "03 --- Installiere nfs-utils.x86_64"
       yum:
         name: nfs-utils.x86_64
         state: present
+
     - name: "04 --- Installiere libnfs-utils.x86_64"
       yum:
         name: libnfs-utils.x86_64
         state: present
 
 # Prüfe, ob die IP-Adresse bereits in /etc/dnsmasq.conf existiert.
-    - name: "05 --- Check, if IP-Address {{ lb.ip }} exists in /etc/dnsmasq.conf"
-      command: "grep \"{{ lb.ip }}\" /etc/dnsmasq.conf"
+    - name: "05 --- Check, if IP-Address {{ masters.master01.ip }} exists in /etc/dnsmasq.conf"
+      command: "grep \"{{ masters.master01.ip }}\" /etc/dnsmasq.conf"
       register: checkmyconf
       check_mode: no
       ignore_errors: yes
@@ -64,15 +65,15 @@
       tags:
         - checker
 
-    - name: "06 --- If /etc/dnsmasq.conf contains {{ lb.ip }}, Stop Ansible-Playbook"
-      debug: msg="Die IP-Adresse {{ lb.ip }} existiert bereits in /etc/dnsmasq.conf!"
+    - name: "06 --- If /etc/dnsmasq.conf contains {{ masters.master01.ip }}, Stop Ansible-Playbook"
+      debug: msg="Die IP-Adresse {{ masters.master01.ip }} existiert bereits in /etc/dnsmasq.conf!"
       when: checkmyconf.rc == 0
       tags:
         - checker
 
-# Prüfe, ob der Hostname {{lb.hostname}} bereits in /etc/dnsmasq.conf existiert.
-    - name: "07 --- Check, if IP-Address {{ lb.hostname }} exists in /etc/dnsmasq.conf"
-      command: "grep \"{{ lb.hostname }}\" /etc/dnsmasq.conf"
+# Prüfe, ob der Hostname {{masters.master01.hostname}} bereits in /etc/dnsmasq.conf existiert.
+    - name: "07 --- Check, if IP-Address {{ masters.master01.hostname }} exists in /etc/dnsmasq.conf"
+      command: "grep \"{{ masters.master01.hostname }}\" /etc/dnsmasq.conf"
       register: checkmyconf2
       check_mode: no
       ignore_errors: yes
@@ -81,8 +82,8 @@
       tags:
         - checker
 
-    - name: "08 --- If /etc/dnsmasq.conf contains {{ lb.hostname }}, Stop Ansible-Playbook"
-      debug: msg="Der Hostname {{ lb.hostname }} existiert bereits in /etc/dnsmasq.conf!"
+    - name: "08 --- If /etc/dnsmasq.conf contains {{ masters.master01.hostname }}, Stop Ansible-Playbook"
+      debug: msg="Der Hostname {{ masters.master01.hostname }} existiert bereits in /etc/dnsmasq.conf!"
       when: checkmyconf2.rc == 0
       tags:
         - checker
@@ -110,19 +111,19 @@
         timeout: 1
 
 # Erstelle aus einem Template eine Kickstart-Datei und speichere sie auf dem NFS-Share
-    - name: "11 --- Create kickstart.cfg from kickstart.j2"
-      template:
-        src: "../../terraform/templates/kickstart.j2"
-        dest: "{{ dir_nfs_root }}{{ dir_mounted_kickstart_configs }}{{ lb.hostname }}.cfg" # Hier muss noch der Pfad verifiziert werden
-      tags:
-        - create
+    # - name: "11 --- Create kickstart.cfg from kickstart.j2"
+    #   template:
+    #     src: "../../terraform/templates/kickstart.j2"
+    #     dest: "{{ dir_nfs_root }}{{ dir_mounted_kickstart_configs }}{{ masters.master01.hostname }}.cfg" # Hier muss noch der Pfad verifiziert werden
+    #   tags:
+    #     - create
 
 # Erstelle VM-Instanz Terraform "main.tf"-file
 # In dieser Datei wird auf auf das Terraform-Modul verwiesen
     - name: "12 --- Create main.tf-file from tf-vm-module.j2"
       template:
         src: "../../terraform/templates/tf-vm-module.j2"
-        dest: "{{ dir_terraform }}{{ lb.hostname }}/main.tf"
+        dest: "{{ dir_terraform }}{{ masters.master01.hostname }}/main.tf"
       tags:
         - create
 
@@ -130,7 +131,7 @@
     - name: "13 --- Create output.tf-file from jinja-template output.tf"
       template:
         src: "../../terraform/templates/output.j2"
-        dest: "{{ dir_terraform }}{{ lb.hostname }}/output.tf"
+        dest: "{{ dir_terraform }}{{ masters.master01.hostname }}/output.tf"
       tags:
         - create
 
@@ -170,11 +171,11 @@
 
 # Erzeuge die virtuelle Maschine
     - name: "17 --- Create virtual machine with terraform"
-      raw: "cd {{ dir_terraform }}{{ lb.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
+      raw: "cd {{ dir_terraform }}{{ masters.master01.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM
     - name: "18 --- Retrieve mac-address from created virtual machine"
-      raw: "cd {{ dir_terraform }}{{ lb.hostname }} && terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
+      raw: "cd {{ dir_terraform }}{{ masters.master01.hostname }} && terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
 
 # Erstelle für diese VM, anhand der MAC-Adresse ein PXELINUX-Config-File im TFTPROOT-Dir vom PXE-SERVER
@@ -196,7 +197,7 @@
       lineinfile:
         path: /etc/dnsmasq.conf
         insertafter: "^# OpenShift-Nodes"         
-        line: "dhcp-host={{ mac.stdout | trim }},{{ lb.hostname }},{{ lb.ip }},set:ocp43"
+        line: "dhcp-host={{ mac.stdout | trim }},{{ masters.master01.hostname }},{{ lb.ip }},set:ocp43"
       delegate_to: pi
       notify: "restart dnsmasq"
 
@@ -207,7 +208,7 @@
       lineinfile:
         path: "/etc/dnsmasq.conf"
         insertafter: "^# Static-DNS-Assignements" 
-        line: "address=/{{ lb.hostname }}.{{domain}}/{{ lb.ip }}"
+        line: "address=/{{ masters.master01.hostname }}.{{domain}}/{{ lb.ip }}"
       delegate_to: pi
       notify: "restart dnsmasq"
 
