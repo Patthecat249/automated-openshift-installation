@@ -184,7 +184,7 @@ install_vm:
 bastion:
   name: "bastion"
   hostname: "ocp-bastion"
-  ip: "11.11.11.117"
+  ip: "11.11.11.53"
   cpu: "2"
   ram: "4096"
   disk: "200"
