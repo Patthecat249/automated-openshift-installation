@@ -1,3 +1,5 @@
+# Execute on install-vm
+
 - name: "OCP-MASTER01-VM"
   become: "true"
   become_user: "root"
@@ -181,7 +183,7 @@
         mode: "0755"
         owner: "dnsmasq"
         group: "wheel"
-      delegate_to: pxe-server
+      delegate_to: "{{ bastion.ip }}"
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DHCP-Eintrag in DNSMASQ
     - name: "20 --- Add DHCP-entry to dnsmasq.conf"
@@ -191,7 +193,7 @@
         path: /etc/dnsmasq.conf
         insertafter: "^# OpenShift-Nodes"         
         line: "dhcp-host={{ mac.stdout | trim }},{{ masters[0].hostname }},{{ masters[0].ip }},set:ocp43"
-      delegate_to: pi
+      delegate_to: "{{ bastion.ip }}"
       notify: "restart dnsmasq"
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DNS-Lookup-Eintrag in DNSMASQ
@@ -202,18 +204,18 @@
         path: "/etc/dnsmasq.conf"
         insertafter: "^# Static-DNS-Assignements" 
         line: "address=/{{ masters[0].hostname }}.{{domain}}/{{ masters[0].ip }}"
-      delegate_to: pi
+      delegate_to: "{{ bastion.ip }}"
       notify: "restart dnsmasq"
 
 # Unmounting NFS-Share
-    - name: "22 --- Unmounting NFS-Share"
-      mount:
-        fstype: nfs
-        opts: defaults
-        state: absent
-        src: "{{ nfs_server }}{{ nfs_mount_path }}"
-        path: "{{ dir_nfs_root }}"
-        backup: yes
+    # - name: "22 --- Unmounting NFS-Share"
+    #   mount:
+    #     fstype: nfs
+    #     opts: defaults
+    #     state: absent
+    #     src: "{{ nfs_server }}{{ nfs_mount_path }}"
+    #     path: "{{ dir_nfs_root }}"
+    #     backup: yes
 
 # Starte den DNS-Dienst erneut, wenn sich etwas an der DNS-Konfiguration geändert hat.
   handlers:
@@ -223,5 +225,5 @@
       service:
         name: dnsmasq
         state: restarted
-      delegate_to: pi
+      delegate_to: "{{ bastion.ip }}"
 
