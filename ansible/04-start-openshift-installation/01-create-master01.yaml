@@ -178,7 +178,7 @@
       become: "true"
       become_user: "root"
       template:
-        src: "../../terraform/templates/pxelinux-template.j2"
+        src: "../../99-jinja-templates/pxe/pxelinux.cfg.j2"
         dest: "{{dir_tftproot}}01-{{ mac.stdout | trim | regex_replace(':', '-')}}"
         mode: "0755"
         owner: "dnsmasq"
