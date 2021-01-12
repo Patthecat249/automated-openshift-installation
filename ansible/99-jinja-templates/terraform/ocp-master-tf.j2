@@ -33,7 +33,7 @@ data "vsphere_network" "network" {
 
 
 # --- Create VM {{ hostname }} --- #
-resource "vsphere_virtual_machine" "vm_{{ hostname }}" {
+resource "vsphere_virtual_machine" "{{ hostname }}" {
   name                        = "{{ hostname }}"
   folder                      = "{{ vsphere_folder }}"
   guest_id                    = "coreos64Guest"
