@@ -85,9 +85,9 @@
         - checker
 
 # Beende das Playbook, wenn die IP-Adresse bereits in /etc/dnsmasq.conf existiert
-    - meta: end_play
-      when: checkmyconf.rc == 0
-# Beende das Playbook, wenn die IP-Adresse bereits in /etc/dnsmasq.conf existiert
+    # - meta: end_play
+    #   when: checkmyconf.rc == 0
+# Beende das Playbook, wenn der Hostname bereits in /etc/dnsmasq.conf existiert
     - meta: end_play
       when: checkmyconf2.rc == 0
 
