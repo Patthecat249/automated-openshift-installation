@@ -8,6 +8,6 @@ timeout 18
 ONTIMEOUT coreOS
 
 LABEL coreOS
-menu label Add {{ item.name }} {{ item.hostname }} Node
+menu label Add {{ item.hostname }} Node
 kernel {{ dir_coreos_files }}{{ file_coreos_kernel }}
 append ip=dhcp rd.neednet=1 initrd={{ dir_coreos_files }}{{ file_coreos_initrd }} console=tty0 console=ttyS0 coreos.inst=yes coreos.inst.install_dev=sda coreos.inst.image_url=http://{{ bastion.ip }}/{{ clustername }}/{{ file_coreos_raw_gz }} coreos.inst.ignition_url=http://{{ bastion.ip }}/{{ clustername }}/{{ ignition_file }}
