@@ -12,7 +12,7 @@
     - ram: "{{ masters[0].ram }}"
     - hostname: "{{ masters[0].hostname }}"
     - ip: "{{ masters[0].ip }}"
-    - ignition_file: "{{ dir_install_config }}master.ign"
+    - ignition_file: "master.ign"
     # - kickstart_file: "{{ masters[0].hostname }}.cfg"
  
   tasks:
