@@ -51,21 +51,21 @@
         state: present
 
 # Prüfe, ob die IP-Adresse bereits in /etc/dnsmasq.conf existiert.
-    - name: "05 --- Check, if IP-Address {{ masters[0].ip }} exists in /etc/dnsmasq.conf"
-      command: "grep \"{{ masters[0].ip }}\" /etc/dnsmasq.conf"
-      register: checkmyconf
-      check_mode: no
-      ignore_errors: yes
-      changed_when: no
-      delegate_to: "11.11.11.53"
-      tags:
-        - checker
+    # - name: "05 --- Check, if IP-Address {{ masters[0].ip }} exists in /etc/dnsmasq.conf"
+    #   command: "grep \"{{ masters[0].ip }}\" /etc/dnsmasq.conf"
+    #   register: checkmyconf
+    #   check_mode: no
+    #   ignore_errors: yes
+    #   changed_when: no
+    #   delegate_to: "11.11.11.53"
+    #   tags:
+    #     - checker
 
-    - name: "06 --- If /etc/dnsmasq.conf contains {{ masters[0].ip }}, Stop Ansible-Playbook"
-      debug: msg="Die IP-Adresse {{ masters[0].ip }} existiert bereits in /etc/dnsmasq.conf!"
-      when: checkmyconf.rc == 0
-      tags:
-        - checker
+    # - name: "06 --- If /etc/dnsmasq.conf contains {{ masters[0].ip }}, Stop Ansible-Playbook"
+    #   debug: msg="Die IP-Adresse {{ masters[0].ip }} existiert bereits in /etc/dnsmasq.conf!"
+    #   when: checkmyconf.rc == 0
+    #   tags:
+    #     - checker
 
 # Prüfe, ob der Hostname {{masters[0].hostname}} bereits in /etc/dnsmasq.conf existiert.
     - name: "07 --- Check, if IP-Address {{ masters[0].hostname }} exists in /etc/dnsmasq.conf"
