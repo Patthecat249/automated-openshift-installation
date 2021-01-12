@@ -57,7 +57,7 @@
       check_mode: no
       ignore_errors: yes
       changed_when: no
-      delegate_to: "pi"
+      delegate_to: "11.11.11.53"
       tags:
         - checker
 
@@ -74,7 +74,7 @@
       check_mode: no
       ignore_errors: yes
       changed_when: no
-      delegate_to: "pi"
+      delegate_to: "11.11.11.53"
       tags:
         - checker
 
