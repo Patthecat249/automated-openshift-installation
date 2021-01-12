@@ -134,7 +134,7 @@
     - name: "14 --- Create vars.tf-file from jinja-template vars-coreos-tf.j2"
       template:
         src: "../99-jinja-templates/terraform/vars-coreos-tf.j2"
-        dest: "{{ dir_terraform_module_vm }}vars.tf"
+        dest: "{{ dir_terraform }}{{ masters[0].hostname }}/vars.tf"
       tags:
         - create
 
