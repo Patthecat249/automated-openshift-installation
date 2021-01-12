@@ -32,14 +32,14 @@ data "vsphere_network" "network" {
 }
 
 
-# --- Create VM {{ masters[0].hostname }} --- #
-resource "vsphere_virtual_machine" "vm_{{ masters[0].hostname }}" {
-  name                        = "{{ masters[0].hostname }}"
+# --- Create VM {{ hostname }} --- #
+resource "vsphere_virtual_machine" "vm_{{ hostname }}" {
+  name                        = "{{ hostname }}"
   folder                      = "{{ vsphere_folder }}"
   guest_id                    = "coreos64Guest"
   resource_pool_id            = data.vsphere_resource_pool.pool.id
   firmware                    = "bios"
-  datastore_id                = data.vsphere_datastore.datastore_{{ masters[0].hostname }}.id
+  datastore_id                = data.vsphere_datastore.datastore_{{ hostname }}.id
   num_cpus                    = {{ vsphere_master_cpu }}
   memory                      = {{ vsphere_master_ram }}
   boot_delay                  = var.vm_boot_delay

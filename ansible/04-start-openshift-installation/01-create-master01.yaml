@@ -115,9 +115,9 @@
 
 # Erstelle VM-Instanz Terraform "main.tf"-file
 # In dieser Datei wird auf auf das Terraform-Modul verwiesen
-    - name: "12 --- Create main.tf-file from tf-vm-module.j2"
+    - name: "12 --- Create main.tf-file from ocp-master-tf.j2"
       template:
-        src: "../../terraform/templates/tf-vm-module.j2"
+        src: "../99-jinja-templates/terraform/ocp-master-tf.j2"
         dest: "{{ dir_terraform }}{{ masters[0].hostname }}/main.tf"
       tags:
         - create
@@ -125,15 +125,15 @@
 # Erzeuge und kopiere das output.tf-file in den VM-Instanz-Ordner
     - name: "13 --- Create output.tf-file from jinja-template output.tf"
       template:
-        src: "../../terraform/templates/output.j2"
+        src: "../99-jinja-templates/terraform/output.j2"
         dest: "{{ dir_terraform }}{{ masters[0].hostname }}/output.tf"
       tags:
         - create
 
 # Erstelle und kopiere das vars.tf-file in den Terraform-Module Ordner
-    - name: "14 --- Create vars.tf-file from jinja-template vars.tf"
+    - name: "14 --- Create vars.tf-file from jinja-template vars-coreos-tf.j2"
       template:
-        src: "../../terraform/modules/vm-vsphere/vars.tf"
+        src: "../99-jinja-templates/terraform/vars-coreos-tf.j2"
         dest: "{{ dir_terraform_module_vm }}vars.tf"
       tags:
         - create
