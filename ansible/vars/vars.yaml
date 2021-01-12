@@ -8,6 +8,10 @@ version_major: "4.5"
 clusternetwork: "10.254.0.0/16"
 servicenetwork: "10.255.0.0/16"
 
+ignition_filename_master: "master.ign"
+ignition_filename_worker: "worker.ign"
+ignition_filename_bootstrap: "bootstrap.ign"
+
 # VMware-Settings
 vsphere_server: "vcenter.home.local"
 vsphere_user: "administrator@home.local"
