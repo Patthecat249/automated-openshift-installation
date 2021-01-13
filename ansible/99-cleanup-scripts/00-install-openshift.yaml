@@ -1,0 +1,77 @@
+# Execute on install-vm
+
+- name: "Cleanup-OpenShift-Installation"
+  become: "true"
+  become_user: "root"
+  hosts: 127.0.0.1
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+  tasks:
+# Lösche die DHCP-Einträge in DNSMASQ
+    - name: "01 --- Cleanup DHCP-Entries"
+      become: "true"
+      become_user: "root"
+      lineinfile:
+        path: /etc/dnsmasq.conf
+        #insertafter: "^# DHCP-Host-Entries"         
+        line: "{{ item }}"
+        state: "absent"
+      with_items: "dhcp-host={{ mac.stdout | trim }},{{ bstrp.hostname }},{{ bstrp.ip }},set:openshift_node"
+      delegate_to: "{{ bastion.ip }}"
+      notify: "restart dnsmasq"
+
+# Lösche die DNS-Einträge in DNSMASQ
+    - name: "02 --- Cleanup DNS-Entries"
+      become: "true"
+      become_user: "root"
+      lineinfile: "{{ item }}"
+        path: "/etc/dnsmasq.conf"
+        #insertafter: "^# DNS-Name-Resolution" 
+        line: "{{ item }}"
+        state: "absent"
+      with_items:
+        - "address=/{{ bstrp.hostname }}.{{clustername}}.{{domain}}/{{ bstrp.ip }}"
+      delegate_to: "{{ bastion.ip }}"
+      notify: "restart dnsmasq"
+
+
+# Starte den DNS-Dienst erneut, wenn sich etwas an der DNS-Konfiguration geändert hat.
+  handlers:
+    - name: "restart dnsmasq"
+      become: "true"
+      become_user: "root"
+      service:
+        name: dnsmasq
+        state: restarted
+      delegate_to: "{{ bastion.ip }}"
+
+
+# Delete VMs with terraform
+# Lösche die virtuelle Maschine
+    - name: "03 --- Delete virtual machines with terraform"
+      raw: "{{ item }}"
+      with_items:
+        - "cd {{ dir_terraform }}{{ bstrp.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform destroy -auto-approve"
+        - "cd {{ dir_terraform }}{{ masters[0].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
+        - "cd {{ dir_terraform }}{{ masters[1].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
+        - "cd {{ dir_terraform }}{{ masters[2].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
+        - "cd {{ dir_terraform }}{{ workers[0].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
+        - "cd {{ dir_terraform }}{{ workers[1].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
+        - "cd {{ dir_terraform }}{{ workers[2].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
+
+# Cleanup Working Directories
+    - name: "04 --- Cleanup Working Directories"
+      file:
+        path: "{{ item }}"
+        state: "absent"
+        recurse: "true"
+      with_items:
+        - "{{ dir_terraform }}{{ bstrp.hostname }}"
+        - "{{ dir_terraform }}{{ masters[0].hostname }}"
+        - "{{ dir_terraform }}{{ masters[1].hostname }}"
+        - "{{ dir_terraform }}{{ masters[2].hostname }}"
+        - "{{ dir_terraform }}{{ workers[0].hostname }}"
+        - "{{ dir_terraform }}{{ workers[1].hostname }}"
+        - "{{ dir_terraform }}{{ workers[2].hostname }}"
+
