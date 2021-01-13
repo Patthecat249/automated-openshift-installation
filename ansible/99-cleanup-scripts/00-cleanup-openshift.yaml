@@ -46,13 +46,13 @@
     - name: "03 --- Delete virtual machines with terraform"
       raw: "{{ item }}"
       with_items:
-        - "cd {{ dir_terraform }}{{ bstrp.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform destroy -auto-approve"
-        - "cd {{ dir_terraform }}{{ masters[0].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
-        - "cd {{ dir_terraform }}{{ masters[1].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
-        - "cd {{ dir_terraform }}{{ masters[2].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
-        - "cd {{ dir_terraform }}{{ workers[0].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
-        - "cd {{ dir_terraform }}{{ workers[1].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
-        - "cd {{ dir_terraform }}{{ workers[2].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
+        - "cd {{ dir_terraform }}{{ bstrp.hostname }}  && /usr/local/bin/terraform destroy -auto-approve"
+        - "cd {{ dir_terraform }}{{ masters[0].hostname }}  && /usr/local/bin/terraform destroy -auto-approve"
+        - "cd {{ dir_terraform }}{{ masters[1].hostname }}  && /usr/local/bin/terraform destroy -auto-approve"
+        - "cd {{ dir_terraform }}{{ masters[2].hostname }}  && /usr/local/bin/terraform destroy -auto-approve"
+        - "cd {{ dir_terraform }}{{ workers[0].hostname }}  && /usr/local/bin/terraform destroy -auto-approve"
+        - "cd {{ dir_terraform }}{{ workers[1].hostname }}  && /usr/local/bin/terraform destroy -auto-approve"
+        - "cd {{ dir_terraform }}{{ workers[2].hostname }}  && /usr/local/bin/terraform destroy -auto-approve"
 
 # Cleanup Working Directories
     - name: "04 --- Cleanup Working Directories"
