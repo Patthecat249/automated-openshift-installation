@@ -138,7 +138,7 @@
       lineinfile:
         path: "/etc/dnsmasq.conf"
         insertafter: "^# Static-DNS-Assignements" 
-        line: "address=/{{ masters[0].hostname }}.{{domain}}/{{ masters[0].ip }}"
+        line: "address=/{{ masters[0].hostname }}.{{clustername}}.{{domain}}/{{ masters[0].ip }}"
       delegate_to: "{{ bastion.ip }}"
       notify: "restart dnsmasq"
 
