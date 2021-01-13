@@ -8,10 +8,10 @@
   vars_files:
     - "../vars/vars.yaml"
   vars:
-    - cpu: "{{ masters[0].cpu }}"
-    - ram: "{{ masters[0].ram }}"
-    - hostname: "{{ masters[0].hostname }}"
-    - ip: "{{ masters[0].ip }}"
+    - cpu: "{{ bstrp.cpu }}"
+    - ram: "{{ bstrp.ram }}"
+    - hostname: "{{ bstrp.hostname }}"
+    - ip: "{{ bstrp.ip }}"
     - ignition_file: "{{ignition_filename_master}}"
  
   tasks:
@@ -23,7 +23,7 @@
         recurse: "true"
       with_items:
         - "{{ dir_root }}"
-        - "{{ dir_terraform }}{{ masters[0].hostname }}"
+        - "{{ dir_terraform }}{{ bstrp.hostname }}"
         - "{{ dir_terraform }}{{ masters[1].hostname }}"
         - "{{ dir_terraform }}{{ masters[2].hostname }}"
         - "{{ dir_terraform }}{{ workers[0].hostname }}"
@@ -33,9 +33,9 @@
       tags:
         - create
 
-# Prüfe, ob der Hostname {{masters[0].hostname}} bereits in /etc/dnsmasq.conf existiert.
-    - name: "02 --- Check, if IP-Address {{ masters[0].hostname }} exists in /etc/dnsmasq.conf"
-      command: "grep \"{{ masters[0].hostname }}\" /etc/dnsmasq.conf"
+# Prüfe, ob der Hostname {{bstrp.hostname}} bereits in /etc/dnsmasq.conf existiert.
+    - name: "02 --- Check, if IP-Address {{ bstrp.hostname }} exists in /etc/dnsmasq.conf"
+      command: "grep \"{{ bstrp.hostname }}\" /etc/dnsmasq.conf"
       register: is_hostname_in_dnsmasq
       check_mode: no
       ignore_errors: yes
@@ -44,8 +44,8 @@
       tags:
         - checker
 
-    - name: "03 --- If /etc/dnsmasq.conf contains {{ masters[0].hostname }}, Stop Ansible-Playbook"
-      debug: msg="Der Hostname {{ masters[0].hostname }} existiert bereits in /etc/dnsmasq.conf!"
+    - name: "03 --- If /etc/dnsmasq.conf contains {{ bstrp.hostname }}, Stop Ansible-Playbook"
+      debug: msg="Der Hostname {{ bstrp.hostname }} existiert bereits in /etc/dnsmasq.conf!"
       when: is_hostname_in_dnsmasq.rc == 0
       tags:
         - checker
@@ -62,7 +62,7 @@
     - name: "04 --- Create main.tf-file from ocp-master-tf.j2"
       template:
         src: "../99-jinja-templates/terraform/ocp-master-tf.j2"
-        dest: "{{ dir_terraform }}{{ masters[0].hostname }}/main.tf"
+        dest: "{{ dir_terraform }}{{ bstrp.hostname }}/main.tf"
       tags:
         - create
 
@@ -70,7 +70,7 @@
     - name: "05 --- Create output.tf-file from jinja-template output.tf"
       template:
         src: "../99-jinja-templates/terraform/output.j2"
-        dest: "{{ dir_terraform }}{{ masters[0].hostname }}/output.tf"
+        dest: "{{ dir_terraform }}{{ bstrp.hostname }}/output.tf"
       tags:
         - create
 
@@ -78,7 +78,7 @@
     - name: "06 --- Create vars.tf-file from jinja-template vars-coreos-tf.j2"
       template:
         src: "../99-jinja-templates/terraform/vars-coreos-tf.j2"
-        dest: "{{ dir_terraform }}{{ masters[0].hostname }}/vars.tf"
+        dest: "{{ dir_terraform }}{{ bstrp.hostname }}/vars.tf"
       tags:
         - create
 
@@ -101,11 +101,11 @@
 
 # Erzeuge die virtuelle Maschine
     - name: "09 --- Create virtual machine with terraform"
-      raw: "cd {{ dir_terraform }}{{ masters[0].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
+      raw: "cd {{ dir_terraform }}{{ bstrp.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM
     - name: "10 --- Retrieve mac-address from created virtual machine"
-      raw: "cd {{ dir_terraform }}{{ masters[0].hostname }} && /usr/local/bin/terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
+      raw: "cd {{ dir_terraform }}{{ bstrp.hostname }} && /usr/local/bin/terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
 
 # Erstelle für diese VM, anhand der MAC-Adresse ein PXELINUX-Config-File im TFTPROOT-Dir vom PXE-SERVER
@@ -127,7 +127,7 @@
       lineinfile:
         path: /etc/dnsmasq.conf
         insertafter: "^# DHCP-Host-Entries"         
-        line: "dhcp-host={{ mac.stdout | trim }},{{ masters[0].hostname }},{{ masters[0].ip }},set:openshift_node"
+        line: "dhcp-host={{ mac.stdout | trim }},{{ bstrp.hostname }},{{ bstrp.ip }},set:openshift_node"
       delegate_to: "{{ bastion.ip }}"
       notify: "restart dnsmasq"
 
@@ -138,7 +138,7 @@
       lineinfile:
         path: "/etc/dnsmasq.conf"
         insertafter: "^# DNS-Name-Resolution" 
-        line: "address=/{{ masters[0].hostname }}.{{clustername}}.{{domain}}/{{ masters[0].ip }}"
+        line: "address=/{{ bstrp.hostname }}.{{clustername}}.{{domain}}/{{ bstrp.ip }}"
       delegate_to: "{{ bastion.ip }}"
       notify: "restart dnsmasq"
 
