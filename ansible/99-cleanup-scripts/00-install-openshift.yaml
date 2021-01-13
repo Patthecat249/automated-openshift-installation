@@ -41,18 +41,6 @@
 #       delegate_to: "{{ bastion.ip }}"
 #       notify: "restart dnsmasq"
 
-
-# Starte den DNS-Dienst erneut, wenn sich etwas an der DNS-Konfiguration geändert hat.
-  handlers:
-    - name: "restart dnsmasq"
-      become: "true"
-      become_user: "root"
-      service:
-        name: dnsmasq
-        state: restarted
-      delegate_to: "{{ bastion.ip }}"
-
-
 # Delete VMs with terraform
 # Lösche die virtuelle Maschine
     - name: "03 --- Delete virtual machines with terraform"
@@ -81,3 +69,12 @@
         - "{{ dir_terraform }}{{ workers[1].hostname }}"
         - "{{ dir_terraform }}{{ workers[2].hostname }}"
 
+# Starte den DNS-Dienst erneut, wenn sich etwas an der DNS-Konfiguration geändert hat.
+  handlers:
+    - name: "restart dnsmasq"
+      become: "true"
+      become_user: "root"
+      service:
+        name: dnsmasq
+        state: restarted
+      delegate_to: "{{ bastion.ip }}"
