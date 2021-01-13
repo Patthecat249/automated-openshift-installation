@@ -1,6 +1,6 @@
 # Execute on install-vm
 
-- name: "OCP-MASTER01-VM"
+- name: "Install Bootstrap-VM"
   become: "true"
   become_user: "root"
   hosts: 127.0.0.1
@@ -35,7 +35,7 @@
       check_mode: no
       ignore_errors: yes
       changed_when: no
-      delegate_to: "11.11.11.53"
+      delegate_to: "{{ bastion.ip }}"
       tags:
         - checker
 
