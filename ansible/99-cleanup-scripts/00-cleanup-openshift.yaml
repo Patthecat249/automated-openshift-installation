@@ -59,7 +59,6 @@
       file:
         path: "{{ item }}"
         state: "absent"
-        recurse: "true"
       with_items:
         - "{{ dir_terraform }}{{ bstrp.hostname }}"
         - "{{ dir_terraform }}{{ masters[0].hostname }}"
