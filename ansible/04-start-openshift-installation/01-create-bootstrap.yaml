@@ -24,11 +24,6 @@
       with_items:
         - "{{ dir_root }}"
         - "{{ dir_terraform }}{{ bstrp.hostname }}"
-        - "{{ dir_terraform }}{{ masters[1].hostname }}"
-        - "{{ dir_terraform }}{{ masters[2].hostname }}"
-        - "{{ dir_terraform }}{{ workers[0].hostname }}"
-        - "{{ dir_terraform }}{{ workers[1].hostname }}"
-        - "{{ dir_terraform }}{{ workers[2].hostname }}"
         - "{{ dir_terraform_module_vm }}"
       tags:
         - create
