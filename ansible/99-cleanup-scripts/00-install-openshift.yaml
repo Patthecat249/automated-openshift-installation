@@ -25,7 +25,7 @@
     - name: "02 --- Cleanup DNS-Entries"
       become: "true"
       become_user: "root"
-      lineinfile: "{{ item }}"
+      lineinfile:
         path: "/etc/dnsmasq.conf"
         #insertafter: "^# DNS-Name-Resolution" 
         line: "{{ item }}"
