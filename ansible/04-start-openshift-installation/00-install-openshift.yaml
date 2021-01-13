@@ -3,4 +3,4 @@
   hosts: "127.0.0.1"
   tasks:
   - name: "01 - Start OpenShift-Installation by creating all VMs"
-    raw: "{{ playbook_dir }}/ansible-playbook 01-create-bootstrap.yaml"
+    raw: "cd {{ playbook_dir }}/ && ansible-playbook 01-create-bootstrap.yaml"
