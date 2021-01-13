@@ -16,13 +16,17 @@ bind-interfaces
 no-resolv
 strict-order
 
-# DHCP-Host-Entries
+## Spezielle MAC-Address-zu-IP-Zuweisung von Master- und Worker-Nodes. Beim Booten sollen den Master/Worker-Nodes anhand ihrer MAC-Adressen bestimmte Hostnamen und IP-Adressen zugewiesen werden.
+{% for h in masters %}
+dhcp-host={{ h.mac }},{{ h.hostname }}.{{ clustername }}.{{ domain }},{{ h.ip }},set:openshift_node
+{% endfor %}
+{% for h in workers %}
+dhcp-host={{ h.mac }},{{ h.hostname }}.{{ clustername }}.{{ domain }},{{ h.ip }},set:openshift_node
+{% endfor %}
 
 
-# DNS-Name-Resolution
-
-### Auflösung für Bastion-Host
-address=/{{ bastion.hostname }}.{{ clustername }}.{{ domain }}/{{ bastion.ip }}
+# Bootstrap-MAC-zu-IP-Zuweisung
+dhcp-host={{ bstrp.mac }},{{ bstrp.hostname }}.{{ clustername }}.{{ domain }},{{ bstrp.ip }},set:openshift_node
 
 ## Spezifische DNS-Einstellungen
 ### DNS-Namensaufloesung
@@ -43,10 +47,30 @@ srv-host=_etcd-server-ssl._tcp.{{ clustername }}.{{ domain }},etcd-{{ i }}.{{ cl
 address=/etcd-{{ i }}.{{ clustername }}.{{ domain }}/{{ masters[i].ip }}
 {% endfor %}
 
+### Auflösung Bootstrap-Node
+address=/{{ bstrp.hostname }}.{{ clustername }}.{{ domain }}/{{ bstrp.ip }}
+
+### Auflösung für Bastion-Host
+address=/{{ bastion.hostname }}.{{ clustername }}.{{ domain }}/{{ bastion.ip }}
+
+### Auflösung für Master/Worker-Nodes
+#### Master
+{% for i in range( 0,masters|length ) %}
+address=/{{ masters[i].hostname }}.{{ clustername }}.{{ domain }}/{{ masters[i].ip }}
+{% endfor %}
+
+#### Worker
+{% for i in range( 0,workers|length ) %}
+address=/{{ workers[i].hostname }}.{{ clustername }}.{{ domain }}/{{ workers[i].ip }}
+{% endfor %}
 
 ### Auflösung für GPFS-Cluster-IP
 address=/{{ nfs_server_name }}/{{ nfs_server_ip }}
 
+{#
+### Auflösung Load-Balancer
+address=/{{ lb.hostname }}.{{ clustername }}.{{ domain }}/{{ lb.ip }} 
+#}
 
 #+----------------------------+#
 #| --- DHCP-SEKTION ---       |#
