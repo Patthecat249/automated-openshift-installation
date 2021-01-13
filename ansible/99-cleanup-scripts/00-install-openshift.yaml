@@ -19,6 +19,11 @@
       with_items: 
         - "{{ bstrp.hostname }}"
         - "{{ masters[0].hostname }}"
+        - "{{ masters[1].hostname }}"
+        - "{{ masters[2].hostname }}"
+        - "{{ workers[0].hostname }}"
+        - "{{ workers[1].hostname }}"
+        - "{{ workers[2].hostname }}"
       delegate_to: "{{ bastion.ip }}"
       notify: "restart dnsmasq"
 
