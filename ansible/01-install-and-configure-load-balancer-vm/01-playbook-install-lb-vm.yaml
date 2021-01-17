@@ -21,7 +21,7 @@
       register: folder_details
 
     - meta: end_play
-      when: folder_details.rc == 0
+      when: folder_details.exists == true
 
 
 # Erstelle Arbeitsverzeichnisse
