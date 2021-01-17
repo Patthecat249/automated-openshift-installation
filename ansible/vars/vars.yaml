@@ -211,6 +211,8 @@ registry:
 # Router
 router:
   ip: "10.0.249.1"
+  openshift: 
+    ip: "11.11.11.1"
 
 # Raspi
 pi:
