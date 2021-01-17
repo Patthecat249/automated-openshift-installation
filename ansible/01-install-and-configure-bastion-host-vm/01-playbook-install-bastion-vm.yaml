@@ -13,6 +13,22 @@
     - kickstart_file: "{{ bastion.hostname }}.cfg"
  
   tasks:
+
+  # Check if Folder exists
+    - name: "00 - Prüfe, ob Ordner {{ dir_terraform }}{{ bastion.hostname }} existiert"
+      stat:
+        path: "{{ dir_terraform }}{{ bastion.hostname }}"
+      register: folder_details
+      ignore_errors: "true"
+
+    - name: "Folder exists: {{ dir_terraform }}{{ bastion.hostname }}"
+      debug:
+        msg: "The folder {{ dir_terraform }}{{ bastion.hostname }} exists. Please check, if Host: {{ bastion.hostname }} is already installed."
+      when: folder_details.stat.isdir is defined and folder_details.stat.isdir
+
+    - meta: end_play
+      when: folder_details.stat.isdir
+
 # Erstelle Arbeitsverzeichnisse
     - name: "01 --- Create Working-Directories"
       file:
@@ -48,45 +64,45 @@
         state: present
 
 # Prüfe, ob die IP-Adresse bereits in /etc/dnsmasq.conf existiert.
-    - name: "05 --- Check, if IP-Address {{ bastion.ip }} exists in /etc/dnsmasq.conf"
-      command: "grep \"{{ bastion.ip }}\" /etc/dnsmasq.conf"
-      register: checkmyconf
-      check_mode: no
-      ignore_errors: yes
-      changed_when: no
-      delegate_to: "pi"
-      tags:
-        - checker
+    # - name: "05 --- Check, if IP-Address {{ bastion.ip }} exists in /etc/dnsmasq.conf"
+    #   command: "grep \"{{ bastion.ip }}\" /etc/dnsmasq.conf"
+    #   register: checkmyconf
+    #   check_mode: no
+    #   ignore_errors: yes
+    #   changed_when: no
+    #   delegate_to: "pi"
+    #   tags:
+    #     - checker
 
-    - name: "06 --- If /etc/dnsmasq.conf contains {{ bastion.ip }}, Stop Ansible-Playbook"
-      debug: msg="Die IP-Adresse {{ bastion.ip }} existiert bereits in /etc/dnsmasq.conf!"
-      when: checkmyconf.rc == 0
-      tags:
-        - checker
+    # - name: "06 --- If /etc/dnsmasq.conf contains {{ bastion.ip }}, Stop Ansible-Playbook"
+    #   debug: msg="Die IP-Adresse {{ bastion.ip }} existiert bereits in /etc/dnsmasq.conf!"
+    #   when: checkmyconf.rc == 0
+    #   tags:
+    #     - checker
 
 # Prüfe, ob der Hostname {{bastion.hostname}} bereits in /etc/dnsmasq.conf existiert.
-    - name: "07 --- Check, if IP-Address {{ bastion.hostname }} exists in /etc/dnsmasq.conf"
-      command: "grep \"{{ bastion.hostname }}\" /etc/dnsmasq.conf"
-      register: checkmyconf2
-      check_mode: no
-      ignore_errors: yes
-      changed_when: no
-      delegate_to: "pi"
-      tags:
-        - checker
+    # - name: "07 --- Check, if IP-Address {{ bastion.hostname }} exists in /etc/dnsmasq.conf"
+    #   command: "grep \"{{ bastion.hostname }}\" /etc/dnsmasq.conf"
+    #   register: checkmyconf2
+    #   check_mode: no
+    #   ignore_errors: yes
+    #   changed_when: no
+    #   delegate_to: "pi"
+    #   tags:
+    #     - checker
 
-    - name: "08 --- If /etc/dnsmasq.conf contains {{ bastion.hostname }}, Stop Ansible-Playbook"
-      debug: msg="Der Hostname {{ bastion.hostname }} existiert bereits in /etc/dnsmasq.conf!"
-      when: checkmyconf2.rc == 0
-      tags:
-        - checker
+    # - name: "08 --- If /etc/dnsmasq.conf contains {{ bastion.hostname }}, Stop Ansible-Playbook"
+    #   debug: msg="Der Hostname {{ bastion.hostname }} existiert bereits in /etc/dnsmasq.conf!"
+    #   when: checkmyconf2.rc == 0
+    #   tags:
+    #     - checker
 
 # Beende das Playbook, wenn die IP-Adresse bereits in /etc/dnsmasq.conf existiert
-    - meta: end_play
-      when: checkmyconf.rc == 0
+    # - meta: end_play
+    #   when: checkmyconf.rc == 0
 # Beende das Playbook, wenn die IP-Adresse bereits in /etc/dnsmasq.conf existiert
-    - meta: end_play
-      when: checkmyconf2.rc == 0
+    # - meta: end_play
+    #   when: checkmyconf2.rc == 0
 
 # Mounte das NFS-Verzeichnis /volume1/nfs-iso nach /mnt/sva
     - name: "09 --- Mounting NFS-Share {{ nfs_server }}:{{ nfs_mount_path }}"
@@ -115,7 +131,7 @@
 # In dieser Datei wird auf auf das Terraform-Modul verwiesen
     - name: "12 --- Create main.tf-file from tf-vm-module.j2"
       template:
-        src: "../../terraform/templates/tf-vm-module.j2"
+        src: "../99-jinja-templates/terraform/bastion-tf.j2"
         dest: "{{ dir_terraform }}{{ bastion.hostname }}/main.tf"
       tags:
         - create

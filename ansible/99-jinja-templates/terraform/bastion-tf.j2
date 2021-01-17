@@ -1,0 +1,60 @@
+provider "vsphere" {
+  vsphere_server = var.vsphere_server
+  user = var.vsphere_user
+  password = var.vsphere_pass
+  allow_unverified_ssl = true
+}
+
+# --- VARIABLE-DECLARATION
+
+data "vsphere_datacenter" "dc" {
+  name = "{{vsphere_datacenter}}"
+}
+
+data "vsphere_compute_cluster" "cluster" {
+  name = "{{vsphere_cluster}}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_resource_pool" "pool" {
+  name = "{{vsphere_rp}}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_datastore" "datastore_{{ bastion.hostname }}" {
+  name = "{{vsphere_datastore}}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_network" "network" {
+  name = "{{vsphere_network}}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+
+# --- Create VM {{ bastion.hostname }} --- #
+resource "vsphere_virtual_machine" "{{ bastion.hostname }}" {
+  name                        = "{{ bastion.hostname }}"
+  folder                      = "{{ vsphere_folder }}"
+  guest_id                    = "coreos64Guest"
+  resource_pool_id            = data.vsphere_resource_pool.pool.id
+  firmware                    = "bios"
+  datastore_id                = data.vsphere_datastore.datastore_{{ bastion.hostname }}.id
+  num_cpus                    = {{ bastion.cpu }}
+  memory                      = {{ bastion.ram }}
+  boot_delay                  = var.vm_boot_delay
+  wait_for_guest_ip_timeout   = 0
+  wait_for_guest_net_timeout  = 0
+  network_interface {
+    network_id = data.vsphere_network.network.id
+    adapter_type = "vmxnet3"
+    ipv4_address = "{{bastion.ip}}"
+    ipv4_netmask = "24"
+  }
+
+  disk {
+    label                     = "disk0"
+    size                      = {{ vsphere_master_disksize }}
+    thin_provisioned          = "true"
+  }
+}
