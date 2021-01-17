@@ -49,22 +49,20 @@ resource "vsphere_virtual_machine" "{{ bastion.hostname }}" {
     network_id = data.vsphere_network.network.id
     adapter_type = "vmxnet3"
   }
-
   clone {
-    # ... other configuration ...
-
+    template_uuid = "4226b890-4986-d6b5-f3ef-e3458f22cfee"
     customize {
-      # ... other configuration ...
-
+      linux_options {
+        host_name = "{{ hostname }}"
+        domain = "{{ domain }}"
+      }
       network_interface {
         ipv4_address = "{{bastion.ip}}"
         ipv4_netmask = 24
       }
-
       ipv4_gateway = "11.11.11.1"
     }
   }
-}
 
   disk {
     label                     = "disk0"
