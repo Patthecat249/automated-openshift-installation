@@ -1,6 +1,6 @@
 # OpenShift
 clustername: "openshift"
-domain: "local"
+domain: "home.local"
 dns_server_ip: "11.11.11.53"
 version_openshift: "4.5.23"
 version_core_os: "4.5.6"
@@ -119,7 +119,7 @@ key_to_nodes_name: "id_{{clustername}}"
 # OpenShift-Master-Nodes
 masters:
   - name: "master01"
-    hostname: "ocp-master-01"
+    hostname: "ocpmaster01"
     ip: "11.11.11.111"
     cpu: "8"
     ram: "16384"
@@ -127,7 +127,7 @@ masters:
     mac: "11:22:33:44:55:61"
     datastore: "openshift_storage"
   - name: "master02"
-    hostname: "ocp-master-02"
+    hostname: "ocpmaster02"
     ip: "11.11.11.112"
     cpu: "8"
     ram: "16384"
@@ -135,7 +135,7 @@ masters:
     mac: "11:22:33:44:55:62"
     datastore: "openshift_storage"
   - name: "master03"
-    hostname: "ocp-master-03"
+    hostname: "ocpmaster03"
     ip: "11.11.11.113"
     cpu: "8"
     ram: "16384"
@@ -146,7 +146,7 @@ masters:
 # OpenShift-Worker-Nodes
 workers:
   - name: "worker01"
-    hostname: "ocp-worker-01"
+    hostname: "ocpworker01"
     ip: "11.11.11.114"
     cpu: "8"
     ram: "16384"
@@ -154,7 +154,7 @@ workers:
     mac: "11:22:33:44:55:64"
     datastore: "openshift_storage"
   - name: "worker02"
-    hostname: "ocp-worker-02"
+    hostname: "ocpworker02"
     ip: "11.11.11.115"
     cpu: "8"
     ram: "16384"
@@ -162,7 +162,7 @@ workers:
     mac: "11:22:33:44:55:65"
     datastore: "openshift_storage"
   - name: "worker03"
-    hostname: "ocp-worker-03"
+    hostname: "ocpworker03"
     ip: "11.11.11.116"
     cpu: "8"
     ram: "16384"
@@ -173,7 +173,7 @@ workers:
 # Temporary Bootstrap-VM
 bstrp:
   name: "bootstrap"
-  hostname: "ocp-bootstrap"
+  hostname: "ocpbootstrap"
   ip: "11.11.11.117"
   cpu: "8"
   ram: "16384"
@@ -189,7 +189,7 @@ install_vm:
 # Bastion-Host
 bastion:
   name: "bastion"
-  hostname: "ocp-bastion"
+  hostname: "ocpbastion"
   ip: "11.11.11.53"
   cpu: "2"
   ram: "4096"
@@ -199,7 +199,7 @@ bastion:
 # Image-Registry
 registry:
   name: "registry"
-  hostname: "ocp-registry"
+  hostname: "ocpregistry"
   ip: "11.11.11.118"
   cpu: "2"
   ram: "2048"
@@ -219,7 +219,7 @@ pxe:
 # Load-Balancer
 lb:
   name: "load-balancer"
-  hostname: "ocp-lb01"
+  hostname: "ocplb01"
   ip: "11.11.11.119"
   cpu: "1"
   ram: "1024"
