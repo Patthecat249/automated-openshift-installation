@@ -23,7 +23,7 @@
 
     - name: "Folder exists: {{ dir_terraform }}{{ lb.hostname }}"
       debug:
-        msg: "The folder {{ dir_terraform }}{{ lb.hostname }} exists. Please check, if {{ lb.hostname }} is already installed."
+        msg: "The folder {{ dir_terraform }}{{ lb.hostname }} exists. Please check, if Host: {{ lb.hostname }} is already installed."
       when: folder_details.stat.isdir is defined and folder_details.stat.isdir
 
     - meta: end_play
@@ -65,45 +65,45 @@
         state: present
 
 # Prüfe, ob die IP-Adresse bereits in /etc/dnsmasq.conf existiert.
-    - name: "05 --- Check, if IP-Address {{ lb.ip }} exists in /etc/dnsmasq.conf"
-      command: "grep \"{{ lb.ip }}\" /etc/dnsmasq.conf"
-      register: checkmyconf
-      check_mode: no
-      ignore_errors: yes
-      changed_when: no
-      delegate_to: "pi"
-      tags:
-        - checker
+    # - name: "05 --- Check, if IP-Address {{ lb.ip }} exists in /etc/dnsmasq.conf"
+    #   command: "grep \"{{ lb.ip }}\" /etc/dnsmasq.conf"
+    #   register: checkmyconf
+    #   check_mode: no
+    #   ignore_errors: yes
+    #   changed_when: no
+    #   delegate_to: "pi"
+    #   tags:
+    #     - checker
 
-    - name: "06 --- If /etc/dnsmasq.conf contains {{ lb.ip }}, Stop Ansible-Playbook"
-      debug: msg="Die IP-Adresse {{ lb.ip }} existiert bereits in /etc/dnsmasq.conf!"
-      when: checkmyconf.rc == 0
-      tags:
-        - checker
+    # - name: "06 --- If /etc/dnsmasq.conf contains {{ lb.ip }}, Stop Ansible-Playbook"
+    #   debug: msg="Die IP-Adresse {{ lb.ip }} existiert bereits in /etc/dnsmasq.conf!"
+    #   when: checkmyconf.rc == 0
+    #   tags:
+    #     - checker
 
 # Prüfe, ob der Hostname {{lb.hostname}} bereits in /etc/dnsmasq.conf existiert.
-    - name: "07 --- Check, if IP-Address {{ lb.hostname }} exists in /etc/dnsmasq.conf"
-      command: "grep \"{{ lb.hostname }}\" /etc/dnsmasq.conf"
-      register: checkmyconf2
-      check_mode: no
-      ignore_errors: yes
-      changed_when: no
-      delegate_to: "pi"
-      tags:
-        - checker
+    # - name: "07 --- Check, if IP-Address {{ lb.hostname }} exists in /etc/dnsmasq.conf"
+    #   command: "grep \"{{ lb.hostname }}\" /etc/dnsmasq.conf"
+    #   register: checkmyconf2
+    #   check_mode: no
+    #   ignore_errors: yes
+    #   changed_when: no
+    #   delegate_to: "pi"
+    #   tags:
+    #     - checker
 
-    - name: "08 --- If /etc/dnsmasq.conf contains {{ lb.hostname }}, Stop Ansible-Playbook"
-      debug: msg="Der Hostname {{ lb.hostname }} existiert bereits in /etc/dnsmasq.conf!"
-      when: checkmyconf2.rc == 0
-      tags:
-        - checker
+    # - name: "08 --- If /etc/dnsmasq.conf contains {{ lb.hostname }}, Stop Ansible-Playbook"
+    #   debug: msg="Der Hostname {{ lb.hostname }} existiert bereits in /etc/dnsmasq.conf!"
+    #   when: checkmyconf2.rc == 0
+    #   tags:
+    #     - checker
 
 # Beende das Playbook, wenn die IP-Adresse bereits in /etc/dnsmasq.conf existiert
-    - meta: end_play
-      when: checkmyconf.rc == 0
+    # - meta: end_play
+    #   when: checkmyconf.rc == 0
 # Beende das Playbook, wenn die IP-Adresse bereits in /etc/dnsmasq.conf existiert
-    - meta: end_play
-      when: checkmyconf2.rc == 0
+    # - meta: end_play
+    #   when: checkmyconf2.rc == 0
 
 # Mounte das NFS-Verzeichnis /volume1/nfs-iso nach /mnt/sva
     - name: "09 --- Mounting NFS-Share {{ nfs_server }}:{{ nfs_mount_path }}"
