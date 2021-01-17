@@ -1,3 +1,4 @@
+# Run Playbook on Install-VM
 - name: "Registry-VM"
   become: "true"
   become_user: "root"
@@ -13,6 +14,16 @@
     - kickstart_file: "{{ lb.hostname }}.cfg"
  
   tasks:
+# Check if Folder exists
+    - name: "00 - Prüfe, ob Ordner {{ dir_terraform }}{{ lb.hostname }} existiert"
+      stat:
+        path: "{{ dir_terraform }}{{ lb.hostname }}"
+      register: folder_details
+
+    - meta: end_play
+      when: folder_details.rc == 0
+
+
 # Erstelle Arbeitsverzeichnisse
     - name: "01 --- Create Working-Directories"
       file:
