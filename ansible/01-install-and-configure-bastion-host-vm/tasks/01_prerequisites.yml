@@ -13,8 +13,7 @@
   become: "true"
   yum:
     name:
-      - epel-release
-      - "centos-release-ansible-29.noarch"
+      - "epel-release"
     state: "present"
 
 - name: "04 - Update yum-repos centos-release-ansible-29.noarch"
