@@ -67,11 +67,7 @@ resource "vsphere_virtual_machine" "{{ registry.hostname }}" {
         ipv4_address = "{{registry.ip}}"
         ipv4_netmask = 24
       }
-      network_interface {
-        ipv4_address = "{{registry.ipexternal}}"
-        ipv4_netmask = 24
-      }
-      dns_server_list = ["{{pi.ip}}"]
+      dns_server_list = ["{{bastion.ip}}"]
       ipv4_gateway = "{{router.ip}}"
     }
   }
