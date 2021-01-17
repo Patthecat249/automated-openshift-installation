@@ -36,7 +36,7 @@ data "vsphere_network" "network" {
 resource "vsphere_virtual_machine" "{{ bastion.hostname }}" {
   name                        = "{{ bastion.hostname }}"
   folder                      = "{{ vsphere_folder }}"
-  guest_id                    = "coreos64Guest"
+  guest_id                    = "centos7_64Guest"
   resource_pool_id            = data.vsphere_resource_pool.pool.id
   firmware                    = "bios"
   datastore_id                = data.vsphere_datastore.datastore_{{ bastion.hostname }}.id
