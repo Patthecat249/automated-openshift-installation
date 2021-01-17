@@ -148,7 +148,7 @@
     - name: "14 --- Create vars.tf-file from jinja-template vars.tf"
       template:
         src: "../99-jinja-templates/terraform/vars-tf.j2"
-        dest: "{{ dir_terraform_module_vm }}vars.tf"
+        dest: "{{ dir_terraform }}{{ bastion.hostname }}/vars.tf"
       tags:
         - create
 
