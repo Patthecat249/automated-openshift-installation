@@ -145,7 +145,7 @@
 # Erstelle und kopiere das vars.tf-file in den Terraform-Module Ordner
     - name: "14 --- Create vars.tf-file from jinja-template vars.tf"
       template:
-        src: "../99-jinja-templates/terraform/vars.tf"
+        src: "../99-jinja-templates/terraform/vars-tf.j2"
         dest: "{{ dir_terraform }}{{ registry.hostname }}/vars.tf"
       tags:
         - create
