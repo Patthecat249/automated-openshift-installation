@@ -71,7 +71,7 @@ resource "vsphere_virtual_machine" "{{ bastion.hostname }}" {
         ipv4_address = "{{bastion.ipexternal}}"
         ipv4_netmask = 24
       }
-
+      dns_server_list = ["{{pi.ip}}"]
       ipv4_gateway = "{{router.ip}}"
     }
   }
