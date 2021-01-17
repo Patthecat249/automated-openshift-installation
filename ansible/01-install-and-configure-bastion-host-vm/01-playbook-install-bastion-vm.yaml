@@ -139,7 +139,7 @@
 # Erzeuge und kopiere das output.tf-file in den VM-Instanz-Ordner
     - name: "13 --- Create output.tf-file from jinja-template output.tf"
       template:
-        src: "../../terraform/templates/output.j2"
+        src: "../99-jinja-templates/terraform/output.j2"
         dest: "{{ dir_terraform }}{{ bastion.hostname }}/output.tf"
       tags:
         - create
@@ -147,7 +147,7 @@
 # Erstelle und kopiere das vars.tf-file in den Terraform-Module Ordner
     - name: "14 --- Create vars.tf-file from jinja-template vars.tf"
       template:
-        src: "../../terraform/modules/vm-vsphere/vars.tf"
+        src: "../99-jinja-templates/terraform/vars-tf.j2"
         dest: "{{ dir_terraform_module_vm }}vars.tf"
       tags:
         - create
