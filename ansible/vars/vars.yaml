@@ -21,6 +21,7 @@ vsphere_datacenter: "dc-home"
 vsphere_rp: "rp-home"
 vsphere_datastore: "openshift_storage"
 vsphere_network: "dpg-openshift"
+vsphere_networkhome: "dpg-home-prod"
 vsphere_folder: "dc-home/vm/openshift"
 vsphere_master_cpu: "8"
 vsphere_master_ram: "16384"
@@ -191,6 +192,7 @@ bastion:
   name: "bastion"
   hostname: "ocpbastion"
   ip: "11.11.11.53"
+  ipexternal: "10.0.249.120"
   cpu: "2"
   ram: "4096"
   disk: "200"
@@ -205,6 +207,10 @@ registry:
   ram: "2048"
   disk: "200"
   mac: "00:50:56:a6:bf:52"
+
+# Router
+router:
+  ip: "10.0.249.1"
 
 # Raspi
 pi:
