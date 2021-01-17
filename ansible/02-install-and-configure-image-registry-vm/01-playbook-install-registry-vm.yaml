@@ -13,6 +13,21 @@
     - kickstart_file: "{{ registry.hostname }}.cfg"
  
   tasks:
+    # Check if Folder exists
+    - name: "00 - Prüfe, ob Ordner {{ dir_terraform }}{{ registry.hostname }} existiert"
+      stat:
+        path: "{{ dir_terraform }}{{ registry.hostname }}"
+      register: folder_details
+      ignore_errors: yes
+
+    - name: "Folder exists: {{ dir_terraform }}{{ registry.hostname }}"
+      debug:
+        msg: "The folder {{ dir_terraform }}{{ registry.hostname }} exists. Please check, if Host: {{ registry.hostname }} is already installed."
+      when: folder_details.stat.isdir is defined and folder_details.stat.isdir
+
+    - meta: end_play
+      when: folder_details.stat.exists == true
+
 # Erstelle Arbeitsverzeichnisse
     - name: "01 --- Create Working-Directories"
       file:
