@@ -9,6 +9,9 @@
     src: "{{rootpw}}"
     dest: "{{rootpw}}"
 
+- name: "03a- yum makecache fast"
+  raw: "yum makecache fast"
+
 - name: "03 - Update yum-repos EPEL-RELEASE"
   become: "true"
   yum:
