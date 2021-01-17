@@ -1,7 +1,7 @@
 ---
 # Dieses Playbook erstellt die Arbeitsverzeichnisse auf dem Bastion-Host
-- name: "01 - Create SSH-Connection to {{bastion.hostname}}"
-  command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no {{bastion.hostname}}"
+- name: "01 - Create SSH-Connection to {{bastion.ip}}"
+  command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no {{bastion.ip}}"
   delegate_to: "localhost"
 
 - name: "02 - Copy password-file  to /root/"
