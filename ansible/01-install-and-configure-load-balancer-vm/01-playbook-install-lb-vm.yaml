@@ -20,8 +20,13 @@
         path: "{{ dir_terraform }}{{ lb.hostname }}"
       register: folder_details
 
-    - meta: end_play
-      when: folder_details.exists == true
+    - name: "Folder exists: {{ dir_terraform }}{{ lb.hostname }}"
+      debug:
+        msg: "Path exists and is a directory"
+      when: folder_details.stat.isdir is defined and p.stat.isdir
+
+    # - meta: end_play
+    #   when: folder_details.exists
 
 
 # Erstelle Arbeitsverzeichnisse
