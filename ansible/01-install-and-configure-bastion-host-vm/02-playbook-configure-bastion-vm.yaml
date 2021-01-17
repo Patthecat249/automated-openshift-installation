@@ -1,5 +1,5 @@
 ---
-- hosts: "{{bastion.hostname}}"  
+- hosts: "{{bastion.ip}}"  
   become: yes
   gather_facts: "false"
   vars_files:
