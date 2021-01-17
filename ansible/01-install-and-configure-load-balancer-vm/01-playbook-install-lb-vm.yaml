@@ -22,7 +22,7 @@
 
     - name: "Folder exists: {{ dir_terraform }}{{ lb.hostname }}"
       debug:
-        msg: "Path exists and is a directory"
+        msg: "The folder {{ dir_terraform }}{{ lb.hostname }} exists. Please check, if {{ lb.hostname }} is already installed."
       when: folder_details.stat.isdir is defined and folder_details.stat.isdir
 
     - meta: end_play
