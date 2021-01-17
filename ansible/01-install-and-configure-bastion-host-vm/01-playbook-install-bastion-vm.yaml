@@ -19,7 +19,7 @@
       stat:
         path: "{{ dir_terraform }}{{ bastion.hostname }}"
       register: folder_details
-      ignore_errors: "true"
+      ignore_errors: yes
 
     - name: "Folder exists: {{ dir_terraform }}{{ bastion.hostname }}"
       debug:
@@ -27,7 +27,7 @@
       when: folder_details.stat.isdir is defined and folder_details.stat.isdir
 
     - meta: end_play
-      when: folder_details.stat.isdir
+      when: folder_details.stat.exists == true
 
 # Erstelle Arbeitsverzeichnisse
     - name: "01 --- Create Working-Directories"
