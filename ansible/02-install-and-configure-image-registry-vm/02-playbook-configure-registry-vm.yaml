@@ -14,7 +14,7 @@
     - name: "01 - ssh-copy-id as user-root to {{registry.hostname}}"
       become: "true"
       become_user: "root"
-      raw: "ssh-copy-id -o StrictHostKeyChecking=no root@{{registry.hostname}}"
+      raw: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@{{registry.hostname}}"
       delegate_to: "localhost"
 
 # Install some software
