@@ -201,7 +201,7 @@
       lineinfile:
         path: "/etc/dnsmasq.conf"
         insertafter: "^## OpenShift-Nodes-DNS" 
-        line: "address=/{{ registry.hostname }}.{{domain}}/{{ registry.ip }}"
+        line: "address=/{{ registry.hostname }}.{{ clustername }}.{{domain}}/{{ registry.ip }}"
       delegate_to: pi
       notify: "restart dnsmasq"
 
