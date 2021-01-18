@@ -195,7 +195,7 @@
       notify: "restart dnsmasq"
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DNS-Lookup-Eintrag in DNSMASQ
-    - name: "21 --- Add DNS-Lookup-entry to dnsmasq.conf"
+    - name: "21a --- Add DNS-Lookup-entry to dnsmasq.conf"
       become: "true"
       become_user: "root"
       lineinfile:
@@ -204,6 +204,23 @@
         line: "address=/{{ lb.hostname }}.{{domain}}/{{ lb.ip }}"
       delegate_to: pi
       notify: "restart dnsmasq"
+
+# Add DNS-Entries fr API, API-INT, Console
+    - name: "21b --- Add DNS-Lookup-entry to dnsmasq.conf"
+      become: "true"
+      become_user: "root"
+      lineinfile:
+        path: "/etc/dnsmasq.conf"
+        insertafter: "^## OCP-Routes" 
+        line: "{{ item }}"
+      with_items:
+        - "address=/.apps.{{clustername}}.{{domain}}/{{ lb.ip }}"
+        - "address=/api.{{clustername}}.{{domain}}/{{ lb.ip }}"
+        - "address=/api-int.{{clustername}}.{{domain}}/{{ lb.ip }}"
+        - "address=/console-openshift-console.apps.{{clustername}}.{{domain}}/{{ lb.ip }}"
+      delegate_to: pi
+      notify: "restart dnsmasq"
+
 
 # Unmounting NFS-Share
     - name: "22 --- Unmounting NFS-Share"
