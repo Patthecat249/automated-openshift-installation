@@ -113,7 +113,7 @@
         mode: "0755"
         owner: "dnsmasq"
         group: "wheel"
-      delegate_to: pxe
+      delegate_to: "{{ bastion.ip }}"
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DHCP-Eintrag in DNSMASQ
     - name: "12 --- Add DHCP-entry to dnsmasq.conf"
