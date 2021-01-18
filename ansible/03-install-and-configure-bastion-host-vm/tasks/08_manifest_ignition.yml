@@ -45,7 +45,7 @@
 - name: "46 - Configure firewalld to open port 80 for webserver"
   firewalld:
     permanent: "true"
-    state: "disabled"
+    state: "enabled"
     port: "80/tcp"
   notify:
     - restart firewall
