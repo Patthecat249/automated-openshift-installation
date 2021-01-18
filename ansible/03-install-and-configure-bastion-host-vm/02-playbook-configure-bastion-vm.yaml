@@ -13,7 +13,7 @@
     - import_tasks: "tasks/06_prepare_install_config.yml"
     - import_tasks: "tasks/07_network_boot_config.yml"
     - import_tasks: "tasks/08_manifest_ignition.yml"
-    - import_tasks: "../ocp-master-worker-nodes/01-create-terraform-main-tf.yaml"
+    #- import_tasks: "../ocp-master-worker-nodes/01-create-terraform-main-tf.yaml"
 
   handlers:
     - import_tasks: handlers.yml 
