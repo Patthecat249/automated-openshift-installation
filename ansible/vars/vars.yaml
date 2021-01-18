@@ -200,7 +200,7 @@ bastion:
 registry:
   name: "registry"
   hostname: "ocpregistry"
-  ip: "10.0.249.130"
+  ip: "10.0.249.119"
   cpu: "2"
   ram: "2048"
   disk: "200"
