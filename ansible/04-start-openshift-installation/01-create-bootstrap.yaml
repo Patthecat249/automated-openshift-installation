@@ -35,7 +35,7 @@
       check_mode: no
       ignore_errors: yes
       changed_when: no
-      delegate_to: "{{ pi.ip }}"
+      delegate_to: pi
       tags:
         - checker
 
