@@ -221,6 +221,9 @@
     - name: "22 - Restart the registry-pod"
       raw: "podman stop mirror-registry && podman start mirror-registry" 
 
+    - name: "23 - Summary"
+      debug: msg="Login with = podman login {{registry.hostname}}.{{clustername}}.{{domain}}:{{registry_port}} -u {{registry_user}}"
+
 
 # Zeitausgabe
     - name: "--- Ende Playbook: {{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
