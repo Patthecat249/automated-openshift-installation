@@ -173,7 +173,7 @@ workers:
 # Temporary Bootstrap-VM
 bstrp:
   name: "bootstrap"
-  hostname: "ocp-bootstrap"
+  hostname: "ocpbootstrap"
   ip: "10.0.249.127"
   cpu: "8"
   ram: "16384"
