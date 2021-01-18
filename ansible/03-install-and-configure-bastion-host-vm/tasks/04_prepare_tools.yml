@@ -3,7 +3,7 @@
 # 22.09.2020 - Anpassung: Die TAR-File werden vom Software-Verzeichnis kopiert. Nicht mehr die Tools oc, kubectl und openshift-install einzeln
 - name: "### --- 08 - Copy OC-Client-TAR-File and Openshift-install-TAR-File to bastion"
   copy:
-    src: "{{ dir_downloaded_images }}{{ item }}"
+    src: "{{ dir_tools }}downloads/{{ item }}"
     dest: "{{ dir_tools }}{{ item }}"
     owner: root
     group: root
@@ -17,7 +17,7 @@
 # 22.09.2020 - Anpassung: der OC-Client und der OpenShift-Installer werden auf dem Bastion-Host entpackt
 - name: "### --- 09 - Entpacke OC-Client und Openshift-install-Client"
   unarchive:
-    src: "{{ dir_downloaded_images }}{{ item }}"
+    src: "{{ dir_tools }}downloads/{{ item }}"
     dest: "{{ dir_tools }}"
     remote_src: yes
   with_items:
