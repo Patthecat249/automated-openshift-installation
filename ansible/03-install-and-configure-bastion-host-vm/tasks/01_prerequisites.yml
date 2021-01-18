@@ -42,6 +42,7 @@
       - policycoreutils-python
       - syslinux
       - httpd
+      - unzip
     state: "present"
   tags:
     - installed
