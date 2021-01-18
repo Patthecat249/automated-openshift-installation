@@ -113,7 +113,7 @@
         mode: "0755"
         owner: "dnsmasq"
         group: "wheel"
-      delegate_to: "{{ pi.ip }}"
+      delegate_to: pi
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DHCP-Eintrag in DNSMASQ
     - name: "12 --- Add DHCP-entry to dnsmasq.conf"
@@ -123,7 +123,7 @@
         path: /etc/dnsmasq.conf
         insertafter: "^## OpenShift-Nodes-DHCP"         
         line: "dhcp-host={{ mac.stdout | trim }},{{ bstrp.hostname }},{{ bstrp.ip }},set:openshift_node"
-      delegate_to: "{{ pi.ip }}"
+      delegate_to: pi
       notify: "restart dnsmasq"
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DNS-Lookup-Eintrag in DNSMASQ
@@ -134,7 +134,7 @@
         path: "/etc/dnsmasq.conf"
         insertafter: "^## OpenShift-Nodes-DNS" 
         line: "address=/{{ bstrp.hostname }}.{{clustername}}.{{domain}}/{{ bstrp.ip }}"
-      delegate_to: "{{ pi.ip }}"
+      delegate_to: pi
       notify: "restart dnsmasq"
 
 # Starte den DNS-Dienst erneut, wenn sich etwas an der DNS-Konfiguration geändert hat.
@@ -145,5 +145,5 @@
       service:
         name: dnsmasq
         state: restarted
-      delegate_to: "{{ pi.ip }}"
+      delegate_to: pi
 
