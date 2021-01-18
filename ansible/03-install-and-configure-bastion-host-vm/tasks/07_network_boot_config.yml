@@ -30,39 +30,39 @@
 
 ### --- Diese Aufgaben sollte bei Erstellen der Core-OS-VM-Erstellung mit Terraform ausgeführt werden
 # damit die MAC-Adressen verwendet werden können. 
-- name: "### --- 34 - Render pxelinux.cfg from templates for masters"
-  template:
-    src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
-    dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
-    owner: dnsmasq
-    group: wheel
-    mode: '0755'
-  vars: 
-    ignition_file: master.ign
-  with_items: "{{ masters }}"
+# - name: "### --- 34 - Render pxelinux.cfg from templates for masters"
+#   template:
+#     src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
+#     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
+#     owner: dnsmasq
+#     group: wheel
+#     mode: '0755'
+#   vars: 
+#     ignition_file: master.ign
+#   with_items: "{{ masters }}"
 
-- name: "### --- 35 - Render pxelinux.cfg from templates for workers"
-  template:
-    src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
-    dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
-    owner: dnsmasq
-    group: wheel
-    mode: '0755'
-  vars: 
-    ignition_file: worker.ign
-  with_items: "{{ workers }}"
+# - name: "### --- 35 - Render pxelinux.cfg from templates for workers"
+#   template:
+#     src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
+#     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
+#     owner: dnsmasq
+#     group: wheel
+#     mode: '0755'
+#   vars: 
+#     ignition_file: worker.ign
+#   with_items: "{{ workers }}"
 
-- name: "### --- 36 - Render pxelinux.cfg from templates for bootstrap"
-  template:
-    src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
-    dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
-    owner: dnsmasq
-    group: wheel
-    mode: '0755'
-  vars: 
-    ignition_file: bootstrap.ign
-  with_items: 
-    - "{{ bstrp }}"
+# - name: "### --- 36 - Render pxelinux.cfg from templates for bootstrap"
+#   template:
+#     src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
+#     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
+#     owner: dnsmasq
+#     group: wheel
+#     mode: '0755'
+#   vars: 
+#     ignition_file: bootstrap.ign
+#   with_items: 
+#     - "{{ bstrp }}"
 
 - name: "### --- 37 - Start and enable HTTP server"
   service:
