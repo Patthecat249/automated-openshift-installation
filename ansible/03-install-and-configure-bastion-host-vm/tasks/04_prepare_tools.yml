@@ -17,8 +17,8 @@
 # 22.09.2020 - Anpassung: der OC-Client und der OpenShift-Installer werden auf dem Bastion-Host entpackt
 - name: "### --- 09 - Entpacke OC-Client und Openshift-install-Client"
   unarchive:
-    src: "{{ dir_tools }}{{ item }}"
-    dest: "{{ dir_tools }}"
+    src: "{{ dir_downloads }}{{ item }}"
+    dest: "{{ dir_downloads }}"
     remote_src: yes
   with_items:
     - '{{ file_openshift_installer }}'
@@ -27,7 +27,7 @@
 
 - name: "### --- 10 - Copy kubectl to /usr/local/bin/"
   copy:
-    src: "{{ dir_tools }}kubectl"
+    src: "{{ dir_downloads }}kubectl"
     dest: "/usr/local/bin/kubectl"
     mode: '0755'
     remote_src: yes
@@ -35,7 +35,7 @@
 
 - name: "### --- 11 - Copy oc to /usr/local/bin/"
   copy:
-    src: "{{ dir_tools }}oc"
+    src: "{{ dir_downloads }}oc"
     dest: "/usr/local/bin/oc"
     mode: '0755'
     remote_src: yes
@@ -43,7 +43,7 @@
 
 - name: "### --- 12 - Copy openshift-install to /usr/local/bin/"
   copy:
-    src: "{{ dir_tools }}openshift-install"
+    src: "{{ dir_downloads }}openshift-install"
     dest: "/usr/local/bin/openshift-install"
     mode: '0755'
     remote_src: yes
