@@ -9,7 +9,7 @@
     - name: "00 - ssh-copy-id as user-root to {{lb.hostname}}"
       become: "true"
       become_user: "root"
-      raw: "ssh-copy-id -o StrictHostKeyChecking=no root@{{lb.hostname}}"
+      raw: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@{{lb.hostname}}"
       delegate_to: "localhost"
 
     - name: "01 - Install haproxy-software and policycoreutils-python"
