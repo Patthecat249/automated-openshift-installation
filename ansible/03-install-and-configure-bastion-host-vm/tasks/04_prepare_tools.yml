@@ -17,7 +17,7 @@
 # 22.09.2020 - Anpassung: der OC-Client und der OpenShift-Installer werden auf dem Bastion-Host entpackt
 - name: "### --- 09 - Entpacke OC-Client und Openshift-install-Client"
   unarchive:
-    src: "{{ dir_tools }}{{ item }}"
+    src: "{{ dir_downloaded_images }}{{ item }}"
     dest: "{{ dir_tools }}"
     remote_src: yes
   with_items:
