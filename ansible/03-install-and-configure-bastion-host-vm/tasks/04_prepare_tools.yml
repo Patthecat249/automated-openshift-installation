@@ -3,7 +3,7 @@
 # 22.09.2020 - Anpassung: Die TAR-File werden vom Software-Verzeichnis kopiert. Nicht mehr die Tools oc, kubectl und openshift-install einzeln
 - name: "### --- 08 - Copy OC-Client-TAR-File and Openshift-install-TAR-File to bastion"
   copy:
-    src: "{{ dir_tools }}{{ item }}"
+    src: "{{ dir_tools }}downloads/{{ item }}"
     dest: "{{ dir_tools }}"
     owner: root
     group: root
