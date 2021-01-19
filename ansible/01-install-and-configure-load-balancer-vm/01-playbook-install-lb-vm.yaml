@@ -38,55 +38,55 @@
         - create
 
 # Install some Software
-    - name: "03 --- Installiere nfs-utils.x86_64"
-      yum:
-        name: nfs-utils.x86_64
-        state: present
-    - name: "04 --- Installiere libnfs-utils.x86_64"
-      yum:
-        name: libnfs-utils.x86_64
-        state: present
+    # - name: "03 --- Installiere nfs-utils.x86_64"
+    #   yum:
+    #     name: nfs-utils.x86_64
+    #     state: present
+    # - name: "04 --- Installiere libnfs-utils.x86_64"
+    #   yum:
+    #     name: libnfs-utils.x86_64
+    #     state: present
 
 # Mounte das NFS-Verzeichnis /volume1/nfs-iso nach /mnt/sva
-    - name: "04 --- Mounting NFS-Share {{ nfs_server }}:{{ nfs_mount_path }}"
-      mount:
-        fstype: nfs
-        opts: defaults
-        state: mounted
-        src: "{{ nfs_server }}:{{ nfs_mount_path }}"
-        path: "{{ dir_nfs_root }}"
-        backup: yes
+    # - name: "04 --- Mounting NFS-Share {{ nfs_server }}:{{ nfs_mount_path }}"
+    #   mount:
+    #     fstype: nfs
+    #     opts: defaults
+    #     state: mounted
+    #     src: "{{ nfs_server }}:{{ nfs_mount_path }}"
+    #     path: "{{ dir_nfs_root }}"
+    #     backup: yes
 
 # Wait a second
-    - name: "05 --- Wait a Second..."
-      wait_for:
-        timeout: 1
+    # - name: "05 --- Wait a Second..."
+    #   wait_for:
+    #     timeout: 1
 
 # Erstelle aus einem Template eine Kickstart-Datei und speichere sie auf dem NFS-Share
-    - name: "06 --- Create kickstart.cfg from kickstart.j2"
-      template:
-        src: "../../terraform/templates/kickstart.j2"
-        dest: "{{ dir_nfs_root }}{{ dir_mounted_kickstart_configs }}{{ lb.hostname }}.cfg" # Hier muss noch der Pfad verifiziert werden
+    # - name: "06 --- Create kickstart.cfg from kickstart.j2"
+    #   template:
+    #     src: "../../terraform/templates/kickstart.j2"
+    #     dest: "{{ dir_nfs_root }}{{ dir_mounted_kickstart_configs }}{{ lb.hostname }}.cfg" # Hier muss noch der Pfad verifiziert werden
      
 # Erstelle die Terraform-Files "main.tf/output.tf"-files
 # main.tf
-    - name: "07 --- Create main.tf-file"
+    - name: "03 --- Create main.tf-file"
       template:
         src: "../99-jinja-templates/terraform/new-vm-from-clone-with-network-settings-tf.j2"
         dest: "{{ dir_terraform }}{{ lb.hostname }}/main.tf"
     
 # Erzeuge und kopiere das output.tf-file in den VM-Instanz-Ordner
-    - name: "08 --- Create output.tf-file"
+    - name: "04 --- Create output.tf-file"
       template:
         src: "../99-jinja-templates/terraform/new-vm-from-clone-with-network-settings-output-tf.j2"
         dest: "{{ dir_terraform }}{{ lb.hostname }}/output.tf"
     
 # Erzeuge die virtuelle Maschine
-    - name: "09 --- Create virtual machine with terraform"
+    - name: "05 --- Create virtual machine with terraform"
       raw: "cd {{ dir_terraform }}{{ lb.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM
-    - name: "10 --- Retrieve mac-address from created virtual machine"
+    - name: "06 --- Retrieve mac-address from created virtual machine"
       raw: "cd {{ dir_terraform }}{{ lb.hostname }} && terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
 
@@ -142,14 +142,14 @@
 
 
 # Unmounting NFS-Share
-    - name: "22 --- Unmounting NFS-Share"
-      mount:
-        fstype: nfs
-        opts: defaults
-        state: absent
-        src: "{{ nfs_server }}{{ nfs_mount_path }}"
-        path: "{{ dir_nfs_root }}"
-        backup: yes
+    # - name: "22 --- Unmounting NFS-Share"
+    #   mount:
+    #     fstype: nfs
+    #     opts: defaults
+    #     state: absent
+    #     src: "{{ nfs_server }}{{ nfs_mount_path }}"
+    #     path: "{{ dir_nfs_root }}"
+    #     backup: yes
 
 # Starte den DNS-Dienst erneut, wenn sich etwas an der DNS-Konfiguration geändert hat.
   # handlers:
