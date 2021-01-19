@@ -125,7 +125,7 @@ key_to_nodes_name: "id_{{clustername}}"
 masters:
   - name: "master01"
     hostname: "ocpmaster01"
-    ip: "10.0.249.121"
+    ip: "11.11.11.121"
     cpu: "8"
     ram: "16384"
     disk: "200"
@@ -133,7 +133,7 @@ masters:
     datastore: "openshift_storage"
   - name: "master02"
     hostname: "ocpmaster02"
-    ip: "10.0.249.122"
+    ip: "11.11.11.122"
     cpu: "8"
     ram: "16384"
     disk: "200"
@@ -141,7 +141,7 @@ masters:
     datastore: "openshift_storage"
   - name: "master03"
     hostname: "ocpmaster03"
-    ip: "10.0.249.123"
+    ip: "11.11.11.123"
     cpu: "8"
     ram: "16384"
     disk: "200"
@@ -152,7 +152,7 @@ masters:
 workers:
   - name: "worker01"
     hostname: "ocpworker01"
-    ip: "10.0.249.124"
+    ip: "11.11.11.124"
     cpu: "8"
     ram: "16384"
     disk: "200"
@@ -160,7 +160,7 @@ workers:
     datastore: "openshift_storage"
   - name: "worker02"
     hostname: "ocpworker02"
-    ip: "10.0.249.125"
+    ip: "11.11.11.125"
     cpu: "8"
     ram: "16384"
     disk: "200"
@@ -168,7 +168,7 @@ workers:
     datastore: "openshift_storage"
   - name: "worker03"
     hostname: "ocpworker03"
-    ip: "10.0.249.126"
+    ip: "11.11.11.126"
     cpu: "8"
     ram: "16384"
     disk: "200"
@@ -179,7 +179,7 @@ workers:
 bstrp:
   name: "bootstrap"
   hostname: "ocpbootstrap"
-  ip: "10.0.249.127"
+  ip: "11.11.11.127"
   cpu: "8"
   ram: "16384"
   disk: "200"
@@ -195,7 +195,7 @@ install_vm:
 bastion:
   name: "bastion"
   hostname: "ocpbastion"
-  ip: "10.0.249.120"
+  ip: "11.11.11.120"
   cpu: "2"
   ram: "4096"
   disk: "200"
@@ -205,7 +205,7 @@ bastion:
 registry:
   name: "registry"
   hostname: "ocpregistry"
-  ip: "10.0.249.119"
+  ip: "11.11.11.119"
   cpu: "2"
   ram: "2048"
   disk: "200"
@@ -225,22 +225,22 @@ pxe:
 lb:
   name: "load-balancer"
   hostname: "ocplb01"
-  ip: "10.0.249.129"
+  ip: "11.11.11.129"
   cpu: "1"
   ram: "1024"
   disk: "200"
   mac: "00:50:56:a6:cb:f9"
   app:
-    ip: "10.0.249.129"
+    ip: "11.11.11.129"
   api:
-    ip: "10.0.249.129"
+    ip: "11.11.11.129"
   api_int:
-    ip: "10.0.249.129"
+    ip: "11.11.11.129"
 
 # DNSMASQ-Settings
-dhcp_range: "10.0.249.40,10.0.249.250,255.255.255.0,12h"
+dhcp_range: "11.11.11.40,11.11.11.250,255.255.255.0,12h"
 dhcp_subnetmask: "255.255.255.0"
-dhcp_gateway: "10.0.249.1"
+dhcp_gateway: "11.11.11.1"
 ntpserver: "10.0.249.1"
 interface: "ens192"
 listen_address: "{{ bastion.ip }}"
@@ -289,7 +289,7 @@ image_registry:
 
 # NFS-Settings
 nfs_server: "nas.home.local"
-nfs_server_ip: "11.11.11.150"
+nfs_server_ip: "10.0.249.150"
 nfs_server_name: "nas.home.local"
 nfs_path: "/volume1/nfs-iso/downloaded-iso/linux/"
 nfs_mount_path: "/volume1/nfs-iso/"
