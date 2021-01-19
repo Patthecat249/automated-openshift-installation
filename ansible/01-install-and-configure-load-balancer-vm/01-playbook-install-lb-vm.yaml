@@ -1,4 +1,4 @@
-- name: "Install a Registry-VM"
+- name: "Install a Load-Balancer-VM"
   become: "true"
   become_user: "root"
   hosts: 127.0.0.1
