@@ -78,7 +78,7 @@
 # Erzeuge und kopiere das output.tf-file in den VM-Instanz-Ordner
     - name: "08 --- Create output.tf-file"
       template:
-        src: "../../terraform/templates/output.j2"
+        src: "../99-jinja-templates/terraform/new-vm-from-clone-with-network-settings-output-tf.j2"
         dest: "{{ dir_terraform }}{{ lb.hostname }}/output.tf"
     
 # Erzeuge die virtuelle Maschine
