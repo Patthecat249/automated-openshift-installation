@@ -1,6 +1,6 @@
 ---
 - name: "Configuration of a load-balancer"
-  hosts: "{{ registry.hostname }}"
+  hosts: "{{ registry.ip }}"
   become: "true"
   gather_facts: "false"
   vars_files:
@@ -11,10 +11,10 @@
       debug: msg="{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
 
 # Do ssh-copy-id to localhost, so that ansible can communicate with localhost
-    - name: "01 - ssh-copy-id as user-root to {{registry.hostname}}"
+    - name: "01 - ssh-copy-id as user-root to {{registry.ip}}"
       become: "true"
       become_user: "root"
-      raw: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@{{registry.hostname}}"
+      raw: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@{{registry.ip}}"
       delegate_to: "localhost"
 
 # Install some software
@@ -37,8 +37,8 @@
         - "{{ dir_downloads }}"
       delegate_to: "localhost"
 
-# Create Working-Directories on {{ registry.hostname }}
-    - name: "04 --- Create Working-Directories on {{ registry.hostname }}"
+# Create Working-Directories on {{ registry.ip }}
+    - name: "04 --- Create Working-Directories on {{ registry.ip }}"
       file:
         path: "{{ item }}"
         state: "directory"
