@@ -15,7 +15,7 @@ keyboard --vckeymap=de --xlayouts='de'
 lang en_US.UTF-8
 
 # Network information
-network  --bootproto=dhcp --device=ens192 --nameserver={{ dns_server_ip }} --onboot=off --ipv6=auto --no-activate
+network  --bootproto=dhcp --device=ens192 --nameserver={{ bastion.ip }} --onboot=off --ipv6=auto --no-activate
 network  --hostname={{ hostname }}.{{ domain }}
 
 # Root password
