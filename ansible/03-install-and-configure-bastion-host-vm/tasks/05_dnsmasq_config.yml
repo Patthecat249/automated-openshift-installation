@@ -7,7 +7,7 @@
 - name: "22 - Backup dnsmasq.conf if not already done"
   copy:
     src: "/etc/dnsmasq.conf"
-    dest: "/etc/dnsmasq.conf.backup"
+    dest: "/etc/dnsmasq.conf.backup{{ ansible_date_time.date }}"
     mode: "0644"
     remote_src: yes
   when: not dnsmasq_conf_backup_details.stat.exists
