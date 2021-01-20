@@ -39,7 +39,7 @@ vsphere_guest_id: "centos7_64Guest"
 net_openshift: "11.11.11.0"
 netmask_openshift_cidr: "/24"
 boot_delay: "30000"
-vm_type: "worker"
+
 
 # Clients / Software
 link_to_oc: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{version_openshift}}/openshift-client-linux-{{version_openshift}}.tar.gz"
