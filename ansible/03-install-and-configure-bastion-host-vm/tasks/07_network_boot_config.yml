@@ -28,7 +28,7 @@
 
 # Hinweis !!!
 
-Diese Aufgaben sollte bei Erstellen der Core-OS-VM-Erstellung mit Terraform ausgeführt werden
+#Diese Aufgaben sollte bei Erstellen der Core-OS-VM-Erstellung mit Terraform ausgeführt werden
 # damit die MAC-Adressen verwendet werden können. 
 # - name: "34 - Render pxelinux.cfg from templates for masters"
 #   template:
