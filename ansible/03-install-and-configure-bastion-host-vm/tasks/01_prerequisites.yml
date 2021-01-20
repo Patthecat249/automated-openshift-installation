@@ -136,3 +136,14 @@
     - "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
 
 
+- name: "12 - Open some firewall-ports"
+  firewalld:
+    service: "{{item}}"
+    permanent: yes
+    state: "enabled"
+  with_items:
+    - "tftp"
+    - "http"
+    - "https"
+    - "dns"
+    - "dhcp"
