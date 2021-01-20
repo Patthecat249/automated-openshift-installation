@@ -9,9 +9,7 @@ The Steps **Install an Install-VM** and **Configure an Install-VM** must be comp
 ## Install a Load-Balancer
 
 ```bash
-# Switch to User pi or ssh pi@install-vm
-# install-vm
-su - pi
+# ssh root@install-vm
 mypath=$(pwd)
 
 # Execute Playbook to install a load-balancer
