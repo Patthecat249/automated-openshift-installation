@@ -18,4 +18,12 @@ cd $mypath/git/automated-openshift-installation/ansible/04-start-openshift-insta
 cd $mypath/git/automated-openshift-installation/ansible/04-start-openshift-installation/ && ansible-playbook 07-create-worker03.yaml
 ```
 
+## Wait for bootstrap-complete
+```bash
+openshift-install --dir=/opt/sva/openshift/install-config/ wait-for bootstrap-complete --log-level=debug
+```
 
+## Wait for install-complete
+```bash
+openshift-install --dir=/opt/sva/openshift/install-config/ wait-for install-complete --log-level=debug
+```
