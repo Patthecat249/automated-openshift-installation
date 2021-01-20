@@ -36,6 +36,11 @@ dhcp-option=6,{{ bastion.ip }}
 dhcp-option=42,{{ ntpserver }}
 {% endif %}
 
+## OpenShift-Nodes-DHCP
+
+
+## OpenShift-Nodes-DNS
+
 ## DHCP-Host
 # Bootstrap-MAC-zu-IP-Zuweisung
 dhcp-host={{ bstrp.mac }},{{ bstrp.hostname }}.{{ clustername }}.{{ domain }},{{ bstrp.ip }},set:openshift_node
