@@ -38,7 +38,6 @@ vsphere_guest_id: "centos7_64Guest"
 # Network
 net_openshift: "11.11.11.0"
 netmask_openshift_cidr: "/24"
-dir_vmware: "/dc-home/vm/openshift"
 disksize: "120"
 boot_delay: "30000"
 vm_type: "worker"
