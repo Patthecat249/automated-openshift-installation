@@ -58,14 +58,14 @@
       tags:
         - download
 
-    - name: "03d - Download oc-client"
+    - name: "03d - Download oc-client {{link_to_oc}}"
       get_url:
         url: "{{ link_to_oc }}"
         dest: "{{ dir_downloaded_images }}{{file_oc}}"
       tags:
         - downloada
 
-    - name: "03e - Download openshift-installer"
+    - name: "03e - Download openshift-installer {{link_to_openshift_installer}}"
       get_url:
         url: "{{ link_to_openshift_installer }}"
         dest: "{{ dir_downloaded_images }}{{file_openshift_installer}}"
