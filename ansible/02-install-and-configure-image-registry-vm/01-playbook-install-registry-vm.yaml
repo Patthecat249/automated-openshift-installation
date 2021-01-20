@@ -44,3 +44,35 @@
     - name: "06 --- Retrieve mac-address from created virtual machine"
       raw: "cd {{ dir_terraform }}{{ registry.hostname }} && terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
+
+# Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DHCP-Eintrag in DNSMASQ
+    - name: "07 --- Add DHCP-entry to dnsmasq.conf"
+      become: "true"
+      become_user: "root"
+      lineinfile:
+        path: /etc/dnsmasq.conf
+        insertafter: "^## OpenShift-Nodes-DHCP"         
+        line: "dhcp-host={{ mac.stdout | trim }},{{ registry.hostname }},{{ registry.ip }},set:openshift_node"
+      delegate_to: "{{bastion.ip}}"
+      notify: "restart dnsmasq"
+
+# Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DNS-Lookup-Eintrag in DNSMASQ
+    - name: "08 --- Add DNS-Lookup-entry to dnsmasq.conf"
+      become: "true"
+      become_user: "root"
+      lineinfile:
+        path: "/etc/dnsmasq.conf"
+        insertafter: "^## OpenShift-Nodes-DNS" 
+        line: "address=/{{ registry.hostname }}.{{clustername}}.{{domain}}/{{ registry.ip }}"
+      delegate_to: "{{bastion.ip}}"
+      notify: "restart dnsmasq"
+
+# Starte den DNS-Dienst erneut, wenn sich etwas an der DNS-Konfiguration geändert hat.
+  handlers:
+    - name: "restart dnsmasq"
+      become: "true"
+      become_user: "root"
+      service:
+        name: dnsmasq
+        state: restarted
+      delegate_to: "{{bastion.ip}}"
