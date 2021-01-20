@@ -1,6 +1,6 @@
 ---
 - name: "Mirror the registry"
-  hosts: "{{ registry.hostname }}"
+  hosts: "{{ registry.ip }}"
   become: "true"
   gather_facts: "false"
   vars_files:
