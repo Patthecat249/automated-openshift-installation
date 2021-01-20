@@ -121,7 +121,7 @@
       become_user: "root"
       lineinfile:
         path: /etc/dnsmasq.conf
-        insertafter: "^# DHCP-Host-Entries"         
+        insertafter: "^## OpenShift-Nodes-DHCP"         
         line: "dhcp-host={{ mac.stdout | trim }},{{ masters[2].hostname }},{{ masters[2].ip }},set:openshift_node"
       delegate_to: "{{ bastion.ip }}"
       notify: "restart dnsmasq"
@@ -132,7 +132,7 @@
       become_user: "root"
       lineinfile:
         path: "/etc/dnsmasq.conf"
-        insertafter: "^# DNS-Name-Resolution" 
+        insertafter: "^## OpenShift-Nodes-DNS" 
         line: "address=/{{ masters[2].hostname }}.{{clustername}}.{{domain}}/{{ masters[2].ip }}"
       delegate_to: "{{ bastion.ip }}"
       notify: "restart dnsmasq"
