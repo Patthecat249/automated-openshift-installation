@@ -209,13 +209,20 @@
       delegate_to: "localhost"
 
 # Configure the firewall
-    - name: "21 - Configure firewalld to open port 5000 for mirror-registry"
-      firewalld:
-        permanent: "true"
-        state: "enabled"
-        port: "5000/tcp"
-      notify:
-        - restart firewalld
+    # - name: "21 - Configure firewalld to open port 5000 for mirror-registry"
+    #   firewalld:
+    #     permanent: "true"
+    #     state: "enabled"
+    #     port: "5000/tcp"
+    #   notify:
+    #     - restart firewalld
+
+# Disable Firewalld
+    - name: "Disable Firewalld"
+      systemd:
+        name: "firewalld"
+        state: "stopped"
+        enabled: "no"
 
 # Restart the registry-pod
     - name: "22 - Restart the registry-pod"
