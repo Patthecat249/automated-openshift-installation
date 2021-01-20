@@ -20,6 +20,13 @@
           - "chrony.x86_64"
         state: "present"
 
+# Disable Firewalld
+    - name: "Disable Firewalld"
+      systemd:
+        name: "firewalld"
+        state: "stopped"
+        enabled: "no"
+
     - name: "02 - Render haproxy-template for load-balancer-vm"
       template:
         src: "../99-jinja-templates/haproxy/haproxy.cfg.j2"

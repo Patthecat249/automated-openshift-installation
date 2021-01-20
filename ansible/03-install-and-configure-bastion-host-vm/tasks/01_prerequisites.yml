@@ -23,6 +23,13 @@
       - "centos-release-ansible-29.noarch"
     state: "present"
 
+# Disable Firewalld
+    - name: "Disable Firewalld"
+      systemd:
+        name: "firewalld"
+        state: "stopped"
+        enabled: "no"
+
 
 - name: "05 - Install necassary software programs"
   become: "true"
