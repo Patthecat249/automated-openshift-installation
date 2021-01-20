@@ -2,81 +2,24 @@
 #| --- DNS-SEKTION ---        |#
 #+----------------------------+#
 # Grundlegende globale DNS-Einstellungen
-#domain-needed
+domain-needed
 #bogus-priv
-#local=/cm1.cloud.intern.fags.dir/
 interface={{ interface }}
 listen-address={{ listen_address }}
 bind-interfaces
 #expand-hosts
-#domain=cm1.cloud.intern.fags.dir
+domain={{clustername}}.{{domain}},{{net_openshift}}{{netmask_openshift_cidr}},local
 #log-queries
-#log-facility=/var/log/dnsmasq.log
-#log-dhcp
+log-facility=/var/log/dnsmasq.log
+log-dhcp
 no-resolv
 strict-order
 
-## Spezielle MAC-Address-zu-IP-Zuweisung von Master- und Worker-Nodes. Beim Booten sollen den Master/Worker-Nodes anhand ihrer MAC-Adressen bestimmte Hostnamen und IP-Adressen zugewiesen werden.
-{% for h in masters %}
-dhcp-host={{ h.mac }},{{ h.hostname }}.{{ clustername }}.{{ domain }},{{ h.ip }},set:openshift_node
-{% endfor %}
-{% for h in workers %}
-dhcp-host={{ h.mac }},{{ h.hostname }}.{{ clustername }}.{{ domain }},{{ h.ip }},set:openshift_node
-{% endfor %}
-
-
-# Bootstrap-MAC-zu-IP-Zuweisung
-dhcp-host={{ bstrp.mac }},{{ bstrp.hostname }}.{{ clustername }}.{{ domain }},{{ bstrp.ip }},set:openshift_node
-
-## Spezifische DNS-Einstellungen
-### DNS-Namensaufloesung
-address=/.apps.{{ clustername }}.{{ domain }}/{{ lb.app.ip }}
-address=/api-int.{{ clustername }}.{{ domain }}/{{ lb.api_int.ip }}
-address=/api.{{ clustername }}.{{ domain }}/{{ lb.api.ip }}
-
-# VMware, vCenter, vSphere
-address=/{{ vsphere_server }}/10.0.249.205
-
-### SRV-Records für ETCD im OpenShift-Cluster
-{% for i in range( 0,masters | length ) %}
-srv-host=_etcd-server-ssl._tcp.{{ clustername }}.{{ domain }},etcd-{{ i }}.{{ clustername }}.{{ domain }}.,2380
-{% endfor %}
-
-### Auflösung für ETCD
-{% for i in range( 0,masters | length ) %}
-address=/etcd-{{ i }}.{{ clustername }}.{{ domain }}/{{ masters[i].ip }}
-{% endfor %}
-
-### Auflösung Bootstrap-Node
-address=/{{ bstrp.hostname }}.{{ clustername }}.{{ domain }}/{{ bstrp.ip }}
-
-### Auflösung für Bastion-Host
-address=/{{ bastion.hostname }}.{{ clustername }}.{{ domain }}/{{ bastion.ip }}
-
-### Auflösung für Master/Worker-Nodes
-#### Master
-{% for i in range( 0,masters|length ) %}
-address=/{{ masters[i].hostname }}.{{ clustername }}.{{ domain }}/{{ masters[i].ip }}
-{% endfor %}
-
-#### Worker
-{% for i in range( 0,workers|length ) %}
-address=/{{ workers[i].hostname }}.{{ clustername }}.{{ domain }}/{{ workers[i].ip }}
-{% endfor %}
-
-### Auflösung für GPFS-Cluster-IP
-address=/{{ nfs_server_name }}/{{ nfs_server_ip }}
-
-{#
-### Auflösung Load-Balancer
-address=/{{ lb.hostname }}.{{ clustername }}.{{ domain }}/{{ lb.ip }} 
-#}
-
-#+----------------------------+#
-#| --- DHCP-SEKTION ---       |#
-#+----------------------------+#
+#+--------------+#
+#| --- DHCP --- |#
+#+--------------+#
 {% if dhcp_range is defined %}
-# DHCP-Bereich festlegen
+# DHCP
 ## Gilt nur für alle Master und Worker Nodes
 dhcp-range={{ dhcp_range }}
 {% endif %}
@@ -93,10 +36,58 @@ dhcp-option=6,{{ bastion.ip }}
 dhcp-option=42,{{ ntpserver }}
 {% endif %}
 
-#+----------------------------+#
-#| --- PXE/TFTP-SEKTION ---   |#
-#+----------------------------+#
-# PXE-Konfiguration > Alle Master und Worker-Nodes booten per PXE und laden die Datei pxelinux.0     aus dem TFTP-Rootverzeichnis
+## DHCP-Host
+# Bootstrap-MAC-zu-IP-Zuweisung
+dhcp-host={{ bstrp.mac }},{{ bstrp.hostname }}.{{ clustername }}.{{ domain }},{{ bstrp.ip }},set:openshift_node
+
+## DHCP-Boot-Options
 dhcp-boot=tag:openshift_node,{{ boot_script }},{{ bastion.hostname }}.{{ clustername }}.{{ domain }}
+
+
+#+-------------+#
+#| --- DNS --- |#
+#+-------------+#
+# DNS
+## DNS-OpenShift-Cluster
+address=/.apps.{{ clustername }}.{{ domain }}/{{ lb.app.ip }}
+address=/api-int.{{ clustername }}.{{ domain }}/{{ lb.api_int.ip }}
+address=/api.{{ clustername }}.{{ domain }}/{{ lb.api.ip }}
+
+## SRV-Records für ETCD im OpenShift-Cluster
+{% for i in range( 0,masters | length ) %}
+srv-host=_etcd-server-ssl._tcp.{{ clustername }}.{{ domain }},etcd-{{ i }}.{{ clustername }}.{{ domain }}.,2380
+{% endfor %}
+
+## Auflösung für ETCD
+{% for i in range( 0,masters | length ) %}
+address=/etcd-{{ i }}.{{ clustername }}.{{ domain }}/{{ masters[i].ip }}
+{% endfor %}
+
+## Auflösung Bootstrap-Node
+address=/{{ bstrp.hostname }}.{{ clustername }}.{{ domain }}/{{ bstrp.ip }}
+
+## Auflösung für Bastion-Host
+address=/{{ bastion.hostname }}.{{ clustername }}.{{ domain }}/{{ bastion.ip }}
+
+## Auflösung für Master/Worker-Nodes
+### Master
+{% for i in range( 0,masters|length ) %}
+address=/{{ masters[i].hostname }}.{{ clustername }}.{{ domain }}/{{ masters[i].ip }}
+{% endfor %}
+
+### Worker
+{% for i in range( 0,workers|length ) %}
+address=/{{ workers[i].hostname }}.{{ clustername }}.{{ domain }}/{{ workers[i].ip }}
+{% endfor %}
+
+### Auflösung für NFS-IP
+address=/{{ nfs_server_name }}/{{ nfs_server_ip }}
+
+# VMware, vCenter, vSphere
+address=/{{ vsphere_server }}/10.0.249.205
+
+#+-------------+#
+#| --- PXE --- |#
+#+-------------+#
 enable-tftp
 tftp-root={{ dir_tftp_root }}
