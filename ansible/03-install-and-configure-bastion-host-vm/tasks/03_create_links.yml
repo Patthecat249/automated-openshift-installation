@@ -1,6 +1,6 @@
 ---
 # Dieses Playbook erzeugt Symlinks von den per NFS gemounteten Dateien und zeigt an die entsprechenden Stellen im TFTP-Server und HTTP-Server
-- name: "### --- 06 - Create links to CoreOS files in tftp server"
+- name: "15 - Create links to CoreOS files in tftp server"
   file:
     src: "{{ dir_mnt_to_core_os }}{{ item }}"
     dest: "{{ dir_tftp_root }}{{ dir_coreos_files }}{{ item }}"
@@ -13,7 +13,7 @@
     - "{{ file_coreos_kernel }}"
 
 
-- name: "### --- 07 - Create links to CoreOS files in http server"
+- name: "16 - Create links to CoreOS files in http server"
   file:
     src: "{{ dir_mnt_to_core_os }}{{ file_coreos_raw_gz }}"
     dest: "{{ dir_http_server }}{{ file_coreos_raw_gz }}"

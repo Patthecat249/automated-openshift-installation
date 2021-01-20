@@ -1,12 +1,12 @@
 ---
-- name: "### --- 31 - Allow incoming connections to the tftp service in the firewall"
+- name: "42 - Allow incoming connections to the tftp service in the firewall"
   firewalld:
     service: tftp
     permanent: yes
     state: enabled
 
 
-- name: "### --- 32 - Copy pxelinux.0 and menu.c32 to '{{ dir_tftp_root }}'"
+- name: "43 - Copy pxelinux.0 and menu.c32 to '{{ dir_tftp_root }}'"
   copy:
     src: "/usr/share/syslinux/{{ item }}"
     dest: "{{ dir_tftp_root }}{{ item }}"
@@ -18,7 +18,7 @@
     - 'pxelinux.0'
     - 'menu.c32'
 
-- name: "### --- 33 - Make sure folder '{{ dir_tftp_root }}pxelinux.cfg/' exists"
+- name: "44 - Make sure folder '{{ dir_tftp_root }}pxelinux.cfg/' exists"
   file:
     path: "{{ dir_tftp_root }}pxelinux.cfg"
     state: directory
@@ -28,9 +28,9 @@
 
 # Hinweis !!!
 
-### --- Diese Aufgaben sollte bei Erstellen der Core-OS-VM-Erstellung mit Terraform ausgeführt werden
+Diese Aufgaben sollte bei Erstellen der Core-OS-VM-Erstellung mit Terraform ausgeführt werden
 # damit die MAC-Adressen verwendet werden können. 
-# - name: "### --- 34 - Render pxelinux.cfg from templates for masters"
+# - name: "34 - Render pxelinux.cfg from templates for masters"
 #   template:
 #     src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
 #     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
@@ -41,7 +41,7 @@
 #     ignition_file: master.ign
 #   with_items: "{{ masters }}"
 
-# - name: "### --- 35 - Render pxelinux.cfg from templates for workers"
+# - name: "35 - Render pxelinux.cfg from templates for workers"
 #   template:
 #     src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
 #     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
@@ -52,7 +52,7 @@
 #     ignition_file: worker.ign
 #   with_items: "{{ workers }}"
 
-# - name: "### --- 36 - Render pxelinux.cfg from templates for bootstrap"
+# - name: "36 - Render pxelinux.cfg from templates for bootstrap"
 #   template:
 #     src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
 #     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
@@ -64,12 +64,12 @@
 #   with_items: 
 #     - "{{ bstrp }}"
 
-- name: "### --- 37 - Start and enable HTTP server"
+- name: "45 - Start and enable HTTP server"
   service:
     name: httpd
     state: started
     enabled: yes
 
 # 21.09.2020 - New Feature to backup the TFTP-Folder-Content
-- name: "### --- 38 - Backup TFTP-Folder to /opt/sva/backup"
+- name: "46 - Backup TFTP-Folder to /opt/sva/backup"
   command: cp -r  "{{ dir_tftp_root }}" "{{ dir_backup_tftp }}"
