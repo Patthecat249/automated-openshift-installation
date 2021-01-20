@@ -200,7 +200,7 @@
 
 # Copy the registry-cert from registry-vm to install-vm
     - name: "19 - Copy registry-certificate to local Linux Trust-Store"
-      raw: "scp {{registry.hostname}}:{{dir_registry_certs}}domain.crt /etc/pki/ca-trust/source/anchors/domain.crt" 
+      raw: "scp {{registry.ip}}:{{dir_registry_certs}}domain.crt /etc/pki/ca-trust/source/anchors/domain.crt" 
       delegate_to: "localhost"
 
 # Update the Trust-Store of install-vm
