@@ -9,7 +9,7 @@
     domain: "ocp43-patrick.home.local"
     cpu: "1"
     ram: "1024"
-    disksize: "120"
+    vsphere_general_disksize: "120"
     boot_delay: "60000"
     dir_root: "/opt/sva/"
     dir_terraform: "{{dir_root}}terraform/"
