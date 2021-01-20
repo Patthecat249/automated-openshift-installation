@@ -44,6 +44,6 @@ variable "vm_disk" {
 }
 
 # Boot-Delay
-variable "vm_boot_delay" {
+variable "vm_vsphere_vm_boot_delay" {
   default = "0"
 }
