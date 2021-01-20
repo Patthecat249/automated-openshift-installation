@@ -42,7 +42,6 @@ net_openshift: "11.11.11.0"
 netmask_openshift_cidr: "/24"
 
 
-
 # Clients / Software
 link_to_oc: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{version_openshift}}/openshift-client-linux-{{version_openshift}}.tar.gz"
 link_to_openshift_installer: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{version_openshift}}/openshift-install-linux-{{version_openshift}}.tar.gz"
@@ -72,21 +71,17 @@ release_name: "ocp-release"
 ocp_release: "{{version_openshift}}-x86_64"
 pull_secret_for_mirror: "/root/pull-secret.json"
 
-# Terraform
+# Terraform / vSphere-Plugin
 tf_version: "0.14.2"
 tf_zip_filename: "terraform_{{tf_version}}_linux_amd64.zip"
-
-## Terraform - vSphere-Plugin
 tf_vsphere_plugin_version: "1.24.2"
 tf_vsphere_plugin_zip_filename: "terraform-provider-vsphere_{{tf_vsphere_plugin_version}}_linux_amd64.zip"
 tf_jinja_template: "ocp-master-worker-nodes.tf.j2"
-
-# Download-Links
 download_tf: "https://releases.hashicorp.com/terraform/{{tf_version}}/terraform_{{tf_version}}_linux_amd64.zip"
 download_tf_vsphere_plugin: "https://releases.hashicorp.com/terraform-provider-vsphere/{{tf_vsphere_plugin_version}}/terraform-provider-vsphere_{{tf_vsphere_plugin_version}}_linux_amd64.zip"
 
 # Working directories >> always end with Slash /
-#dir_root: "/opt/patrick/"
+dir_root: "/opt/sva/"
 dir_cluster: "{{dir_root}}{{clustername}}/"
 dir_install_config: "{{dir_cluster}}install-config/"
 dir_terraform: "{{dir_root}}terraform/"
@@ -94,7 +89,6 @@ dir_terraform_modules: "{{dir_terraform}}modules/"
 dir_terraform_module_vm: "{{dir_terraform_modules}}vm-vsphere/"
 dir_terraform_vsphere_plugin: "{{dir_terraform}}vsphere_plugin"
 dir_tools: "{{dir_root}}tools/"
-dir_root: "/opt/sva/"
 dir_downloads: "{{dir_tools}}downloads/"
 dir_downloaded_images: "{{dir_root}}downloads/"
 dir_nfs_root: "/mnt/sva/"
