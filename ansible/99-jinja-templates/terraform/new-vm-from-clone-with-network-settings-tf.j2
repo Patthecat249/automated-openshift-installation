@@ -43,7 +43,7 @@ resource "vsphere_virtual_machine" "{{hostname}}" {
   datastore_id = data.vsphere_datastore.datastore.id
   num_cpus = "2"
   memory = "2048"
-  vsphere_vm_boot_delay = 0
+  boot_delay = 0
   wait_for_guest_ip_timeout = 0
   wait_for_guest_net_timeout = 0
   network_interface {
