@@ -1,15 +1,15 @@
 ---
 - name: "Configuration of a load-balancer"
-  hosts: "{{ lb.hostname }}"
+  hosts: "{{ lb.ip }}"
   become: "true"
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
   tasks:
-    - name: "00 - ssh-copy-id as user-root to {{lb.hostname}}"
+    - name: "00 - ssh-copy-id as user-root to {{lb.ip}}"
       become: "true"
       become_user: "root"
-      raw: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@{{lb.hostname}}"
+      raw: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@{{lb.ip}}"
       delegate_to: "localhost"
 
     - name: "01 - Install haproxy-software and policycoreutils-python"
