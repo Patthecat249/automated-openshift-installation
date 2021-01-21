@@ -35,7 +35,7 @@ vsphere_bstrp_ram: "16384"
 vsphere_bstrp_disksize: "120"
 vsphere_guest_id: "centos7_64Guest"
 #vsphere_vm_boot_delay: "30000"
-vsphere_vm_boot_delay: "0"
+vsphere_vm_boot_delay: "120000"
 
 
 # Network
