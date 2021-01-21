@@ -107,6 +107,8 @@
     - name: "11 --- Create pxelinux-config-file with mac-address-filename on tftproot on pxe-server"
       become: "true"
       become_user: "root"
+      vars:
+        ignition_file: "{{ignition_filename_worker}}"
       template:
         src: "../99-jinja-templates/pxe/pxelinux.cfg.j2"
         dest: "{{dir_tftproot}}01-{{ mac.stdout | trim | regex_replace(':', '-')}}"
