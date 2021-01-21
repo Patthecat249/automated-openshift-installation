@@ -12,7 +12,7 @@
     - ram: "{{ masters[0].ram }}"
     - hostname: "{{ masters[0].hostname }}"
     - ip: "{{ masters[0].ip }}"
-    - ignition_file: "{{ignition_filename_master}}"
+    #- ignition_file: "{{ignition_filename_master}}"
  
   tasks:
 # Erstelle Arbeitsverzeichnisse

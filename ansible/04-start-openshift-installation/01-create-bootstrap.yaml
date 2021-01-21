@@ -12,7 +12,7 @@
     - ram: "{{ bstrp.ram }}"
     - hostname: "{{ bstrp.hostname }}"
     - ip: "{{ bstrp.ip }}"
-    - ignition_file: "{{ignition_filename_bootstrap}}"
+    #- ignition_file: "{{ignition_filename_bootstrap}}"
  
   tasks:
 # Erstelle Arbeitsverzeichnisse
@@ -93,6 +93,8 @@
     - name: "11 --- Create pxelinux-config-file with mac-address-filename on tftproot on pxe-server"
       become: "true"
       become_user: "root"
+      vars:
+        ignition_file: "{{ignition_filename_bootstrap}}"
       template:
         src: "../99-jinja-templates/pxe/pxelinux.cfg.j2"
         dest: "{{dir_tftproot}}01-{{ mac.stdout | trim | regex_replace(':', '-')}}"
