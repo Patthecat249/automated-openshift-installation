@@ -10,30 +10,30 @@ bind-interfaces
 #expand-hosts
 domain={{clustername}}.{{domain}},{{net_openshift}}{{netmask_openshift_cidr}},local
 #log-queries
-log-facility=/var/log/dnsmasq.log
-log-dhcp
+#log-facility=/var/log/dnsmasq.log
+#log-dhcp
 no-resolv
 strict-order
 
 #+--------------+#
 #| --- DHCP --- |#
 #+--------------+#
-{% if dhcp_range is defined %}
+#{% if dhcp_range is defined %}
 # DHCP
 ## Gilt nur für alle Master und Worker Nodes
-dhcp-range={{ dhcp_range }}
-{% endif %}
+#dhcp-range={{ dhcp_range }}
+#{% endif %}
 
 # DHCP-Optionen (Default-Gateway, DNS-Server, ...)
 ## Gateway (Option=3)
-dhcp-option=3,{{ dhcp_gateway }}
+#dhcp-option=3,{{ dhcp_gateway }}
 
 ## DNS-Server (Option=6)
-dhcp-option=6,{{ bastion.ip }}
+#dhcp-option=6,{{ bastion.ip }}
 
 {% if ntpserver is defined %}
 ## NTP Server (Option=42)
-dhcp-option=42,{{ ntpserver }}
+#dhcp-option=42,{{ ntpserver }}
 {% endif %}
 
 ## OpenShift-Nodes-DHCP
@@ -42,7 +42,7 @@ dhcp-option=42,{{ ntpserver }}
 ## OpenShift-Nodes-DNS
 
 ## DHCP-Boot-Options
-dhcp-boot=tag:openshift_node,{{ boot_script }},{{ bastion.hostname }}.{{ clustername }}.{{ domain }}
+#dhcp-boot=tag:openshift_node,{{ boot_script }},{{ bastion.hostname }}.{{ clustername }}.{{ domain }}
 
 
 #+-------------+#
