@@ -110,21 +110,21 @@
 
 # insert DHCP-entries
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DHCP-Eintrag in DNSMASQ
-    - name: "08 --- Add DHCP-entry to /etc/dhcp/dhcpd.conf"
-      become: "true"
-      become_user: "root"
-      vars:
-        hostname: "{{ item.hostname }}"
-      lineinfile:
-        path: "/etc/dhcp/dhcpd.conf"
-        line: "host {{ hostname }} { server-name \"{{ bastion.ip }}\"; next-server {{ bastion.ip }}; filename \"{{ boot_script }}\"; hardware ethernet {{ mac.stdout | trim }}; fixed-address {{ip}}; option host-name \"{{hostname}}\"; }"
-      with_items:
-        - "{{ masters }}"
-        - "{{ workers }}"
-        - "{{ bstrp }}"
+    # - name: "08 --- Add DHCP-entry to /etc/dhcp/dhcpd.conf"
+    #   become: "true"
+    #   become_user: "root"
+    #   vars:
+    #     hostname: "{{ item.hostname }}"
+    #   lineinfile:
+    #     path: "/etc/dhcp/dhcpd.conf"
+    #     line: "host {{ hostname }} { server-name \"{{ bastion.ip }}\"; next-server {{ bastion.ip }}; filename \"{{ boot_script }}\"; hardware ethernet {{ mac.stdout | trim }}; fixed-address {{ip}}; option host-name \"{{hostname}}\"; }"
+    #   with_items:
+    #     - "{{ masters }}"
+    #     - "{{ workers }}"
+    #     - "{{ bstrp }}"
         
-      delegate_to: "{{ bastion.ip }}"
-      notify: "restart dhcpd"
+    #   delegate_to: "{{ bastion.ip }}"
+    #   notify: "restart dhcpd"
 
 
 # create PXE-files
