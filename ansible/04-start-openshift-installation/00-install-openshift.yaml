@@ -192,5 +192,18 @@
         - getmac
 
 # insert DNS-entries
-
-
+    - name: "11 --- Add DNS-Lookup-entry to dnsmasq.conf"
+      become: "true"
+      become_user: "root"
+      lineinfile:
+        path: "/etc/dnsmasq.conf"
+        insertafter: "^## OpenShift-Nodes-DNS" 
+        line: "address=/{{ item.hostname }}.{{clustername}}.{{domain}}/{{ item.ip }}"
+      with_items:
+        - "{{ masters }}"
+        - "{{ workers }}"
+        - "{{ bstrp }}"
+      delegate_to: "{{ bastion.ip }}"
+      notify: "restart dnsmasq"
+      tags:
+        - setdns
