@@ -85,6 +85,19 @@
 
 # # Execute terraform
 # # Erzeuge die virtuelle Maschine
+    - name: "05 --- Terraform - Create virtual machine"
+      vars:
+        - cpu: "{{ item.cpu }}"
+        - ram: "{{ item.ram }}"
+        - hostname: "{{ item.hostname }}"
+        - ip: "{{ item.ip }}"
+        - disk: "{{ item.disk }}"
+      raw: "cd {{ dir_terraform }}{{ hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"      
+      with_items: 
+        - "{{ masters }}"
+        - "{{ workers }}"
+        - "{{ bstrp }}"
+
 #     - name: "05a --- Terraform - Create virtual machine {{ bstrp.hostname }}"
 #       raw: "cd {{ dir_terraform }}{{ bstrp.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
 #     - name: "05b --- Terraform - Create virtual-machine {{ masters[0].hostname }}"
