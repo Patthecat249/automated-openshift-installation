@@ -73,7 +73,7 @@ resource "vsphere_virtual_machine" "{{hostname}}" {
         domain = "{{domain}}"
       }
       network_interface {
-        ipv4_address = "{{ip}}"
+        ipv4_address = "{{router.ocp2}}"
         ipv4_netmask = "24"
       }
       network_interface {
