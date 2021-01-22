@@ -82,6 +82,8 @@
     - "{{ dir_backup_tftp }}"
     - "{{ dir_backup_install_config }}"
     - "{{ dir_backup_dnsmasq }}"
+  tags:
+    - rerun
 
 - name: "08a - Create working directories for tftproot" 
   file:
@@ -95,6 +97,8 @@
     - "{{ dir_tftp_root }}"
     - "{{ dir_tftp_root }}{{ dir_coreos_files }}"
     - "{{ dir_tftp_root }}pxelinux.cfg"
+  tags:
+    - rerun
 
 - name: "08b - Copy syslinux-file to {{dir_tftp_root}}"
   copy:
@@ -106,6 +110,8 @@
   with_items:
     - "pxelinux.0"
     - "menu.c32"
+  tags:
+    - rerun
 
 # 21.09.2020 - New Feature to backup the SSH-Key-Folder-Content
 - name: "09 - Backup SSH-Keys to /opt/sva/backup"
@@ -113,6 +119,8 @@
   with_items:
     - "{{ key_to_nodes_name }}"
     - "{{ key_to_nodes_name }}.pub"
+  tags:
+    - rerun
 
 - name: "10 - Copy CoreOS-Images to tftproot"
   copy:
@@ -124,6 +132,8 @@
     - "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
     - "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
     #- "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
+  tags:
+    - rerun
 
 - name: "11 - Copy CoreOS-Raw-GZ to {{dir_http_server}}"
   copy:
@@ -133,6 +143,8 @@
     #- "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
     #- "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
     - "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
+  tags:
+    - rerun
 
 
 - name: "12 - Open some firewall-ports"
@@ -146,3 +158,5 @@
     - "https"
     - "dns"
     - "dhcp"
+  tags:
+    - rerun
