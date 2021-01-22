@@ -1,3 +1,23 @@
-#- name: "Playbook - Bootstrap everything to a running OpenShift-Cluster"
-- import_playbook: "00-install-and-configure-router-vm/01-playbook-install-router-vm.yaml"
-- import_playbook: "00-install-and-configure-router-vm/02-playbook-configure-router-vm.yaml"
+# Start with Router-vm
+- import_playbook: "../00-install-and-configure-router-vm/01-playbook-install-router-vm.yaml"
+- name: "Wait for {{ router.hostname }} to become available"
+  gather_facts: "false"
+  hosts: "{{ router.ip }}"
+  tasks:
+    - name: "Wait 300 seconds, check each 10 seconds"
+      wait_for_connection:
+        delay: 10
+        timeout: 300
+- import_playbook: "../00-install-and-configure-router-vm/02-playbook-configure-router-vm.yaml"
+
+# Start Bastion-Host
+- import_playbook: "../01-install-and-configure-bastion-host-vm/01-playbook-install-bastion-vm.yaml"
+- name: "Wait for {{ bastion.hostname }} to become available"
+  gather_facts: "false"
+  hosts: "{{ bastion.ip }}"
+  tasks:
+    - name: "Wait 300 seconds, check each 10 seconds"
+      wait_for_connection:
+        delay: 10
+        timeout: 300
+- import_playbook: "../01-install-and-configure-bastion-host-vm/02-playbook-configure-bastion-vm.yaml"
