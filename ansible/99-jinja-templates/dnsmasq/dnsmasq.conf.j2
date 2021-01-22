@@ -64,8 +64,10 @@ srv-host=_etcd-server-ssl._tcp.{{ clustername }}.{{ domain }},etcd-{{ i }}.{{ cl
 address=/etcd-{{ i }}.{{ clustername }}.{{ domain }}/{{ masters[i].ip }}
 {% endfor %}
 
-## Auflösung für Bastion-Host
+## Auflösung für Bastion-Host, Registry, Load-Balancer
 address=/{{ bastion.hostname }}.{{ clustername }}.{{ domain }}/{{ bastion.ip }}
+address=/{{ registry.hostname }}.{{ clustername }}.{{ domain }}/{{ registry.ip }}
+address=/{{ lb.hostname }}.{{ clustername }}.{{ domain }}/{{ lb.ip }}
 
 ### Auflösung für NFS-IP
 address=/{{ nfs_server_name }}/{{ nfs_server_ip }}
