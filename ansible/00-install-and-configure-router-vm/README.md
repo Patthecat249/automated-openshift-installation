@@ -14,7 +14,7 @@ ssh root@install-vm
 mypath=$(pwd)
 
 # Execute Playbook to install a load-balancer
-cd $mypath/git/automated-openshift-installation/ansible/01-install-and-configure-router-vm/ && ansible-playbook 01-playbook-install-router-vm.yaml
+cd $mypath/git/automated-openshift-installation/ansible/00-install-and-configure-router-vm/ && ansible-playbook 01-playbook-install-router-vm.yaml
 
 # Wait a few minutes for the new router-VM
 ```
@@ -29,7 +29,7 @@ ssh root@install-vm
 mypath=$(pwd)
 
 # Execute Playbook to configure the load-balancer
-cd $mypath/git/automated-openshift-installation/ansible/01-install-and-configure-router-vm/ && ansible-playbook 02-playbook-configure-router-vm.yaml
+cd $mypath/git/automated-openshift-installation/ansible/00-install-and-configure-router-vm/ && ansible-playbook 02-playbook-configure-router-vm.yaml
 
 # Proceed with the Next Step "Start-OpenShift-Installation"
 ```
