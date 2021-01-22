@@ -130,6 +130,7 @@
       become_user: "root"
       vars:
         hostname: "{{ mac.results[item].item.hostname }}"
+        ip: "{{ mac.results[item].item.ip }}"
       lineinfile:
         path: "/etc/dhcp/dhcpd.conf"
         line: "host {{ hostname }} { server-name \"{{ bastion.ip }}\"; next-server {{ bastion.ip }}; filename \"{{ boot_script }}\"; hardware ethernet {{ mac.results[item].stdout_lines | trim }}; fixed-address {{ip}}; option host-name \"{{hostname}}\"; }"
