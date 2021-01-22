@@ -89,15 +89,16 @@
       delegate_to: "{{ bastion.ip }}"
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DHCP-Eintrag in DNSMASQ
-    # - name: "10 --- Add DHCP-entry to dnsmasq.conf"
-    #   become: "true"
-    #   become_user: "root"
-    #   lineinfile:
-    #     path: /etc/dnsmasq.conf
-    #     insertafter: "^## OpenShift-Nodes-DHCP"         
-    #     line: "dhcp-host={{ mac.stdout | trim }},{{ masters[0].hostname }},{{ masters[0].ip }},set:openshift_node"
-    #   delegate_to: "{{ bastion.ip }}"
-    #   notify: "restart dnsmasq"
+    - name: "10 --- Add DHCP-entry to /etc/dhcp/dhcpd.conf"
+      become: "true"
+      become_user: "root"
+      lineinfile:
+        path: "/etc/dhcp/dhcpd.conf"
+        #insertafter: "^## OpenShift-Nodes-DHCP"         
+        #line: "dhcp-host={{ mac.stdout | trim }},{{ masters[0].hostname }},{{ masters[0].ip }},set:openshift_node"
+        line: "host {{hostname}} { server-name \"{{bastion.ip}}\"; next-server {{bastion.ip}}; filename \"{{boot_script}}\"; hardware ethernet {{mac.stdout | trim}}; fixed-address {{ip}}; option host-name \"{{hostname}}\"; }"
+      delegate_to: "{{ bastion.ip }}"
+      notify: "restart dhcpd"
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DNS-Lookup-Eintrag in DNSMASQ
     # - name: "13 --- Add DNS-Lookup-entry to dnsmasq.conf"
@@ -111,12 +112,12 @@
     #   notify: "restart dnsmasq"
 
 # Starte den DNS-Dienst erneut, wenn sich etwas an der DNS-Konfiguration geändert hat.
-  # handlers:
-  #   - name: "restart dnsmasq"
-  #     become: "true"
-  #     become_user: "root"
-  #     service:
-  #       name: dnsmasq
-  #       state: restarted
-  #     delegate_to: "{{ bastion.ip }}"
+  handlers:
+    - name: "restart dhcpd"
+      become: "true"
+      become_user: "root"
+      service:
+        name: dhcpd
+        state: restarted
+      delegate_to: "{{ bastion.ip }}"
 
