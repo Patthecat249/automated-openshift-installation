@@ -104,7 +104,7 @@
       tags:
         - getmac
 
-    - debug: var=mac
+    - debug: var=mac.results.stdout_lines
       tags:
         - getmac
 
@@ -122,7 +122,6 @@
     #     - "{{ masters }}"
     #     - "{{ workers }}"
     #     - "{{ bstrp }}"
-        
     #   delegate_to: "{{ bastion.ip }}"
     #   notify: "restart dhcpd"
 
