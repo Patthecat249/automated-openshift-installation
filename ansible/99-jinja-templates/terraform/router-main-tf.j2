@@ -80,7 +80,7 @@ resource "vsphere_virtual_machine" "{{hostname}}" {
         ipv4_address = "{{router.ip}}"
         ipv4_netmask = "24"
       }
-      ipv4_gateway = "{{vsphere_network_openshift_gw}}"
+      ipv4_gateway = "{{router.default_gw}}"
       dns_server_list = ["{{bastion.ip}}","{{pi.ip}}"]
     }
   }
