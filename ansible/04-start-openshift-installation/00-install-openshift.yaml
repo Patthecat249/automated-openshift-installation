@@ -104,7 +104,7 @@
       tags:
         - getmac
 
-    - debug: var=mac.results.stdout_lines
+    - debug: var=mac.results
       tags:
         - getmac
 
