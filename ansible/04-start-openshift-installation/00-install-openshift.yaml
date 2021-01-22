@@ -98,22 +98,6 @@
         - "{{ workers }}"
         - "{{ bstrp }}"
 
-#     - name: "05a --- Terraform - Create virtual machine {{ bstrp.hostname }}"
-#       raw: "cd {{ dir_terraform }}{{ bstrp.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
-#     - name: "05b --- Terraform - Create virtual-machine {{ masters[0].hostname }}"
-#       raw: "cd {{ dir_terraform }}{{ masters[0].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
-#     - name: "05c --- Terraform - Create virtual-machine {{ masters[1].hostname }}"
-#       raw: "cd {{ dir_terraform }}{{ masters[1].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
-#     - name: "05d --- Terraform - Create virtual-machine {{ masters[2].hostname }}"
-#       raw: "cd {{ dir_terraform }}{{ masters[2].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
-#     - name: "05e --- Terraform - Create virtual-machine {{ workers[0].hostname }}"
-#       raw: "cd {{ dir_terraform }}{{ workers[0].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
-#     - name: "05f --- Terraform - Create virtual-machine {{ workers[1].hostname }}"
-#       raw: "cd {{ dir_terraform }}{{ workers[1].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
-#     - name: "05g --- Terraform - Create virtual-machine {{ workers[2].hostname }}"
-#       raw: "cd {{ dir_terraform }}{{ workers[2].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
-
-
 # insert DHCP-entries
 
 
