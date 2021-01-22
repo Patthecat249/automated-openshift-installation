@@ -204,6 +204,19 @@ registry:
   disk: "200"
   mac: "00:50:56:a6:bf:52"
 
+# Router-VM
+router:
+  name: "router"
+  hostname: "ocprouter"
+  ip: 
+    internet: "10.0.249.2"
+    ocp1: "11.11.10.1"
+    ocp2: "11.11.11.1"
+  cpu: "1"
+  ram: "1024"
+  disk: "200"
+  
+
 # Raspi
 pi:
   hostname: "pi"

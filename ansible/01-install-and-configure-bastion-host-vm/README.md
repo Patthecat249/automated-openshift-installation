@@ -14,7 +14,7 @@ ssh root@install-vm
 mypath=$(pwd)
 
 # Execute Playbook to install a load-balancer
-cd $mypath/git/automated-openshift-installation/ansible/03-install-and-configure-bastion-host-vm/ && ansible-playbook 01-playbook-install-bastion-vm.yaml
+cd $mypath/git/automated-openshift-installation/ansible/01-install-and-configure-bastion-host-vm/ && ansible-playbook 01-playbook-install-bastion-vm.yaml
 
 # Wait a few minutes for the new Bastion-Host-VM
 ```
@@ -29,7 +29,7 @@ ssh root@install-vm
 mypath=$(pwd)
 
 # Execute Playbook to configure the load-balancer
-cd $mypath/git/automated-openshift-installation/ansible/03-install-and-configure-bastion-host-vm/ && ansible-playbook 02-playbook-configure-bastion-vm.yaml
+cd $mypath/git/automated-openshift-installation/ansible/01-install-and-configure-bastion-host-vm/ && ansible-playbook 02-playbook-configure-bastion-vm.yaml
 
 # Proceed with the Next Step "Start-OpenShift-Installation"
 ```
