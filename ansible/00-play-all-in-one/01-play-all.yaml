@@ -1,12 +1,12 @@
 # Start with Router-vm
 - import_playbook: "../00-install-and-configure-router-vm/01-playbook-install-router-vm.yaml"
-- name: "Wait for {{ router.hostname }} to become available"
+- name: "Wait for {{ router.hostname }} ({{ router.ip }}) to become available"
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
   hosts: "127.0.0.1"
   tasks:
-    - name: "Wait 300 seconds, check each 10 seconds"
+    - name: "Check if Port: 22 is open at {{ router.ip }} - check every 10 seconds"
       wait_for:
         host: "{{ router.ip }}"
         delay: 10
@@ -16,14 +16,15 @@
 
 # Start Bastion-Host
 - import_playbook: "../01-install-and-configure-bastion-host-vm/01-playbook-install-bastion-vm.yaml"
-- name: "Wait for {{ bastion.hostname }} ({{ bastion.hostname }}) to become available"
+- name: "Wait for {{ bastion.hostname }} ({{ bastion.ip }}) to become available"
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
-  hosts: "{{ bastion.ip }}"
+  hosts: "127.0.0.1"
   tasks:
-    - name: "Wait 300 seconds, check each 10 seconds"
+    - name: "Check if Port: 22 is open at {{ bastion.ip }} - check every 10 seconds"
       wait_for:
+        host: "{{ bastion.ip }}"
         delay: 10
         timeout: 300
         port: 22
