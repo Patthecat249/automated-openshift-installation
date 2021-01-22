@@ -125,6 +125,26 @@
     #   delegate_to: "{{ bastion.ip }}"
     #   notify: "restart dhcpd"
 
+    - name: "08 --- Add DHCP-entry to /etc/dhcp/dhcpd.conf"
+      become: "true"
+      become_user: "root"
+      vars:
+        hostname: "{{ mac.results[item].item.hostname }}"
+      lineinfile:
+        path: "/etc/dhcp/dhcpd.conf"
+        line: "host {{ hostname }} { server-name \"{{ bastion.ip }}\"; next-server {{ bastion.ip }}; filename \"{{ boot_script }}\"; hardware ethernet {{ mac.results[item].stdout_lines | trim }}; fixed-address {{ip}}; option host-name \"{{hostname}}\"; }"
+      with_items:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+      #when: mac.results[item].item.hostname == "ocpbootstrap"
+      tags:
+        - getmac
+
 
 # create PXE-files
 
