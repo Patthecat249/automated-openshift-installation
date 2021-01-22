@@ -27,13 +27,13 @@
 # main.tf
     - name: "03 --- Create main.tf-file"
       template:
-        src: "../99-jinja-templates/terraform/new-vm-from-clone-with-network-settings-tf.j2"
+        src: "../99-jinja-templates/terraform/router-main-tf.j2"
         dest: "{{ dir_terraform }}{{ router.hostname }}/main.tf"
     
 # Erzeuge und kopiere das output.tf-file in den VM-Instanz-Ordner
     - name: "04 --- Create output.tf-file"
       template:
-        src: "../99-jinja-templates/terraform/new-vm-from-clone-with-network-settings-output-tf.j2"
+        src: "../99-jinja-templates/terraform/router-output-tf.j2"
         dest: "{{ dir_terraform }}{{ router.hostname }}/output.tf"
     
 # Erzeuge die virtuelle Maschine
@@ -41,6 +41,9 @@
       raw: "cd {{ dir_terraform }}{{ router.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM
-    - name: "06 --- Retrieve mac-address from created virtual machine"
-      raw: "cd {{ dir_terraform }}{{ router.hostname }} && terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
+    - name: "06 --- Retrieve first mac-address from created virtual machine"
+      raw: "cd {{ dir_terraform }}{{ router.hostname }} && terraform output -json | jq '.[\"mac-address1\"].value' | sed -e 's|\"||g'"
+      register: mac
+    - name: "07 --- Retrieve second mac-address from created virtual machine"
+      raw: "cd {{ dir_terraform }}{{ router.hostname }} && terraform output -json | jq '.[\"mac-address2\"].value' | sed -e 's|\"||g'"
       register: mac

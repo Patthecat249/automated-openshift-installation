@@ -4,8 +4,12 @@ output "vm-name" {
  
 }
 
-
-output "mac-address" {
+output "mac-address1" {
  description = "Mac-Adress"
  value = vsphere_virtual_machine.{{hostname}}.network_interface[0].mac_address
+}
+
+output "mac-address2" {
+ description = "Mac-Adress"
+ value = vsphere_virtual_machine.{{hostname}}.network_interface[1].mac_address
 }
