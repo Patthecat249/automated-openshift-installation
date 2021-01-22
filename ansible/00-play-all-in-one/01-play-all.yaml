@@ -7,9 +7,10 @@
   hosts: "{{ router.ip }}"
   tasks:
     - name: "Wait 300 seconds, check each 10 seconds"
-      wait_for_connection:
+      wait_for:
         delay: 10
         timeout: 300
+        port: 22
 - import_playbook: "../00-install-and-configure-router-vm/02-playbook-configure-router-vm.yaml"
 
 # Start Bastion-Host
@@ -21,7 +22,8 @@
   hosts: "{{ bastion.ip }}"
   tasks:
     - name: "Wait 300 seconds, check each 10 seconds"
-      wait_for_connection:
+      wait_for:
         delay: 10
         timeout: 300
+        port: 22
 - import_playbook: "../01-install-and-configure-bastion-host-vm/02-playbook-configure-bastion-vm.yaml"
