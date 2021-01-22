@@ -2,16 +2,22 @@
 # Dieses Playbook erzeugt die manifest- und ignition-config-files
 - name: "47 - Create manifest-files"
   shell: "/usr/local/bin/openshift-install create manifests --dir={{ dir_install_config }}"
+  tags:
+    - rerun
 
 # 21.09.2020 - New Feature to backup the manifest-files to /opt/sva/backup
 - name: "48 - Backup manifest-files to /opt/sva/backup"
   command: cp -r "{{ dir_install_config }}" "{{ dir_backup_manifest_files }}"
+  tags:
+    - rerun
 
 - name: "49 - Prevent pods from being scheduled on the control plane machines"
   lineinfile:
     path: "{{ dir_install_config }}manifests/cluster-scheduler-02-config.yml"
     regexp: 'true'
     line: "  mastersSchedulable: False"
+  tags:
+    - rerun
 
 # 22.09.2020 - Troubleshooting Keine Anmeldung per SSH mehr möglich
 # Daniel Metefindt im Team Channel Container&Konfiguration > OpenShift
@@ -25,10 +31,14 @@
 
 - name: "50 - Obtain the Ignition config files"
   shell: "/usr/local/bin/openshift-install create ignition-configs --dir={{ dir_install_config }}"
+  tags:
+    - rerun
 
 # 21.09.2020 - New Feature to backup the ignition-files to /opt/sva/backup
 - name: "51 - Backup ignition-files to /opt/sva/backup"
   command: cp -r "{{ dir_install_config }}" "{{ dir_backup_ignition_files }}"
+  tags:
+    - rerun
 
 - name: "52 - Copy Ignition files to HTTP server"
   copy:
@@ -41,6 +51,8 @@
     - "{{ dir_install_config }}master.ign"
     - "{{ dir_install_config }}worker.ign"
     - "{{ dir_install_config }}bootstrap.ign"
+  tags:
+    - rerun
 
 - name: "53 - Configure firewalld to open port 80 for webserver"
   firewalld:

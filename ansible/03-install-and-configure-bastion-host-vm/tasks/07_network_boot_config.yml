@@ -4,6 +4,8 @@
     service: tftp
     permanent: yes
     state: enabled
+  tags:
+    - rerun
 
 
 - name: "43 - Copy pxelinux.0 and menu.c32 to '{{ dir_tftp_root }}'"
@@ -17,6 +19,8 @@
   with_items: 
     - 'pxelinux.0'
     - 'menu.c32'
+  tags:
+    - rerun
 
 - name: "44 - Make sure folder '{{ dir_tftp_root }}pxelinux.cfg/' exists"
   file:
@@ -25,6 +29,8 @@
     owner: dnsmasq
     group: wheel
     mode: '0755'
+  tags:
+    - rerun
 
 # Hinweis !!!
 
@@ -69,7 +75,11 @@
     name: httpd
     state: started
     enabled: yes
+  tags:
+    - rerun
 
 # 21.09.2020 - New Feature to backup the TFTP-Folder-Content
 - name: "46 - Backup TFTP-Folder to /opt/sva/backup"
   command: cp -r  "{{ dir_tftp_root }}" "{{ dir_backup_tftp }}"
+  tags:
+    - rerun

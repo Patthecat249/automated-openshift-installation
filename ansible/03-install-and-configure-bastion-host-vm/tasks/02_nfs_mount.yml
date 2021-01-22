@@ -10,10 +10,14 @@
     state: mounted
     src: "{{nfs_server}}:{{ nfs_mount_path }}"
     path: "{{ dir_mnt }}"
+  tags:
+    - rerun
 
 - name: "14 - Wait a Second..."
   wait_for:
     timeout: 1
+  tags:
+    - rerun
 
    
 # - name: "Unmounting NFS-Share"

@@ -3,6 +3,8 @@
   stat:
     path: "/etc/dnsmasq.conf.backup"
   register: dnsmasq_conf_backup_details
+  tags:
+    - rerun
 
 - name: "22 - Backup dnsmasq.conf if not already done"
   copy:
@@ -11,6 +13,8 @@
     mode: "0644"
     remote_src: yes
   when: not dnsmasq_conf_backup_details.stat.exists
+  tags:
+    - rerun
 
 - name: "23 - Render dnsmasq.conf from template"
   template:
@@ -23,6 +27,8 @@
     validate: "dnsmasq --test -C %s"
   notify: 
     - restart dnsmasq
+  tags:
+    - rerun
 
 # 21.09.2020 - New Feature to backup the dnsmasq.conf-file
 - name: "24 - Backup dnsmasq.conf to /opt/sva/backup"
@@ -30,6 +36,8 @@
     src: "/etc/dnsmasq.conf"
     dest: "{{ dir_backup_dnsmasq }}dnsmasq.conf"
     remote_src: yes
+  tags:
+    - rerun
 
 # Setup SELinux for tftproot-Folder so that dnsmasq works with SELinux
 - name: "25 - Set SELinux boolean tftp_anon_write to true"
@@ -60,6 +68,8 @@
     name: dnsmasq
     state: started
     enabled: yes
+  tags:
+    - rerun
 
 - name: "30 - Add DNS server and search domain"
   shell: |

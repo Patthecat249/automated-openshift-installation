@@ -8,11 +8,15 @@
     group: root
     mode: '0644'
     force: yes
+  tags:
+    - rerun
 
 - name: "32 - Compact pull-secret in one line"
   shell: "cat {{ dir_cluster }}{{ pull_secret_file_name }} | tr -d '\t\n\r[:space:]'"
   register: pull_secret_details
   no_log: True
+  tags:
+    - rerun
 
 - name: "33 - Add pull-secret into install-config.yaml"
   lineinfile: 
@@ -20,16 +24,22 @@
     regexp: '^pullSecret: '
     line: "pullSecret: '{{ pull_secret_details.stdout }}'"
   no_log: True
+  tags:
+    - rerun
 
 - name: "34 - Show ssh public key content"
   shell: "cat {{ dir_key_to_nodes }}{{ key_to_nodes_name }}.pub"
   register: ssh_public_key_details
+  tags:
+    - rerun
 
 - name: "35 - Add ssh-public-key-content to install-config.yaml"
   lineinfile: 
     path: "{{ dir_cluster }}install-config.yaml"
     regexp: '^sshKey: '
     line: "sshKey: '{{ ssh_public_key_details.stdout }}'"
+  tags:
+    - rerun
 
 - name: "36 - Show certificate of JFrog"
   shell: |
@@ -37,6 +47,8 @@
      -showcerts < /dev/null 2>/dev/null \
      | awk '/BEGIN/{p=1}p;/END/{p=0}' \
      > "{{ dir_cluster }}{{local_registry}}.crt"
+  tags:
+    - rerun
 
 - name: "37 - Add two blank spaces in"
   shell: |
@@ -44,6 +56,8 @@
      | sed 's/^/  /' \
      | sed '1 i\additionalTrustBundle: |'
   register: cert_details
+  tags:
+    - rerun
 
 - name: "38 - Add certificate to install-config.yaml"
   blockinfile:
@@ -51,6 +65,8 @@
     insertafter: EOF
     marker: ""
     block: "{{ cert_details.stdout }}"
+  tags:
+    - rerun
 
 - name: "39 - Add imageContentSources into install-config.yaml"
   blockinfile:
@@ -58,6 +74,8 @@
     insertafter: EOF
     marker: ""
     block: "{{ image_block }}"
+  tags:
+    - rerun
 
 - name: "40 - Copy install-config.yaml to install-config-folder"
   copy:
@@ -65,6 +83,8 @@
     dest: "{{ dir_install_config }}install-config.yaml"
     remote_src: yes
     force: yes
+  tags:
+    - rerun
 
 # 21.09.2020 - New Feature to backup the install-config.yaml-file
 - name: "41 - Backup install-config.yaml to /opt/sva/backup"
@@ -72,3 +92,5 @@
     src: "{{ dir_cluster }}install-config.yaml"
     dest: "{{ dir_backup_install_config }}install-config.yaml"
     remote_src: yes
+  tags:
+    - rerun
