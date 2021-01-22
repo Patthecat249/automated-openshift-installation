@@ -40,8 +40,8 @@ resource "vsphere_virtual_machine" "{{ hostname }}" {
   resource_pool_id            = data.vsphere_resource_pool.pool.id
   firmware                    = "bios"
   datastore_id                = data.vsphere_datastore.datastore_{{ hostname }}.id
-  num_cpus                    = {{ vsphere_master_cpu }}
-  memory                      = {{ vsphere_master_ram }}
+  num_cpus                    = {{ cpu }}
+  memory                      = {{ ram }}
   boot_delay                  = var.vm_vsphere_vm_boot_delay
   wait_for_guest_ip_timeout   = 0
   wait_for_guest_net_timeout  = 0
@@ -52,7 +52,7 @@ resource "vsphere_virtual_machine" "{{ hostname }}" {
 
   disk {
     label                     = "disk0"
-    size                      = {{ vsphere_master_disksize }}
+    size                      = {{ disk }}
     thin_provisioned          = "true"
   }
 }
