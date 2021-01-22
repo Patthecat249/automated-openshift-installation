@@ -207,3 +207,21 @@
       notify: "restart dnsmasq"
       tags:
         - setdns
+
+# Starte den DNS-Dienst erneut, wenn sich etwas an der DNS-Konfiguration geändert hat.
+  handlers:
+    - name: "restart dhcpd"
+      become: "true"
+      become_user: "root"
+      service:
+        name: dhcpd
+        state: restarted
+      delegate_to: "{{ bastion.ip }}"
+
+    - name: "restart dnsmasq"
+      become: "true"
+      become_user: "root"
+      service:
+        name: dnsmasq
+        state: restarted
+      delegate_to: "{{ bastion.ip }}"
