@@ -14,5 +14,12 @@
     - import_tasks: "tasks/08_manifest_ignition.yml"
     #- import_tasks: "../ocp-master-worker-nodes/01-create-terraform-main-tf.yaml"
 
+    # Disable Firewalld
+    - name: "Disable Firewalld"
+      systemd:
+        name: "firewalld"
+        state: "stopped"
+        enabled: "no"
+
   handlers:
     - import_tasks: handlers.yml 
