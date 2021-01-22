@@ -12,7 +12,6 @@
     - ram: "{{ masters[0].ram }}"
     - hostname: "{{ masters[0].hostname }}"
     - ip: "{{ masters[0].ip }}"
-    #- ignition_file: "{{ignition_filename_master}}"
  
   tasks:
 # Erstelle Arbeitsverzeichnisse
@@ -26,56 +25,36 @@
         - "{{ dir_terraform }}{{ masters[0].hostname }}"
         - "{{ dir_terraform_module_vm }}"
 
-# Prüfe, ob der Hostname {{masters[0].hostname}} bereits in /etc/dnsmasq.conf existiert.
-    # - name: "02 --- Check, if IP-Address {{ masters[0].hostname }} exists in /etc/dnsmasq.conf"
-    #   command: "grep \"{{ masters[0].hostname }}\" /etc/dnsmasq.conf"
-    #   register: is_hostname_in_dnsmasq
-    #   check_mode: no
-    #   ignore_errors: yes
-    #   changed_when: no
-    #   delegate_to: "{{ bastion.ip }}"
-
-    # - name: "03 --- If /etc/dnsmasq.conf contains {{ masters[0].hostname }}, Stop Ansible-Playbook"
-    #   debug: msg="Der Hostname {{ masters[0].hostname }} existiert bereits in /etc/dnsmasq.conf!"
-    #   when: is_hostname_in_dnsmasq.rc == 0
-
-# Beende das Playbook, wenn die IP-Adresse bereits in /etc/dnsmasq.conf existiert
-    # - meta: end_play
-    #   when: checkmyconf.rc == 0
-# Beende das Playbook, wenn der Hostname bereits in /etc/dnsmasq.conf existiert
-    # - meta: end_play
-    #   when: is_hostname_in_dnsmasq.rc == 0
-
 # Erstelle VM-Instanz Terraform "main.tf"-file
 # main.tf
-    - name: "04 --- Create main.tf"
+    - name: "02 --- Create main.tf"
       template:
         src: "../99-jinja-templates/terraform/ocp-master-tf.j2"
         dest: "{{ dir_terraform }}{{ masters[0].hostname }}/main.tf"
 
 # output.tf
-    - name: "05 --- Create output.tf"
+    - name: "03 --- Create output.tf"
       template:
         src: "../99-jinja-templates/terraform/output.j2"
         dest: "{{ dir_terraform }}{{ masters[0].hostname }}/output.tf"
 
 # vars.tf
-    - name: "06 --- Create vars.tf"
+    - name: "04 --- Create vars.tf"
       template:
         src: "../99-jinja-templates/terraform/vars-coreos-tf.j2"
         dest: "{{ dir_terraform }}{{ masters[0].hostname }}/vars.tf"
 
 # Erzeuge die virtuelle Maschine
-    - name: "07 --- Create virtual-machine {{ masters[0].hostname }} with terraform"
+    - name: "05 --- Create virtual-machine {{ masters[0].hostname }} with terraform"
       raw: "cd {{ dir_terraform }}{{ masters[0].hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM
-    - name: "08 --- Retrieve mac-address from created virtual machine"
+    - name: "06 --- Retrieve mac-address from created virtual machine"
       raw: "cd {{ dir_terraform }}{{ masters[0].hostname }} && /usr/local/bin/terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
 
 # Erstelle für diese VM, anhand der MAC-Adresse ein PXELINUX-Config-File im TFTPROOT-Dir vom PXE-SERVER
-    - name: "09 --- Create pxelinux-config-file with mac-address-filename on tftproot on pxe-server"
+    - name: "07 --- Create pxelinux-config-file with mac-address-filename on tftproot on pxe-server"
       become: "true"
       become_user: "root"
       vars:
@@ -89,7 +68,7 @@
       delegate_to: "{{ bastion.ip }}"
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DHCP-Eintrag in DNSMASQ
-    - name: "10 --- Add DHCP-entry to /etc/dhcp/dhcpd.conf"
+    - name: "08 --- Add DHCP-entry to /etc/dhcp/dhcpd.conf"
       become: "true"
       become_user: "root"
       lineinfile:
@@ -101,15 +80,15 @@
       notify: "restart dhcpd"
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DNS-Lookup-Eintrag in DNSMASQ
-    # - name: "13 --- Add DNS-Lookup-entry to dnsmasq.conf"
-    #   become: "true"
-    #   become_user: "root"
-    #   lineinfile:
-    #     path: "/etc/dnsmasq.conf"
-    #     insertafter: "^## OpenShift-Nodes-DNS" 
-    #     line: "address=/{{ masters[0].hostname }}.{{clustername}}.{{domain}}/{{ masters[0].ip }}"
-    #   delegate_to: "{{ bastion.ip }}"
-    #   notify: "restart dnsmasq"
+    - name: "09 --- Add DNS-Lookup-entry to dnsmasq.conf"
+      become: "true"
+      become_user: "root"
+      lineinfile:
+        path: "/etc/dnsmasq.conf"
+        insertafter: "^## OpenShift-Nodes-DNS" 
+        line: "address=/{{ masters[0].hostname }}.{{clustername}}.{{domain}}/{{ masters[0].ip }}"
+      delegate_to: "{{ bastion.ip }}"
+      notify: "restart dnsmasq"
 
 # Starte den DNS-Dienst erneut, wenn sich etwas an der DNS-Konfiguration geändert hat.
   handlers:
@@ -121,3 +100,10 @@
         state: restarted
       delegate_to: "{{ bastion.ip }}"
 
+    - name: "restart dnsmasq"
+      become: "true"
+      become_user: "root"
+      service:
+        name: dnsmasq
+        state: restarted
+      delegate_to: "{{ bastion.ip }}"
