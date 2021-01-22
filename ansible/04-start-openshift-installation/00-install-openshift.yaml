@@ -142,7 +142,7 @@
         - 4
         - 5
         - 6
-      #when: mac.results[item].item.hostname == "ocpbootstrap"
+      delegate_to: "bastion.ip"
       tags:
         - getmac
 
