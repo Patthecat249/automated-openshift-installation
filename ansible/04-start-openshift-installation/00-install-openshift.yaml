@@ -138,6 +138,7 @@
       become_user: "root"
       vars:
         ignition_file: "{{ignition_filename_master}}"
+        hostname: "{{ mac.results[item].item.hostname }}"
       template:
         src: "../99-jinja-templates/pxe/pxelinux.cfg.j2"
         dest: "{{dir_tftproot}}01-{{ mac.results[item].stdout | trim | regex_replace(':', '-')}}"
@@ -156,7 +157,8 @@
       become: "true"
       become_user: "root"
       vars:
-        ignition_file: "{{ignition_filename_master}}"
+        ignition_file: "{{ignition_filename_worker}}"
+        hostname: "{{ mac.results[item].item.hostname }}"
       template:
         src: "../99-jinja-templates/pxe/pxelinux.cfg.j2"
         dest: "{{dir_tftproot}}01-{{ mac.results[item].stdout | trim | regex_replace(':', '-')}}"
@@ -175,7 +177,8 @@
       become: "true"
       become_user: "root"
       vars:
-        ignition_file: "{{ignition_filename_master}}"
+        ignition_file: "{{ignition_filename_bootstrap}}"
+        hostname: "{{ mac.results[item].item.hostname }}"
       template:
         src: "../99-jinja-templates/pxe/pxelinux.cfg.j2"
         dest: "{{dir_tftproot}}01-{{ mac.results[item].stdout | trim | regex_replace(':', '-')}}"
