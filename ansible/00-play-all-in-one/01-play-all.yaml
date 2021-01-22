@@ -14,7 +14,7 @@
 
 # Start Bastion-Host
 - import_playbook: "../01-install-and-configure-bastion-host-vm/01-playbook-install-bastion-vm.yaml"
-- name: "Wait for {{ bastion.hostname }} to become available"
+- name: "Wait for {{ bastion.hostname }} ({{ bastion.hostname }}) to become available"
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
