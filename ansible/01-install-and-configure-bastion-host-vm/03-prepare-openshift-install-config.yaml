@@ -1,0 +1,9 @@
+---
+- hosts: "{{bastion.ip}}"  
+  become: yes
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+  tasks:
+    - import_tasks: "tasks/06_prepare_install_config.yml"
+    - import_tasks: "tasks/08_manifest_ignition.yml"
