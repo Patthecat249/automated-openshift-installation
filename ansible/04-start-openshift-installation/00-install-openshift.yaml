@@ -34,16 +34,6 @@
 # Erstelle VM-Instanz Terraform "main.tf"-file
 # main.tf
 # Masters
-    # - name: "02a --- Create main.tf - {{ masters[0].hostname }}"
-    #   vars:
-    #     - cpu: "{{ masters[0].cpu }}"
-    #     - ram: "{{ masters[0].ram }}"
-    #     - hostname: "{{ masters[0].hostname }}"
-    #     - ip: "{{ masters[0].ip }}"
-    #   template:
-    #     src: "../99-jinja-templates/terraform/ocp-master-tf.j2"
-    #     dest: "{{ dir_terraform }}{{ hostname }}/main.tf"
-
     - name: "02a --- Create main.tf - {{ masters[0].hostname }}"
       vars:
         - cpu: "{{ item.cpu }}"
@@ -53,7 +43,9 @@
       template:
         src: "../99-jinja-templates/terraform/ocp-master-tf.j2"
         dest: "{{ dir_terraform }}{{ hostname }}/main.tf"
-      with_items: "{{masters}}"
+      with_items: 
+        - "{{masters}}"
+        - "{{workers}}"
 
 
 #     - name: "02b --- Create main.tf - {{ masters[1].hostname }}"
