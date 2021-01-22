@@ -4,10 +4,11 @@
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
-  hosts: "{{ router.ip }}"
+  hosts: "127.0.0.1"
   tasks:
     - name: "Wait 300 seconds, check each 10 seconds"
       wait_for:
+        host: "{{ router.ip }}"
         delay: 10
         timeout: 300
         port: 22
