@@ -2,7 +2,7 @@
 - import_playbook: "../00-install-and-configure-router-vm/01-playbook-install-router-vm.yaml"
 - name: "Wait for {{ router.hostname }} to become available"
   gather_facts: "false"
-  vars_file:
+  vars_files:
     - "../vars/vars.yaml"
   hosts: "{{ router.ip }}"
   tasks:
@@ -16,7 +16,7 @@
 - import_playbook: "../01-install-and-configure-bastion-host-vm/01-playbook-install-bastion-vm.yaml"
 - name: "Wait for {{ bastion.hostname }} to become available"
   gather_facts: "false"
-  vars_file:
+  vars_files:
     - "../vars/vars.yaml"
   hosts: "{{ bastion.ip }}"
   tasks:
