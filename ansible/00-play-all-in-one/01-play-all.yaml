@@ -1,0 +1,3 @@
+#- name: "Playbook - Bootstrap everything to a running OpenShift-Cluster"
+- import_playbook: "00-install-and-configure-router-vm/01-playbook-install-router-vm.yaml"
+- import_playbook: "00-install-and-configure-router-vm/02-playbook-configure-router-vm.yaml"
