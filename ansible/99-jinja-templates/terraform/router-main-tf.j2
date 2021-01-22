@@ -77,7 +77,7 @@ resource "vsphere_virtual_machine" "{{hostname}}" {
         ipv4_netmask = "24"
       }
       network_interface {
-        ipv4_address = "{{router.ip.gateway}}"
+        ipv4_address = "{{router.ip}}"
         ipv4_netmask = "24"
       }
       ipv4_gateway = "{{vsphere_network_openshift_gw}}"
