@@ -87,18 +87,44 @@
 # # Erzeuge die virtuelle Maschine
     - name: "05 --- Terraform - Create virtual machine"
       vars:
-        - cpu: "{{ item.cpu }}"
-        - ram: "{{ item.ram }}"
-        - hostname: "{{ item.hostname }}"
-        - ip: "{{ item.ip }}"
-        - disk: "{{ item.disk }}"
+        hostname: "{{ item.hostname }}"
       raw: "cd {{ dir_terraform }}{{ hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"      
       with_items: 
         - "{{ masters }}"
         - "{{ workers }}"
         - "{{ bstrp }}"
 
+    - name: "06 --- Retrieve mac-address from created virtual machines"
+      raw: "cd {{ dir_terraform }}{{ item.hostname }} && /usr/local/bin/terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
+      register: mac
+      with_items:
+        - "{{ masters }}"
+        - "{{ workers }}"
+        - "{{ bstrp }}"
+      tags:
+        - getmac
+
+    - debug: var=mac
+      tags:
+        - getmac
+
 # insert DHCP-entries
+# Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DHCP-Eintrag in DNSMASQ
+    - name: "08 --- Add DHCP-entry to /etc/dhcp/dhcpd.conf"
+      become: "true"
+      become_user: "root"
+      vars:
+        hostname: "{{ item.hostname }}"
+      lineinfile:
+        path: "/etc/dhcp/dhcpd.conf"
+        line: "host {{ hostname }} { server-name \"{{ bastion.ip }}\"; next-server {{ bastion.ip }}; filename \"{{ boot_script }}\"; hardware ethernet {{ mac.stdout | trim }}; fixed-address {{ip}}; option host-name \"{{hostname}}\"; }"
+      with_items:
+        - "{{ masters }}"
+        - "{{ workers }}"
+        - "{{ bstrp }}"
+        
+      delegate_to: "{{ bastion.ip }}"
+      notify: "restart dhcpd"
 
 
 # create PXE-files
