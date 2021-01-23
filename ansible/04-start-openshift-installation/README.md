@@ -23,7 +23,21 @@ cd $mypath/git/automated-openshift-installation/ansible/04-start-openshift-insta
 openshift-install --dir=/opt/sva/openshift/install-config/ wait-for bootstrap-complete --log-level=debug
 ```
 
+
+
+## Sign Certificates
+
+```bash
+oc adm certificate approve $(oc get csr | grep -i pending | awk '{print $1}')
+```
+
+
+
+
+
 ## Wait for install-complete
+
 ```bash
 openshift-install --dir=/opt/sva/openshift/install-config/ wait-for install-complete --log-level=debug
 ```
+
