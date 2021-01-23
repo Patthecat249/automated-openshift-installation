@@ -1,29 +1,29 @@
 ---
 # Dieses Playbook erstellt die Arbeitsverzeichnisse auf dem Bastion-Host
-- name: "01 - Create SSH-Connection to {{bastion.ip}}"
+- name: "40 - Create SSH-Connection to {{bastion.ip}}"
   command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no {{bastion.ip}}"
   delegate_to: "localhost"
 
-- name: "02 - Copy password-file  to /root/"
+- name: "41 - Copy password-file  to /root/"
   copy:
     src: "{{rootpw}}"
     dest: "{{rootpw}}"
 
-- name: "03 - Update yum-repos EPEL-RELEASE"
+- name: "42 - Update yum-repos EPEL-RELEASE"
   become: "true"
   yum:
     name:
       - "epel-release"
     state: "present"
 
-- name: "04 - Update yum-repos centos-release-ansible-29.noarch"
+- name: "43 - Update yum-repos centos-release-ansible-29.noarch"
   become: "true"
   yum:
     name:
       - "centos-release-ansible-29.noarch"
     state: "present"
 
-- name: "05 - Install necassary software programs"
+- name: "44 - Install necassary software programs"
   become: "true"
   yum:
     name:
@@ -45,7 +45,7 @@
   tags:
     - installed
 
-- name: "06 - Create User DNSMASQ in Group wheel"
+- name: "45 - Create User DNSMASQ in Group wheel"
   user:
     name: "dnsmasq"
     groups: "wheel"
@@ -53,13 +53,13 @@
   tags:
     - userdnsmasq
 
-- name: "06 - Create SSH-Keypair"
+- name: "46 - Create SSH-Keypair"
   raw: "ssh-keygen -q -t rsa -N '' -f /root/.ssh/{{key_to_nodes_name}} <<<y 2>&1 >/dev/null"
 
-- name: "07 - Create SSH-Connection on {{bastion.hostname}} itself"
+- name: "47 - Create SSH-Connection on {{bastion.hostname}} itself"
   command: "sshpass -f '{{rootpw}}' ssh-copy-id -i /root/.ssh/{{key_to_nodes_name}} -o StrictHostKeyChecking=no localhost"
 
-- name: "08 - Create working directories" 
+- name: "48 - Create working directories" 
   file:
     path: "{{ item }}"
     owner: root
@@ -85,7 +85,7 @@
   tags:
     - rerun
 
-- name: "08a - Create working directories for tftproot" 
+- name: "49 - Create working directories for tftproot" 
   file:
     path: "{{ item }}"
     owner: "dnsmasq"
@@ -100,7 +100,7 @@
   tags:
     - rerun
 
-- name: "08b - Copy syslinux-file to {{dir_tftp_root}}"
+- name: "50 - Copy syslinux-file to {{dir_tftp_root}}"
   copy:
     owner: "dnsmasq"
     group: "wheel"
@@ -114,7 +114,7 @@
     - rerun
 
 # 21.09.2020 - New Feature to backup the SSH-Key-Folder-Content
-- name: "09 - Backup SSH-Keys to /opt/sva/backup"
+- name: "51 - Backup SSH-Keys to /opt/sva/backup"
   command: cp "{{ dir_key_to_nodes }}{{ item }}" "{{ dir_backup_ssh_keys }}"
   with_items:
     - "{{ key_to_nodes_name }}"
@@ -122,7 +122,7 @@
   tags:
     - rerun
 
-- name: "10 - Copy CoreOS-Images to tftproot"
+- name: "52 - Copy CoreOS-Images to tftproot"
   copy:
     owner: "dnsmasq"
     group: "wheel"
@@ -135,7 +135,7 @@
   tags:
     - rerun
 
-- name: "11 - Copy CoreOS-Raw-GZ to {{dir_http_server}}"
+- name: "53 - Copy CoreOS-Raw-GZ to {{dir_http_server}}"
   copy:
     src: "{{item}}"
     dest: "{{ dir_http_server }}"  
@@ -147,7 +147,7 @@
     - rerun
 
 
-- name: "12 - Open some firewall-ports"
+- name: "54 - Open some firewall-ports"
   firewalld:
     service: "{{item}}"
     permanent: yes
