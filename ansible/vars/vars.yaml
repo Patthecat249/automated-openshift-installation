@@ -36,7 +36,7 @@ vsphere_bstrp_cpu: "8"
 vsphere_bstrp_ram: "16384"
 vsphere_bstrp_disksize: "120"
 vsphere_guest_id: "centos7_64Guest"
-vsphere_vm_boot_delay: "30000"
+vsphere_vm_boot_delay: "60000"
 
 
 
@@ -124,7 +124,6 @@ masters:
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "11:22:33:44:55:61"
     datastore: "openshift_storage"
   - name: "master02"
     hostname: "ocpmaster02"
@@ -132,7 +131,6 @@ masters:
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "11:22:33:44:55:62"
     datastore: "openshift_storage"
   - name: "master03"
     hostname: "ocpmaster03"
@@ -140,7 +138,6 @@ masters:
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "11:22:33:44:55:63"
     datastore: "openshift_storage"
 
 # OpenShift-Worker-Nodes
@@ -151,7 +148,6 @@ workers:
     cpu: "8"
     ram: "32768"
     disk: "200"
-    mac: "11:22:33:44:55:64"
     datastore: "openshift_storage"
   - name: "worker02"
     hostname: "ocpworker02"
@@ -159,7 +155,6 @@ workers:
     cpu: "8"
     ram: "32768"
     disk: "200"
-    mac: "11:22:33:44:55:65"
     datastore: "openshift_storage"
   - name: "worker03"
     hostname: "ocpworker03"
@@ -167,7 +162,6 @@ workers:
     cpu: "8"
     ram: "32768"
     disk: "200"
-    mac: "11:22:33:44:55:66"
     datastore: "openshift_storage"
 
 # Temporary Bootstrap-VM
@@ -178,7 +172,6 @@ bstrp:
   cpu: "8"
   ram: "16384"
   disk: "200"
-  mac: "11:22:33:44:55:60"
   datastore: "openshift_storage"
 
 # Install-VM
@@ -194,7 +187,6 @@ bastion:
   cpu: "2"
   ram: "4096"
   disk: "200"
-  mac: "00:50:56:a6:83:ae"
 
 # Image-Registry
 registry:
@@ -204,7 +196,6 @@ registry:
   cpu: "2"
   ram: "2048"
   disk: "200"
-  mac: "00:50:56:a6:bf:52"
 
 # Router-VM
 router:
@@ -237,7 +228,6 @@ lb:
   cpu: "1"
   ram: "1024"
   disk: "200"
-  mac: "00:50:56:a6:cb:f9"
   app:
     ip: "11.11.11.129"
   api:

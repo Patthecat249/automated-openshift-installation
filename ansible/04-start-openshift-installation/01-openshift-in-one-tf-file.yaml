@@ -1,0 +1,177 @@
+# Start-OpenShift-Cluster-Installation
+
+- name: "Playbook - Start-OpenShift-Cluster-Installation"
+  become: "true"
+  become_user: "root"
+  hosts: 127.0.0.1
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+  tasks:
+# Erstelle Arbeitsverzeichnisse
+    - name: "129 --- Create Working-Directories"
+      file:
+        path: "{{ item }}"
+        state: "directory"
+        recurse: "true"
+      with_items:
+        - "{{ dir_terraform }}{{ clustername }}-nodes/"
+
+# Create tf-files
+# Erstelle VM-Instanz Terraform "main.tf"-file
+# main.tf
+# Masters / Workers
+    - name: "130 --- Create main.tf"
+      template:
+        src: "tf-main.j2"
+        dest: "{{ dir_terraform }}{{ clustername }}-nodes/main.tf"
+
+# output.tf
+# Masters / Workers
+    - name: "131 --- Create output.tf"
+      template:
+        src: "tf-output.j2"
+        dest: "{{ dir_terraform }}{{ clustername }}-nodes/output.tf"
+
+# vars.tf
+    - name: "132 --- Create vars.tf"
+      template:
+        src: "tf-vars.j2"
+        dest: "{{ dir_terraform }}{{ clustername }}-nodes/vars.tf"
+
+# # Execute terraform
+# # Erzeuge die virtuelle Maschine
+    - name: "133 --- Terraform - Create all OpenShift-virtual-machines"
+      raw: "cd {{ dir_terraform }}{{ clustername }}-nodes/ && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"      
+
+    - name: "134 --- Retrieve mac-address from created virtual machines"
+      raw: "cd {{ dir_terraform }}{{ item.hostname }} && /usr/local/bin/terraform output -json | jq '.[\"mac-{{item.hostname}}\"].value' | sed -e 's|\"||g'"
+      register: mac
+      with_items:
+        - "{{ masters }}"
+        - "{{ workers }}"
+        - "{{ bstrp }}"
+      tags:
+        - getmac
+
+    - debug: var=mac.results
+      tags:
+        - getmac
+
+# insert DHCP-entries
+    - name: "135 --- Add DHCP-entry to /etc/dhcp/dhcpd.conf"
+      become: "true"
+      become_user: "root"
+      vars:
+        hostname: "{{ mac.results[item].item.hostname }}"
+        ip: "{{ mac.results[item].item.ip }}"
+      lineinfile:
+        path: "/etc/dhcp/dhcpd.conf"
+        line: "host {{ hostname }} { server-name \"{{ bastion.ip }}\"; next-server {{ bastion.ip }}; filename \"{{ boot_script }}\"; hardware ethernet {{ mac.results[item].stdout | trim }}; fixed-address {{ip}}; option host-name \"{{hostname}}\"; }"
+      with_items:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+      delegate_to: "{{bastion.ip}}"
+      notify: "restart dhcpd"
+      tags:
+        - getmac
+
+
+# create PXE-files
+    - name: "136 --- PXE - (MASTERS) - Create mac-address-files in {{dir_tftproot}}"
+      become: "true"
+      become_user: "root"
+      vars:
+        ignition_file: "{{ignition_filename_master}}"
+        hostname: "{{ mac.results[item].item.hostname }}"
+      template:
+        src: "../99-jinja-templates/pxe/pxelinux.cfg.j2"
+        dest: "{{dir_tftproot}}01-{{ mac.results[item].stdout | trim | regex_replace(':', '-')}}"
+        mode: "0755"
+        owner: "dnsmasq"
+        group: "wheel"
+      with_items:
+        - 0
+        - 1
+        - 2
+      delegate_to: "{{ bastion.ip }}"
+      tags:
+        - getmac
+
+    - name: "137 --- PXE - (WORKERS) - Create mac-address-files in {{dir_tftproot}}"
+      become: "true"
+      become_user: "root"
+      vars:
+        ignition_file: "{{ignition_filename_worker}}"
+        hostname: "{{ mac.results[item].item.hostname }}"
+      template:
+        src: "../99-jinja-templates/pxe/pxelinux.cfg.j2"
+        dest: "{{dir_tftproot}}01-{{ mac.results[item].stdout | trim | regex_replace(':', '-')}}"
+        mode: "0755"
+        owner: "dnsmasq"
+        group: "wheel"
+      with_items:
+        - 3
+        - 4
+        - 5
+      delegate_to: "{{ bastion.ip }}"
+      tags:
+        - getmac
+
+    - name: "138 --- PXE - (BOOTSTRAP) - Create mac-address-files in {{dir_tftproot}}"
+      become: "true"
+      become_user: "root"
+      vars:
+        ignition_file: "{{ignition_filename_bootstrap}}"
+        hostname: "{{ mac.results[item].item.hostname }}"
+      template:
+        src: "../99-jinja-templates/pxe/pxelinux.cfg.j2"
+        dest: "{{dir_tftproot}}01-{{ mac.results[item].stdout | trim | regex_replace(':', '-')}}"
+        mode: "0755"
+        owner: "dnsmasq"
+        group: "wheel"
+      with_items:
+        - 6
+      delegate_to: "{{ bastion.ip }}"
+      tags:
+        - getmac
+
+# insert DNS-entries
+    - name: "139 --- Add DNS-Lookup-entry to dnsmasq.conf"
+      become: "true"
+      become_user: "root"
+      lineinfile:
+        path: "/etc/dnsmasq.conf"
+        insertafter: "^## OpenShift-Nodes-DNS" 
+        line: "address=/{{ item.hostname }}.{{clustername}}.{{domain}}/{{ item.ip }}"
+      with_items:
+        - "{{ masters }}"
+        - "{{ workers }}"
+        - "{{ bstrp }}"
+      delegate_to: "{{ bastion.ip }}"
+      notify: "restart dnsmasq"
+      tags:
+        - setdns
+
+# Starte den DNS-Dienst erneut, wenn sich etwas an der DNS-Konfiguration geändert hat.
+  handlers:
+    - name: "restart dhcpd"
+      become: "true"
+      become_user: "root"
+      service:
+        name: dhcpd
+        state: restarted
+      delegate_to: "{{ bastion.ip }}"
+
+    - name: "restart dnsmasq"
+      become: "true"
+      become_user: "root"
+      service:
+        name: dnsmasq
+        state: restarted
+      delegate_to: "{{ bastion.ip }}"
