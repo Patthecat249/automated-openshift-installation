@@ -45,7 +45,7 @@
       raw: "cd {{ dir_terraform }}{{ clustername }}-nodes/ && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"      
 
     - name: "134 --- Retrieve mac-address from created virtual machines"
-      raw: "cd {{ dir_terraform }}{{ item.hostname }} && /usr/local/bin/terraform output -json | jq '.[\"mac-{{item.hostname}}\"].value' | sed -e 's|\"||g'"
+      raw: "cd {{ dir_terraform }}{{ clustername }}-nodes/ && /usr/local/bin/terraform output -json | jq '.[\"mac-{{item.hostname}}\"].value' | sed -e 's|\"||g'"
       register: mac
       with_items:
         - "{{ masters }}"
