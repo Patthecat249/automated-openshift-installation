@@ -6,4 +6,4 @@
   hosts: "{{bastion.ip}}"
   tasks:
     - name: "Wait for Installation to complete"
-      raw: "openshift-install --dir={{dir_install_config}} wait-for install-complete"
+      raw: "/usr/local/bin/openshift-install --dir={{dir_install_config}} wait-for install-complete"
