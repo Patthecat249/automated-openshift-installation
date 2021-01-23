@@ -1,0 +1,8 @@
+- name: "Playbook - OpenShift-Installation - wait-for bootstrap to complete"
+  become: "true"
+  gather_facts: "false"
+  hosts: "{{bastion.ip}}"
+  tasks:
+    - name: "Wait for bootstrap to complete"
+      raw: "openshift-install --dir={{dir_install_config}} wait-for bootstrap-complete"
+

@@ -1,0 +1,7 @@
+- name: "Playbook - OpenShift-Installation - Sign Certificate Requests"
+  become: "true"
+  gather_facts: "false"
+  hosts: "{{bastion.ip}}"
+  tasks:
+    - name: "Sign OpenShift Certificate Requests automatically"
+      raw: "export KUBECONFIG={{dir_install_config}}auth/kubeconfig; sleep 30m; while [ $(oc get csr | grep worker | grep Approved | wc -l) -lt 3 ]; do oc get csr -o json | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs oc adm certificate approve; sleep 10s; done"
