@@ -1,12 +1,12 @@
 ---
-- name: "21 - Check if dnsmasq.conf is backed up"
+- name: "63 - Check if dnsmasq.conf is backed up"
   stat:
     path: "/etc/dnsmasq.conf.backup"
   register: dnsmasq_conf_backup_details
   tags:
     - rerun
 
-- name: "22 - Backup dnsmasq.conf if not already done"
+- name: "64 - Backup dnsmasq.conf if not already done"
   copy:
     src: "/etc/dnsmasq.conf"
     dest: "/etc/dnsmasq.conf.backup"
@@ -17,7 +17,7 @@
   tags:
     - rerun
 
-- name: "23 - Render dnsmasq.conf from template"
+- name: "65 - Render dnsmasq.conf from template"
   template:
     src: "../99-jinja-templates/dnsmasq/dnsmasq.conf.j2"
     dest: "/etc/dnsmasq.conf"
@@ -32,7 +32,7 @@
     - rerun
 
 # 21.09.2020 - New Feature to backup the dnsmasq.conf-file
-- name: "24 - Backup dnsmasq.conf to /opt/sva/backup"
+- name: "66 - Backup dnsmasq.conf to /opt/sva/backup"
   copy:
     src: "/etc/dnsmasq.conf"
     dest: "{{ dir_backup_dnsmasq }}dnsmasq.conf"
@@ -41,13 +41,13 @@
     - rerun
 
 # Setup SELinux for tftproot-Folder so that dnsmasq works with SELinux
-- name: "25 - Set SELinux boolean tftp_anon_write to true"
+- name: "67 - Set SELinux boolean tftp_anon_write to true"
   seboolean: 
     name: "tftp_anon_write"
     state: "true"
     persistent: "true"
 
-- name: "26 - Set SELinux boolean tftp_home_dir to true"
+- name: "68 - Set SELinux boolean tftp_home_dir to true"
   seboolean: 
     name: "tftp_home_dir"
     state: "true"
@@ -55,16 +55,16 @@
 
 # /TFTPROOT must be labeled with "tftpdir_t"
 # Important. the trailing slash must be cut off at the end of the var-string /tftproot/
-- name: "27 - semanage fcontext -a -t tftpdir_t '{{ dir_tftp_root | regex_replace('/$')}}(/.*)?'"
+- name: "69 - semanage fcontext -a -t tftpdir_t '{{ dir_tftp_root | regex_replace('/$')}}(/.*)?'"
   sefcontext: 
     target: "{{ dir_tftp_root | regex_replace('/$')}}(/.*)?"
     setype: "tftpdir_t"
     state: "present"
 
-- name: "28 - restorecon -Rv {{dir_tftp_root}}"
+- name: "70 - restorecon -Rv {{dir_tftp_root}}"
   raw: "restorecon -Rv {{dir_tftp_root}}"
 
-- name: "29 - Ensure dnsmasq is running"
+- name: "71 - Ensure dnsmasq is running"
   systemd: 
     name: dnsmasq
     state: started
@@ -72,7 +72,7 @@
   tags:
     - rerun
 
-- name: "30 - Add DNS server and search domain"
+- name: "72 - Add DNS server and search domain"
   shell: |
     nmcli con mod {{interface}} +ipv4.dns-search "{{ clustername }}.{{ domain }}"
     nmcli con mod {{interface}} +ipv4.dns "{{ bastion.ip }}"

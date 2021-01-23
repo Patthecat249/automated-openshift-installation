@@ -1,7 +1,7 @@
 ---
 # Dieses Playbook bereitet die CLI-Tools zum Einsatz bzw. zur Verwendung vor.
 # 22.09.2020 - Anpassung: Die TAR-File werden vom Software-Verzeichnis kopiert. Nicht mehr die Tools oc, kubectl und openshift-install einzeln
-- name: "15 - Copy OC-Client-TAR-File and Openshift-install-TAR-File to bastion"
+- name: "57 - Copy OC-Client-TAR-File and Openshift-install-TAR-File to bastion"
   copy:
     src: "{{ dir_downloaded_images }}{{ item }}"
     dest: "{{ dir_tools }}"
@@ -17,7 +17,7 @@
     - rerun
 
 # 22.09.2020 - Anpassung: der OC-Client und der OpenShift-Installer werden auf dem Bastion-Host entpackt
-- name: "16 - Entpacke OC-Client und Openshift-install-Client"
+- name: "58 - Entpacke OC-Client und Openshift-install-Client"
   unarchive:
     src: "{{ dir_tools }}{{ item }}"
     dest: "{{ dir_tools }}"
@@ -29,7 +29,7 @@
     - rerun
 
 
-- name: "17 - Copy kubectl to /usr/local/bin/"
+- name: "59 - Copy kubectl to /usr/local/bin/"
   copy:
     src: "{{ dir_tools }}kubectl"
     dest: "/usr/local/bin/kubectl"
@@ -39,7 +39,7 @@
   tags:
     - rerun
 
-- name: "18 - Copy oc to /usr/local/bin/"
+- name: "60 - Copy oc to /usr/local/bin/"
   copy:
     src: "{{ dir_tools }}oc"
     dest: "/usr/local/bin/oc"
@@ -49,7 +49,7 @@
   tags:
     - rerun
 
-- name: "19 - Copy openshift-install to /usr/local/bin/"
+- name: "61 - Copy openshift-install to /usr/local/bin/"
   copy:
     src: "{{ dir_tools }}openshift-install"
     dest: "/usr/local/bin/openshift-install"
@@ -59,7 +59,7 @@
   tags:
     - rerun
 
-- name: "20 - Copy pull-secret-original to '{{ dir_cluster }}'"
+- name: "62 - Copy pull-secret-original to '{{ dir_cluster }}'"
   copy: 
     src: "{{pull_secret}}"
     dest: "{{ dir_cluster }}{{ pull_secret_file_name }}" 

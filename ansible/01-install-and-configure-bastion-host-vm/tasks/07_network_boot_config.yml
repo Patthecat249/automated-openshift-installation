@@ -1,5 +1,5 @@
 ---
-- name: "42 - Allow incoming connections to the tftp service in the firewall"
+- name: "73 - Allow incoming connections to the tftp service in the firewall"
   firewalld:
     service: tftp
     permanent: yes
@@ -8,7 +8,7 @@
     - rerun
 
 
-- name: "43 - Copy pxelinux.0 and menu.c32 to '{{ dir_tftp_root }}'"
+- name: "74 - Copy pxelinux.0 and menu.c32 to '{{ dir_tftp_root }}'"
   copy:
     src: "/usr/share/syslinux/{{ item }}"
     dest: "{{ dir_tftp_root }}{{ item }}"
@@ -22,7 +22,7 @@
   tags:
     - rerun
 
-- name: "44 - Make sure folder '{{ dir_tftp_root }}pxelinux.cfg/' exists"
+- name: "75 - Make sure folder '{{ dir_tftp_root }}pxelinux.cfg/' exists"
   file:
     path: "{{ dir_tftp_root }}pxelinux.cfg"
     state: directory
@@ -70,7 +70,7 @@
 #   with_items: 
 #     - "{{ bstrp }}"
 
-- name: "45 - Start and enable HTTP server"
+- name: "76 - Start and enable HTTP server"
   service:
     name: httpd
     state: started
@@ -79,7 +79,7 @@
     - rerun
 
 # 21.09.2020 - New Feature to backup the TFTP-Folder-Content
-- name: "46 - Backup TFTP-Folder to /opt/sva/backup"
+- name: "77 - Backup TFTP-Folder to /opt/sva/backup"
   command: cp -r  "{{ dir_tftp_root }}" "{{ dir_backup_tftp }}"
   tags:
     - rerun

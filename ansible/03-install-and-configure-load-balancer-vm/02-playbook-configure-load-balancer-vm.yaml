@@ -1,18 +1,18 @@
 ---
-- name: "Configuration of a load-balancer"
+- name: "Playbook - Configure the load-balancer"
   hosts: "{{ lb.ip }}"
   become: "true"
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
   tasks:
-    - name: "00 - ssh-copy-id as user-root to {{lb.ip}}"
+    - name: "118 - ssh-copy-id as user-root to {{lb.ip}}"
       become: "true"
       become_user: "root"
       raw: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@{{lb.ip}}"
       delegate_to: "localhost"
 
-    - name: "01 - Install haproxy-software and policycoreutils-python"
+    - name: "119 - Install haproxy-software and policycoreutils-python"
       yum:
         name: 
           - "haproxy"
@@ -21,13 +21,13 @@
         state: "present"
 
 # Disable Firewalld
-    - name: "Disable Firewalld"
+    - name: "120 - Disable Firewalld"
       systemd:
         name: "firewalld"
         state: "stopped"
         enabled: "no"
 
-    - name: "02 - Render haproxy-template for load-balancer-vm"
+    - name: "121 - Render haproxy-template for load-balancer-vm"
       template:
         src: "../99-jinja-templates/haproxy/haproxy.cfg.j2"
         dest: "/etc/haproxy/haproxy.cfg"
@@ -39,11 +39,11 @@
       notify:
         - restart haproxy
 
-    - name: "03 - SELinux - Check Status"
+    - name: "122 - SELinux - Check Status"
       command: "/usr/sbin/getenforce"
       register: "getenforce_res"
 
-    - name: "04 - Configure SELinux with enforcing mode"
+    - name: "123 - Configure SELinux with enforcing mode"
       seport:
         ports: "6443,22623"
         proto: "tcp"
@@ -51,7 +51,7 @@
         state: "present"
       when: getenforce_res.stdout == 'Enforcing'
 
-    - name: "05 - Start and enable service haproxy"
+    - name: "124 - Start and enable service haproxy"
       systemd:
         name: "haproxy"
         state: "started"
