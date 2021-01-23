@@ -41,3 +41,13 @@ oc adm certificate approve $(oc get csr | grep -i pending | awk '{print $1}')
 openshift-install --dir=/opt/sva/openshift/install-config/ wait-for install-complete --log-level=debug
 ```
 
+
+
+## Update Image-Registry-Content
+
+```bash
+OPENSHIFT_VERSION=4.5.28
+
+/usr/local/bin/oc adm -a /opt/sva/tools/pull-secret release mirror --from=quay.io/openshift-release-dev/ocp-release:$OPENSHIFT_VERSION-x86_64 --to=ocpregistry.openshift.home.local:5000/ocp4/openshift4 --to-release-image=ocpregistry.openshift.home.local:5000/ocp4/openshift4:$OPENSHIFT_VERSION-x86_64
+```
+
