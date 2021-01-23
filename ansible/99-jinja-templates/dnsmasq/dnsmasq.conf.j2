@@ -33,10 +33,10 @@ strict-order
 ## DNS-Server (Option=6)
 #dhcp-option=6,{{ bastion.ip }}
 
-{% if ntpserver is defined %}
+#{% if ntpserver is defined %}
 ## NTP Server (Option=42)
 #dhcp-option=42,{{ ntpserver }}
-{% endif %}
+#{% endif %}
 
 ## OpenShift-Nodes-DHCP
 
