@@ -52,3 +52,6 @@
 
 # Prepare install-config.yaml
 - import_playbook: "../01-install-and-configure-bastion-host-vm/03-prepare-openshift-install-config.yaml"
+
+# Start openshift-installation bootstrap -> master-/worker-nodes
+- import_playbook: "../04-start-openshift-installation/00-install-openshift.yaml"

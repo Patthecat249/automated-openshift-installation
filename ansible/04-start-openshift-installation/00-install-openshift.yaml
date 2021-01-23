@@ -1,6 +1,6 @@
-# Execute on install-vm
+# Start-OpenShift-Cluster-Installation
 
-- name: "Install {{ bstrp.name }}-VM"
+- name: "Playbook - Start-OpenShift-Cluster-Installation"
   become: "true"
   become_user: "root"
   hosts: 127.0.0.1
@@ -16,7 +16,7 @@
  
   tasks:
 # Erstelle Arbeitsverzeichnisse
-    - name: "01 --- Create Working-Directories"
+    - name: "129 --- Create Working-Directories"
       file:
         path: "{{ item }}"
         state: "directory"
@@ -34,7 +34,7 @@
 # Erstelle VM-Instanz Terraform "main.tf"-file
 # main.tf
 # Masters / Workers
-    - name: "02a --- Create main.tf"
+    - name: "130 --- Create main.tf"
       vars:
         - cpu: "{{ item.cpu }}"
         - ram: "{{ item.ram }}"
@@ -51,7 +51,7 @@
 
 # output.tf
 # Masters / Workers
-    - name: "03a --- Create output.tf"
+    - name: "131 --- Create output.tf"
       vars:
         - cpu: "{{ item.cpu }}"
         - ram: "{{ item.ram }}"
@@ -67,7 +67,7 @@
         - "{{ bstrp }}"
 
 # vars.tf
-    - name: "04a --- Create vars.tf"
+    - name: "132 --- Create vars.tf"
       vars:
         - cpu: "{{ item.cpu }}"
         - ram: "{{ item.ram }}"
@@ -85,7 +85,7 @@
 
 # # Execute terraform
 # # Erzeuge die virtuelle Maschine
-    - name: "05 --- Terraform - Create virtual machine"
+    - name: "133 --- Terraform - Create virtual machine"
       vars:
         hostname: "{{ item.hostname }}"
       raw: "cd {{ dir_terraform }}{{ hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"      
@@ -94,7 +94,7 @@
         - "{{ workers }}"
         - "{{ bstrp }}"
 
-    - name: "06 --- Retrieve mac-address from created virtual machines"
+    - name: "134 --- Retrieve mac-address from created virtual machines"
       raw: "cd {{ dir_terraform }}{{ item.hostname }} && /usr/local/bin/terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
       with_items:
@@ -109,7 +109,7 @@
         - getmac
 
 # insert DHCP-entries
-    - name: "07 --- Add DHCP-entry to /etc/dhcp/dhcpd.conf"
+    - name: "135 --- Add DHCP-entry to /etc/dhcp/dhcpd.conf"
       become: "true"
       become_user: "root"
       vars:
@@ -133,7 +133,7 @@
 
 
 # create PXE-files
-    - name: "08 --- PXE - (MASTERS) - Create mac-address-files in {{dir_tftproot}}"
+    - name: "136 --- PXE - (MASTERS) - Create mac-address-files in {{dir_tftproot}}"
       become: "true"
       become_user: "root"
       vars:
@@ -153,7 +153,7 @@
       tags:
         - getmac
 
-    - name: "09 --- PXE - (WORKERS) - Create mac-address-files in {{dir_tftproot}}"
+    - name: "137 --- PXE - (WORKERS) - Create mac-address-files in {{dir_tftproot}}"
       become: "true"
       become_user: "root"
       vars:
@@ -173,7 +173,7 @@
       tags:
         - getmac
 
-    - name: "10 --- PXE - (BOOTSTRAP) - Create mac-address-files in {{dir_tftproot}}"
+    - name: "138 --- PXE - (BOOTSTRAP) - Create mac-address-files in {{dir_tftproot}}"
       become: "true"
       become_user: "root"
       vars:
@@ -192,7 +192,7 @@
         - getmac
 
 # insert DNS-entries
-    - name: "11 --- Add DNS-Lookup-entry to dnsmasq.conf"
+    - name: "139 --- Add DNS-Lookup-entry to dnsmasq.conf"
       become: "true"
       become_user: "root"
       lineinfile:
