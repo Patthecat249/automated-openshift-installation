@@ -59,8 +59,6 @@
     permanent: "true"
     state: "enabled"
     port: "80/tcp"
-  notify:
-    - restart firewall
 
 # - name: "46 - Render openshift-automatic-worker-signer.sh"
 #   template: 
