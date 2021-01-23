@@ -23,6 +23,7 @@ vsphere_datastore: "openshift_storage"
 vsphere_network: "dpg-openshift"
 vsphere_network_home: "dpg-home-prod"
 vsphere_network_openshift_gw: "11.11.11.1"
+vsphere_network_openshift_broadcast: "11.11.11.255"
 vsphere_folder: "/dc-home/vm/openshift"
 vsphere_master_cpu: "8"
 vsphere_master_ram: "16384"
@@ -245,7 +246,7 @@ lb:
     ip: "11.11.11.129"
 
 # DNSMASQ-Settings
-dhcp_range: "11.11.11.40,11.11.11.250,255.255.255.0,12h"
+dhcp_range: "11.11.11.110 11.11.11.200"
 dhcp_subnetmask: "255.255.255.0"
 dhcp_gateway: "11.11.11.1"
 ntpserver: "10.0.249.1"

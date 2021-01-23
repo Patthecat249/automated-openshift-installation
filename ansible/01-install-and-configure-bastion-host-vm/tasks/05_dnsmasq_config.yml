@@ -40,6 +40,11 @@
   tags:
     - rerun
 
+- name: "66a - Create /etc/dhcp/dhcpd.conf"
+  template:
+    src: "../99-jinja-templates/dnsmasq/dhcpd.conf.j2"
+    dest: "/etc/dhcp/dhcpd.conf"
+
 # Setup SELinux for tftproot-Folder so that dnsmasq works with SELinux
 - name: "67 - Set SELinux boolean tftp_anon_write to true"
   seboolean: 

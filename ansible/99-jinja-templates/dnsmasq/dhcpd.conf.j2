@@ -1,0 +1,9 @@
+subnet {{net_openshift}} netmask {{dhcp_subnetmask}} {
+  range {{dhcp_range}};
+  option domain-name-servers {{bastion.ip}};
+  option domain-name "{{clustername}}.{{domain}}";
+  option routers {{vsphere_network_openshift_gw}};
+  option broadcast-address {{vsphere_network_openshift_broadcast}};
+  default-lease-time 600;
+  max-lease-time 7200;
+}
