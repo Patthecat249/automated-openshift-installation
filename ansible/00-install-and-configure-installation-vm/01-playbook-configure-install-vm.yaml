@@ -1,5 +1,5 @@
 ---
-- name: "Configuration of Install-VM"
+- name: "Playbook - Install-VM - Configuration"
   hosts: 127.0.0.1
   gather_facts: "false"
   vars_files:
@@ -37,35 +37,35 @@
         - download
 
 # Download some OpenShift-Software (Kernel, initrd, rawgz, oc, openshift-install)
-    - name: "03a - Download CoreOS-Kernel"
+    - name: "04 - Download CoreOS-Kernel"
       get_url:
         url: "{{ link_to_coreos_kernel }}"
         dest: "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
       tags:
         - download
 
-    - name: "03b - Download CoreOS-Initrd"
+    - name: "05 - Download CoreOS-Initrd"
       get_url:
         url: "{{ link_to_coreos_initrd }}"
         dest: "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
       tags:
         - download
 
-    - name: "03c - Download CoreOS-RawGz"
+    - name: "06 - Download CoreOS-RawGz"
       get_url:
         url: "{{ link_to_coreos_raw_gz }}"
         dest: "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
       tags:
         - download
 
-    - name: "03d - Download oc-client {{link_to_oc}}"
+    - name: "07 - Download oc-client {{link_to_oc}}"
       get_url:
         url: "{{ link_to_oc }}"
         dest: "{{ dir_downloaded_images }}{{file_oc}}"
       tags:
         - downloada
 
-    - name: "03e - Download openshift-installer {{link_to_openshift_installer}}"
+    - name: "08 - Download openshift-installer {{link_to_openshift_installer}}"
       get_url:
         url: "{{ link_to_openshift_installer }}"
         dest: "{{ dir_downloaded_images }}{{file_openshift_installer}}"
@@ -74,26 +74,26 @@
 
 
 # Download terraform software from internet
-    - name: "03 - Download terraform"
+    - name: "09 - Download terraform"
       get_url:
         url: "{{ download_tf }}"
         dest: "{{ dir_terraform }}"
 
 # Download terraform vSphere-Provider-Plugin from internet
-    - name: "04 - Download terraform vSphere-Provider-Plugin"
+    - name: "10 - Download terraform vSphere-Provider-Plugin"
       get_url:
         url: "{{ download_tf_vsphere_plugin }}"
         dest: "{{ dir_terraform_vsphere_plugin }}"
 
 # Extraction of zip-archive
-    - name: "05 - Entpacken von terraform"
+    - name: "11 - Entpacken von terraform"
       unarchive:
         src: "{{ dir_terraform }}terraform_{{ tf_version }}_linux_amd64.zip"
         dest: "{{ dir_tools }}"
         remote_src: "true"
 
 # Make Terraform executable >> copy to /usr/local/bin/terraform
-    - name: "06 - Terraform nach /usr/bin kopieren und ausführbar machen"
+    - name: "12 - Terraform nach /usr/bin kopieren und ausführbar machen"
       copy:
         src: "{{ dir_tools }}terraform"
         dest: "/usr/local/bin/terraform"
@@ -101,16 +101,16 @@
         remote_src: "true"
 
 # Create SSH-Key for root-user
-    - name: "07 - Create SSH-Key for root-user"
+    - name: "13 - Create SSH-Key for root-user"
       become: "true"
       raw: "ssh-keygen -q -t rsa -N '' -f /root/.ssh/id_rsa <<<y 2>&1 >/dev/null"
 # Copy SSH-Key to localhost
-    - name: "08 - SSH-COPY-ID"
+    - name: "14 - SSH-COPY-ID"
       become: "true"
       raw: "sshpass -f rootpassword ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@localhost"
 
 # Create User pi
-    - name: "07 - Create User pi"
+    - name: "15 - Create User pi"
       user:
         name: "pi" 
         group: "wheel"
@@ -121,7 +121,7 @@
         ssh_key_file: ".ssh/id_rsa"
 
 # Create Working-Directories for User pi
-    - name: "08 --- Create Working-Directories for user pi"
+    - name: "16 --- Create Working-Directories for user pi"
       become: "true"
       become_user: "pi"
       file:
@@ -132,12 +132,12 @@
         - "{{ dir_pi_home }}git"
 
 # Add right to wheel in sudoers.d
-    - name: "09 - add wheel to sudoers.d"
+    - name: "17 - add wheel to sudoers.d"
       become: "true"
       raw: "echo '%wheel        ALL=(ALL)       NOPASSWD: ALL' > /etc/sudoers.d/wheel"
 
 # Clone Github-Repo automation... to /home/pi/git/ Directory and set permissions for user pi and group wheel
-    - name: "10 - Clone Github-Repository https://github.com/Patthecat249/automated-openshift-installation.git"
+    - name: "18 - Clone Github-Repository https://github.com/Patthecat249/automated-openshift-installation.git"
       become: "true"
       become_user: "pi"     
       git:
@@ -146,36 +146,36 @@
         clone: "true"
         update: "true"
 # Do task as pi: ssh-copy-id
-    - name: "11a - ssh-copy-id as user-pi to pi-server"
+    - name: "19 - ssh-copy-id as user-pi to pi-server"
       become: "true"
       become_user: "pi"
       raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pi"
 
-    - name: "11b - ssh-copy-id as user-root to pi-server"
+    - name: "20 - ssh-copy-id as user-root to pi-server"
       become: "true"
       become_user: "root"
       raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pi"
 
 
-    - name: "12a - ssh-copy-id as user-pi to {{ pxe.hostname }}"
+    - name: "21 - ssh-copy-id as user-pi to {{ pxe.hostname }}"
       become: "true"
       become_user: "pi"
       raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@{{ pxe.hostname }}"
 
-    - name: "12b - ssh-copy-id as user-root to {{ pxe.hostname }}"
+    - name: "22 - ssh-copy-id as user-root to {{ pxe.hostname }}"
       become: "true"
       become_user: "root"
       raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@{{ pxe.hostname }}"
 
 
 # Create .ansible.cfg in /root-dir
-    - name: "14 --- Create .ansible.cfg and inventory-file in /root"
+    - name: "23 --- Create .ansible.cfg and inventory-file in /root"
       become: "true"
       template:
         src: "../99-jinja-templates/ansible/ansible.cfg.j2"
         dest: "/root/.ansible.cfg" 
 # Create inventory file in /root-dir
-    - name: "15 --- Create .ansible.cfg and inventory-file in /root"
+    - name: "24 --- Create .ansible.cfg and inventory-file in /root"
       become: "true"
       template:
         src: "../99-jinja-templates/ansible/inventory.j2"
