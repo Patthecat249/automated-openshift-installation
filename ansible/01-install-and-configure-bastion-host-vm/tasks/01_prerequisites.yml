@@ -29,6 +29,7 @@
     name:
       - ansible.noarch
       - git
+      - dhcp
       - sshpass
       - wget.x86_64
       - jq.x86_64
