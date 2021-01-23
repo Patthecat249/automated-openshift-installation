@@ -1,6 +1,9 @@
 - name: "Playbook - OpenShift-Installation - Sign Certificate Requests"
   become: "true"
   gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+
   hosts: "{{bastion.ip}}"
   tasks:
     - name: "Sign OpenShift Certificate Requests automatically"
