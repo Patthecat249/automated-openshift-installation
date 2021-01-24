@@ -34,7 +34,6 @@
 
 # Copy Tools
     - name: "Copy oc-client /openshift-install to {{ bastion.ip }}"
-      hosts: "{{ bastion.ip }}"
       copy:
         src: "{{ item }}"
         dest: "{{dir_tools}}"
@@ -44,7 +43,7 @@
       with_items:
         - "{{ dir_downloaded_images }}{{file_openshift_installer}}"
         - "{{ dir_downloaded_images }}{{file_oc}}"
-      # delegate_to: "{{ bastion.ip }}"
+      delegate_to: "{{ bastion.ip }}"
 
 
 # Extract Tools
