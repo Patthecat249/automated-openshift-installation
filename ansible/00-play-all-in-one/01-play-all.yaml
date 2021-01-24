@@ -76,7 +76,7 @@
 - import_playbook: "../04-start-openshift-installation/02-wait-for-bootstrap-complete.yaml"
 
 # Sign Certificate Signing Requests
-- import_playbook: "../04-start-openshift-installation/03-sign-certificate-requests.yaml"
+# - import_playbook: "../04-start-openshift-installation/03-sign-certificate-requests.yaml"
 
 # Wait for Install to complete
-- import_playbook: "../04-start-openshift-installation/04-wait-for-install-complete.yaml"
+# - import_playbook: "../04-start-openshift-installation/04-wait-for-install-complete.yaml"
