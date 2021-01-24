@@ -4,6 +4,5 @@
   vars_files:
     - "../vars/vars.yaml"
   tasks:
-    - name: "Execution of post-installation-task after an ocp-installation"
-        - import_tasks: tasks/10-ntp-chronyd.yaml
+    - import_tasks: tasks/10-ntp-chronyd.yaml
 ...
