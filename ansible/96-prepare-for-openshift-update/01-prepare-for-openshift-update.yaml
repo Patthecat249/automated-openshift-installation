@@ -38,7 +38,6 @@
         src: "{{ item }}"
         dest: "{{dir_tools}}"
         mode: '0755'
-        #remote_src: yes
         force: yes
       with_items:
         - "{{ dir_downloaded_images }}{{file_openshift_installer}}"
@@ -47,42 +46,42 @@
 
 
 # Extract Tools
-    # - name: "58 - Entpacke OC-Client {{ file_oc }} und Openshift-install-Client {{ file_openshift_installer }}"
-    #   unarchive:
-    #     src: "{{ dir_tools }}{{ item }}"
-    #     dest: "{{ dir_tools }}"
-    #     remote_src: yes
-    #   with_items:
-    #     - '{{ file_openshift_installer }}'
-    #     - '{{ file_oc }}' 
-    #   delegate_to: "{{ bastion.ip }}"
+    - name: "58 - Entpacke OC-Client {{ file_oc }} und Openshift-install-Client {{ file_openshift_installer }}"
+      unarchive:
+        src: "{{ dir_tools }}{{ item }}"
+        dest: "{{ dir_tools }}"
+        remote_src: yes
+      with_items:
+        - '{{ file_openshift_installer }}'
+        - '{{ file_oc }}' 
+      delegate_to: "{{ bastion.ip }}"
 
-    # - name: "59 - Copy kubectl to /usr/local/bin/"
-    #   copy:
-    #     src: "{{ dir_tools }}kubectl"
-    #     dest: "/usr/local/bin/kubectl"
-    #     mode: '0755'
-    #     remote_src: yes
-    #     force: yes
-    #   delegate_to: "{{ bastion.ip }}"
+    - name: "59 - Copy kubectl to /usr/local/bin/"
+      copy:
+        src: "{{ dir_tools }}kubectl"
+        dest: "/usr/local/bin/kubectl"
+        mode: '0755'
+        remote_src: yes
+        force: yes
+      delegate_to: "{{ bastion.ip }}"
 
-    # - name: "60 - Copy oc to /usr/local/bin/"
-    #   copy:
-    #     src: "{{ dir_tools }}oc"
-    #     dest: "/usr/local/bin/oc"
-    #     mode: '0755'
-    #     remote_src: yes
-    #     force: yes
-    #   delegate_to: "{{ bastion.ip }}"
+    - name: "60 - Copy oc to /usr/local/bin/"
+      copy:
+        src: "{{ dir_tools }}oc"
+        dest: "/usr/local/bin/oc"
+        mode: '0755'
+        remote_src: yes
+        force: yes
+      delegate_to: "{{ bastion.ip }}"
 
-    # - name: "61 - Copy openshift-install to /usr/local/bin/"
-    #   copy:
-    #     src: "{{ dir_tools }}openshift-install"
-    #     dest: "/usr/local/bin/openshift-install"
-    #     mode: '0755'
-    #     remote_src: yes
-    #     force: yes
-    #   delegate_to: "{{ bastion.ip }}"
+    - name: "61 - Copy openshift-install to /usr/local/bin/"
+      copy:
+        src: "{{ dir_tools }}openshift-install"
+        dest: "/usr/local/bin/openshift-install"
+        mode: '0755'
+        remote_src: yes
+        force: yes
+      delegate_to: "{{ bastion.ip }}"
 
 # # Copy oc-client to Bastion-Host
 #     - name: "Copy oc-client to {{ bastion.ip }}"
