@@ -5,19 +5,19 @@
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
-
+  tasks:
 # Download OpenShift-Software (Kernel, initrd, rawgz, oc, openshift-install)
-    - name: "04 - Download CoreOS-Kernel"
+    - name: "04 - Download CoreOS-Kernel {{link_to_coreos_kernel}}"
       get_url:
         url: "{{ link_to_coreos_kernel }}"
         dest: "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
 
-    - name: "05 - Download CoreOS-Initrd"
+    - name: "05 - Download CoreOS-Initrd {{ link_to_coreos_initrd }}"
       get_url:
         url: "{{ link_to_coreos_initrd }}"
         dest: "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
 
-    - name: "06 - Download CoreOS-RawGz"
+    - name: "06 - Download CoreOS-RawGz {{ link_to_coreos_raw_gz }}"
       get_url:
         url: "{{ link_to_coreos_raw_gz }}"
         dest: "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
