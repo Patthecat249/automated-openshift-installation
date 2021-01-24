@@ -32,6 +32,8 @@
         url: "{{ link_to_openshift_installer }}"
         dest: "{{ dir_downloaded_images }}{{file_openshift_installer}}"
 
+
+
 # Extract Tools
     - name: "58 - Entpacke OC-Client {{ file_oc }} und Openshift-install-Client {{ file_openshift_installer }}"
       unarchive:
@@ -65,6 +67,39 @@
         mode: '0755'
         remote_src: yes
         force: yes
+
+# Copy oc-client to Bastion-Host
+    - name: "Copy oc-client to {{ bastion.ip }}"
+      copy:
+        src: "/usr/local/bin/oc"
+        dest: "/usr/local/bin/oc"
+        force: "true"
+      delegate_to: "{{ bastion.ip }}"
+
+# Copy oc-client to Registry-Host
+    - name: "Copy oc-client to {{ registry.ip }}"
+      copy:
+        src: "/usr/local/bin/oc"
+        dest: "/usr/local/bin/oc"
+        force: "true"
+      delegate_to: "{{ registry.ip }}"
+
+# Copy openshift-install to Bastion-Host
+    - name: "Copy openshift-install to {{ bastion.ip }}"
+      copy:
+        src: "/usr/local/bin/openshift-install"
+        dest: "/usr/local/bin/openshift-install"
+        force: "true"
+      delegate_to: "{{ bastion.ip }}"
+
+# Copy openshift-install to Registry-Host
+    - name: "Copy openshift-install to {{ registry.ip }}"
+      copy:
+        src: "/usr/local/bin/openshift-install"
+        dest: "/usr/local/bin/openshift-install"
+        force: "true"
+      delegate_to: "{{ registry.ip }}"
+
 
 # Mirror images from Red Hat to mirror-registry
     - name: "110 - Mirror the Images from Red Hat into mirror-registry"
