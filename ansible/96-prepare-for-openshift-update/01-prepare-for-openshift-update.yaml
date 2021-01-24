@@ -32,6 +32,18 @@
         url: "{{ link_to_openshift_installer }}"
         dest: "{{ dir_downloaded_images }}{{file_openshift_installer}}"
 
+# Copy Tools
+    - name: "Copy oc-client /openshift-install to {{ bastion.ip }}"
+      copy:
+        src: "{{ item }}"
+        dest: "{{dir_tools}}"
+        mode: '0755'
+        remote_src: yes
+        force: yes
+      with_items:
+        - "{{ dir_downloaded_images }}{{file_openshift_installer}}"
+        - "{{ dir_downloaded_images }}{{file_oc}}"
+      delegate_to: "{{ bastion.ip }}"
 
 
 # Extract Tools
@@ -43,6 +55,7 @@
       with_items:
         - '{{ file_openshift_installer }}'
         - '{{ file_oc }}' 
+      delegate_to: "{{ bastion.ip }}"
 
     - name: "59 - Copy kubectl to /usr/local/bin/"
       copy:
@@ -51,6 +64,7 @@
         mode: '0755'
         remote_src: yes
         force: yes
+      delegate_to: "{{ bastion.ip }}"
 
     - name: "60 - Copy oc to /usr/local/bin/"
       copy:
@@ -59,6 +73,7 @@
         mode: '0755'
         remote_src: yes
         force: yes
+      delegate_to: "{{ bastion.ip }}"
 
     - name: "61 - Copy openshift-install to /usr/local/bin/"
       copy:
@@ -67,41 +82,42 @@
         mode: '0755'
         remote_src: yes
         force: yes
-
-# Copy oc-client to Bastion-Host
-    - name: "Copy oc-client to {{ bastion.ip }}"
-      copy:
-        src: "/usr/local/bin/oc"
-        dest: "/usr/local/bin/oc"
-        force: "true"
       delegate_to: "{{ bastion.ip }}"
 
-# Copy oc-client to Registry-Host
-    - name: "Copy oc-client to {{ registry.ip }}"
-      copy:
-        src: "/usr/local/bin/oc"
-        dest: "/usr/local/bin/oc"
-        force: "true"
-      delegate_to: "{{ registry.ip }}"
+# # Copy oc-client to Bastion-Host
+#     - name: "Copy oc-client to {{ bastion.ip }}"
+#       copy:
+#         src: "/usr/local/bin/oc"
+#         dest: "/usr/local/bin/oc"
+#         force: "true"
+#       delegate_to: "{{ bastion.ip }}"
 
-# Copy openshift-install to Bastion-Host
-    - name: "Copy openshift-install to {{ bastion.ip }}"
-      copy:
-        src: "/usr/local/bin/openshift-install"
-        dest: "/usr/local/bin/openshift-install"
-        force: "true"
-      delegate_to: "{{ bastion.ip }}"
+# # Copy oc-client to Registry-Host
+#     - name: "Copy oc-client to {{ registry.ip }}"
+#       copy:
+#         src: "/usr/local/bin/oc"
+#         dest: "/usr/local/bin/oc"
+#         force: "true"
+#       delegate_to: "{{ registry.ip }}"
 
-# Copy openshift-install to Registry-Host
-    - name: "Copy openshift-install to {{ registry.ip }}"
-      copy:
-        src: "/usr/local/bin/openshift-install"
-        dest: "/usr/local/bin/openshift-install"
-        force: "true"
-      delegate_to: "{{ registry.ip }}"
+# # Copy openshift-install to Bastion-Host
+#     - name: "Copy openshift-install to {{ bastion.ip }}"
+#       copy:
+#         src: "/usr/local/bin/openshift-install"
+#         dest: "/usr/local/bin/openshift-install"
+#         force: "true"
+#       delegate_to: "{{ bastion.ip }}"
+
+# # Copy openshift-install to Registry-Host
+#     - name: "Copy openshift-install to {{ registry.ip }}"
+#       copy:
+#         src: "/usr/local/bin/openshift-install"
+#         dest: "/usr/local/bin/openshift-install"
+#         force: "true"
+#       delegate_to: "{{ registry.ip }}"
 
 
 # Mirror images from Red Hat to mirror-registry
-    - name: "110 - Mirror the Images from Red Hat into mirror-registry"
-      command: "/usr/local/bin/oc adm -a {{ dir_tools }}pull-secret release mirror --from=quay.io/{{product_repo}}/{{release_name}}:{{ocp_release}} --to={{local_registry}}:{{registry_port}}/{{local_repository}} --to-release-image={{local_registry}}:{{registry_port}}/{{local_repository}}:{{ocp_release}}"
-      delegate_to: "{{registry.ip}}"
+    # - name: "110 - Mirror the Images from Red Hat into mirror-registry"
+    #   command: "/usr/local/bin/oc adm -a {{ dir_tools }}pull-secret release mirror --from=quay.io/{{product_repo}}/{{release_name}}:{{ocp_release}} --to={{local_registry}}:{{registry_port}}/{{local_repository}} --to-release-image={{local_registry}}:{{registry_port}}/{{local_repository}}:{{ocp_release}}"
+    #   delegate_to: "{{registry.ip}}"
