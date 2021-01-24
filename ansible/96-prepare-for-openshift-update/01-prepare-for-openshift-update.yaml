@@ -7,32 +7,32 @@
     - "../vars/vars.yaml"
   tasks:
 # Download OpenShift-Software (Kernel, initrd, rawgz, oc, openshift-install)
-    # - name: "04 - Download CoreOS-Kernel {{link_to_coreos_kernel}}"
-    #   get_url:
-    #     url: "{{ link_to_coreos_kernel }}"
-    #     dest: "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
+    - name: "04 - Download CoreOS-Kernel {{link_to_coreos_kernel}}"
+      get_url:
+        url: "{{ link_to_coreos_kernel }}"
+        dest: "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
 
-    # - name: "05 - Download CoreOS-Initrd {{ link_to_coreos_initrd }}"
-    #   get_url:
-    #     url: "{{ link_to_coreos_initrd }}"
-    #     dest: "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
+    - name: "05 - Download CoreOS-Initrd {{ link_to_coreos_initrd }}"
+      get_url:
+        url: "{{ link_to_coreos_initrd }}"
+        dest: "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
 
-    # - name: "06 - Download CoreOS-RawGz {{ link_to_coreos_raw_gz }}"
-    #   get_url:
-    #     url: "{{ link_to_coreos_raw_gz }}"
-    #     dest: "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
+    - name: "06 - Download CoreOS-RawGz {{ link_to_coreos_raw_gz }}"
+      get_url:
+        url: "{{ link_to_coreos_raw_gz }}"
+        dest: "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
 
-    # - name: "07 - Download oc-client {{link_to_oc}}"
-    #   get_url:
-    #     url: "{{ link_to_oc }}"
-    #     dest: "{{ dir_downloaded_images }}{{file_oc}}"
+    - name: "07 - Download oc-client {{link_to_oc}}"
+      get_url:
+        url: "{{ link_to_oc }}"
+        dest: "{{ dir_downloaded_images }}{{file_oc}}"
 
-    # - name: "08 - Download openshift-installer {{link_to_openshift_installer}}"
-    #   get_url:
-    #     url: "{{ link_to_openshift_installer }}"
-    #     dest: "{{ dir_downloaded_images }}{{file_openshift_installer}}"
+    - name: "08 - Download openshift-installer {{link_to_openshift_installer}}"
+      get_url:
+        url: "{{ link_to_openshift_installer }}"
+        dest: "{{ dir_downloaded_images }}{{file_openshift_installer}}"
 
-# Copy Tools
+# Copy Tools to Bastion
     - name: "Copy oc-client /openshift-install to {{ bastion.ip }}"
       copy:
         src: "{{ item }}"
@@ -45,7 +45,20 @@
       delegate_to: "{{ bastion.ip }}"
 
 
-# Extract Tools
+# Copy Tools to Registry
+    - name: "Copy oc-client /openshift-install to {{ registry.ip }}"
+      copy:
+        src: "{{ item }}"
+        dest: "{{dir_tools}}"
+        mode: '0755'
+        force: yes
+      with_items:
+        - "{{ dir_downloaded_images }}{{file_openshift_installer}}"
+        - "{{ dir_downloaded_images }}{{file_oc}}"
+      delegate_to: "{{ registry.ip }}"
+
+
+# Extract Tools on Bastion
     - name: "58 - Entpacke OC-Client {{ file_oc }} und Openshift-install-Client {{ file_openshift_installer }}"
       unarchive:
         src: "{{ dir_tools }}{{ item }}"
@@ -83,40 +96,45 @@
         force: yes
       delegate_to: "{{ bastion.ip }}"
 
-# # Copy oc-client to Bastion-Host
-#     - name: "Copy oc-client to {{ bastion.ip }}"
-#       copy:
-#         src: "/usr/local/bin/oc"
-#         dest: "/usr/local/bin/oc"
-#         force: "true"
-#       delegate_to: "{{ bastion.ip }}"
+# Extract Tools on Registry
+    - name: "58 - Entpacke OC-Client {{ file_oc }} und Openshift-install-Client {{ file_openshift_installer }}"
+      unarchive:
+        src: "{{ dir_tools }}{{ item }}"
+        dest: "{{ dir_tools }}"
+        remote_src: yes
+      with_items:
+        - '{{ file_openshift_installer }}'
+        - '{{ file_oc }}' 
+      delegate_to: "{{ registry.ip }}"
 
-# # Copy oc-client to Registry-Host
-#     - name: "Copy oc-client to {{ registry.ip }}"
-#       copy:
-#         src: "/usr/local/bin/oc"
-#         dest: "/usr/local/bin/oc"
-#         force: "true"
-#       delegate_to: "{{ registry.ip }}"
+    - name: "59 - Copy kubectl to /usr/local/bin/"
+      copy:
+        src: "{{ dir_tools }}kubectl"
+        dest: "/usr/local/bin/kubectl"
+        mode: '0755'
+        remote_src: yes
+        force: yes
+      delegate_to: "{{ registry.ip }}"
 
-# # Copy openshift-install to Bastion-Host
-#     - name: "Copy openshift-install to {{ bastion.ip }}"
-#       copy:
-#         src: "/usr/local/bin/openshift-install"
-#         dest: "/usr/local/bin/openshift-install"
-#         force: "true"
-#       delegate_to: "{{ bastion.ip }}"
+    - name: "60 - Copy oc to /usr/local/bin/"
+      copy:
+        src: "{{ dir_tools }}oc"
+        dest: "/usr/local/bin/oc"
+        mode: '0755'
+        remote_src: yes
+        force: yes
+      delegate_to: "{{ registry.ip }}"
 
-# # Copy openshift-install to Registry-Host
-#     - name: "Copy openshift-install to {{ registry.ip }}"
-#       copy:
-#         src: "/usr/local/bin/openshift-install"
-#         dest: "/usr/local/bin/openshift-install"
-#         force: "true"
-#       delegate_to: "{{ registry.ip }}"
-
+    - name: "61 - Copy openshift-install to /usr/local/bin/"
+      copy:
+        src: "{{ dir_tools }}openshift-install"
+        dest: "/usr/local/bin/openshift-install"
+        mode: '0755'
+        remote_src: yes
+        force: yes
+      delegate_to: "{{ registry.ip }}"
 
 # Mirror images from Red Hat to mirror-registry
-    # - name: "110 - Mirror the Images from Red Hat into mirror-registry"
-    #   command: "/usr/local/bin/oc adm -a {{ dir_tools }}pull-secret release mirror --from=quay.io/{{product_repo}}/{{release_name}}:{{ocp_release}} --to={{local_registry}}:{{registry_port}}/{{local_repository}} --to-release-image={{local_registry}}:{{registry_port}}/{{local_repository}}:{{ocp_release}}"
-    #   delegate_to: "{{registry.ip}}"
+    - name: "110 - Mirror the Images from Red Hat into mirror-registry"
+      command: "/usr/local/bin/oc adm -a {{ dir_tools }}pull-secret release mirror --from=quay.io/{{product_repo}}/{{release_name}}:{{ocp_release}} --to={{local_registry}}:{{registry_port}}/{{local_repository}} --to-release-image={{local_registry}}:{{registry_port}}/{{local_repository}}:{{ocp_release}}"
+      delegate_to: "{{registry.ip}}"
