@@ -5,5 +5,21 @@
     - "../vars/vars.yaml"
   hosts: "{{bastion.ip}}"
   tasks:
+    - name: "Render openshift-automatic-worker-signer.sh"
+      template:
+        src: "../99-jinja-templates/auto-signer/openshift-autmatic-worker-signer-sh.j2"
+        dest: "{{ dir_tools }}openshift-autmatic-worker-signer.sh"
+        owner: "root"
+        group: "root"
+        mode: "0755"
+        force: "yes"
+    
+    - name: "Wait for CSRs of Worker-Nodes need to be signed (Check every 20s - Max. 30Min)"
+      shell: "/usr/local/bin/oc get csr --kubeconfig=\"{{kubeconfig}}\" | grep -i pending | grep csr"
+      register: cmd_res
+      retries: 90
+      delay: 20
+      until: cmd_res.stdout_lines | list | count >= 1
+
     - name: "Sign OpenShift Certificate Requests automatically"
-      raw: "export KUBECONFIG={{dir_install_config}}auth/kubeconfig; while [ $(/usr/local/bin/oc get csr | grep worker | grep Approved | wc -l) -lt 3 ]; do oc get csr -o json | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs oc adm certificate approve; sleep 10s; done"
+      shell: "{{ dir_tools }}openshift-autmatic-worker-signer.sh"
