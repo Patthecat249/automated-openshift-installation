@@ -7,7 +7,7 @@
     - "{{workers}}"
 
 - name: "### --- 02 - Chronyd - Restart Daemon"
-  command: "ssh -i {{dir_key_to_nodes}}{{key_to_nodes_name}} 'sudo systemctl restart chronyd'"
+  command: "ssh -i {{dir_key_to_nodes}}{{key_to_nodes_name}} core@{{item.hostname}} 'sudo systemctl restart chronyd'"
   with_items:
     - "{{masters}}"
     - "{{workers}}"
