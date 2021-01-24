@@ -1,12 +1,9 @@
 ---
 # Execute on install-vm
-- hosts: 127.0.0.1
+- hosts: "{{ bastion.ip }}"
   vars_files:
     - "../vars/vars.yaml"
   tasks:
     - name: "Execution of post-installation-task after an ocp-installation"
-      hosts: "{{ bastion.ip }}"
-      gather_facts: "false"
-      tasks:
         - import_tasks: tasks/10-ntp-chronyd.yaml
 ...
