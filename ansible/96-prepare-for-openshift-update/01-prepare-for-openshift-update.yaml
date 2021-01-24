@@ -1,0 +1,72 @@
+# Execute on install-vm
+---
+- name: "Playbook - Prepare for OpenShift-Update"
+  hosts: 127.0.0.1
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+
+# Download OpenShift-Software (Kernel, initrd, rawgz, oc, openshift-install)
+    - name: "04 - Download CoreOS-Kernel {{link_to_coreos_kernel}}"
+      get_url:
+        url: "{{ link_to_coreos_kernel }}"
+        dest: "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
+
+    - name: "05 - Download CoreOS-Initrd {{ link_to_coreos_initrd }}"
+      get_url:
+        url: "{{ link_to_coreos_initrd }}"
+        dest: "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
+
+    - name: "06 - Download CoreOS-RawGz {{ link_to_coreos_raw_gz }}"
+      get_url:
+        url: "{{ link_to_coreos_raw_gz }}"
+        dest: "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
+
+    - name: "07 - Download oc-client {{link_to_oc}}"
+      get_url:
+        url: "{{ link_to_oc }}"
+        dest: "{{ dir_downloaded_images }}{{file_oc}}"
+
+    - name: "08 - Download openshift-installer {{link_to_openshift_installer}}"
+      get_url:
+        url: "{{ link_to_openshift_installer }}"
+        dest: "{{ dir_downloaded_images }}{{file_openshift_installer}}"
+
+# Extract Tools
+    - name: "58 - Entpacke OC-Client {{ file_oc }} und Openshift-install-Client {{ file_openshift_installer }}"
+      unarchive:
+        src: "{{ dir_tools }}{{ item }}"
+        dest: "{{ dir_tools }}"
+        remote_src: yes
+      with_items:
+        - '{{ file_openshift_installer }}'
+        - '{{ file_oc }}' 
+
+    - name: "59 - Copy kubectl to /usr/local/bin/"
+      copy:
+        src: "{{ dir_tools }}kubectl"
+        dest: "/usr/local/bin/kubectl"
+        mode: '0755'
+        remote_src: yes
+        force: yes
+
+    - name: "60 - Copy oc to /usr/local/bin/"
+      copy:
+        src: "{{ dir_tools }}oc"
+        dest: "/usr/local/bin/oc"
+        mode: '0755'
+        remote_src: yes
+        force: yes
+
+    - name: "61 - Copy openshift-install to /usr/local/bin/"
+      copy:
+        src: "{{ dir_tools }}openshift-install"
+        dest: "/usr/local/bin/openshift-install"
+        mode: '0755'
+        remote_src: yes
+        force: yes
+
+# Mirror images from Red Hat to mirror-registry
+    - name: "110 - Mirror the Images from Red Hat into mirror-registry"
+      command: "/usr/local/bin/oc adm -a {{ dir_tools }}pull-secret release mirror --from=quay.io/{{product_repo}}/{{release_name}}:{{ocp_release}} --to={{local_registry}}:{{registry_port}}/{{local_repository}} --to-release-image={{local_registry}}:{{registry_port}}/{{local_repository}}:{{ocp_release}}"
+      delegate_to: "{{registry.ip}}"
