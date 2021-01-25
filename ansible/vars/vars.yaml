@@ -1,13 +1,13 @@
 # OpenShift
 clustername: "openshift"
 domain: "home.local"
-dns_server_ip: "11.11.11.53"
-version_openshift: "4.5.23"
+version_openshift: "4.5.28"
 version_core_os: "4.5.6"
 version_major: "4.5"
 clusternetwork: "10.254.0.0/16"
 servicenetwork: "10.255.0.0/16"
 
+# Install-Config.yaml
 ignition_filename_master: "master.ign"
 ignition_filename_worker: "worker.ign"
 ignition_filename_bootstrap: "bootstrap.ign"
@@ -21,10 +21,13 @@ vsphere_datacenter: "dc-home"
 vsphere_rp: "rp-home"
 vsphere_datastore: "openshift_storage"
 vsphere_network: "dpg-openshift"
-vsphere_networkhome: "dpg-home-prod"
-vsphere_folder: "dc-home/vm/openshift"
+vsphere_network_home: "dpg-home-prod"
+vsphere_network_openshift_gw: "11.11.11.1"
+vsphere_network_openshift_broadcast: "11.11.11.255"
+vsphere_folder: "/dc-home/vm/openshift"
 vsphere_master_cpu: "8"
 vsphere_master_ram: "16384"
+vsphere_general_disksize: "120"
 vsphere_master_disksize: "120"
 vsphere_worker_cpu: "4"
 vsphere_worker_ram: "8192"
@@ -32,14 +35,15 @@ vsphere_worker_disksize: "120"
 vsphere_bstrp_cpu: "8"
 vsphere_bstrp_ram: "16384"
 vsphere_bstrp_disksize: "120"
+vsphere_guest_id: "centos7_64Guest"
+vsphere_vm_boot_delay: "15000"
 
 
-dir_vmware: "/dc-home/vm/openshift"
-#cpu: "1"
-#ram: "1024"
-disksize: "120"
-boot_delay: "30000"
-vm_type: "worker"
+
+# Network
+net_openshift: "11.11.11.0"
+netmask_openshift_cidr: "/24"
+
 
 # Clients / Software
 link_to_oc: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{version_openshift}}/openshift-client-linux-{{version_openshift}}.tar.gz"
@@ -63,36 +67,32 @@ pull_secret_file_name: "pull-secret"
 registry_user: "reguser" # No underscore allowed!
 registry_pass: "Test1234"
 registry_port: "5000"
-local_registry: "{{registry.hostname}}.{{domain}}:{{registry_port}}"
+local_registry: "{{registry.hostname}}.{{clustername}}.{{domain}}"
 product_repo: "openshift-release-dev"
 local_repository: "ocp4/openshift4"
 release_name: "ocp-release"
 ocp_release: "{{version_openshift}}-x86_64"
 pull_secret_for_mirror: "/root/pull-secret.json"
 
-# Terraform
+# Terraform / vSphere-Plugin
 tf_version: "0.14.2"
 tf_zip_filename: "terraform_{{tf_version}}_linux_amd64.zip"
-
-## Terraform - vSphere-Plugin
 tf_vsphere_plugin_version: "1.24.2"
 tf_vsphere_plugin_zip_filename: "terraform-provider-vsphere_{{tf_vsphere_plugin_version}}_linux_amd64.zip"
 tf_jinja_template: "ocp-master-worker-nodes.tf.j2"
-
-# Download-Links
 download_tf: "https://releases.hashicorp.com/terraform/{{tf_version}}/terraform_{{tf_version}}_linux_amd64.zip"
 download_tf_vsphere_plugin: "https://releases.hashicorp.com/terraform-provider-vsphere/{{tf_vsphere_plugin_version}}/terraform-provider-vsphere_{{tf_vsphere_plugin_version}}_linux_amd64.zip"
 
 # Working directories >> always end with Slash /
-#dir_root: "/opt/patrick/"
+dir_root: "/opt/sva/"
 dir_cluster: "{{dir_root}}{{clustername}}/"
 dir_install_config: "{{dir_cluster}}install-config/"
+kubeconfig: "{{dir_install_config}}/auth/kubeconfig"
 dir_terraform: "{{dir_root}}terraform/"
 dir_terraform_modules: "{{dir_terraform}}modules/"
 dir_terraform_module_vm: "{{dir_terraform_modules}}vm-vsphere/"
 dir_terraform_vsphere_plugin: "{{dir_terraform}}vsphere_plugin"
 dir_tools: "{{dir_root}}tools/"
-dir_root: "/opt/sva/"
 dir_downloads: "{{dir_tools}}downloads/"
 dir_downloaded_images: "{{dir_root}}downloads/"
 dir_nfs_root: "/mnt/sva/"
@@ -121,65 +121,58 @@ key_to_nodes_name: "id_{{clustername}}"
 masters:
   - name: "master01"
     hostname: "ocpmaster01"
-    ip: "11.11.11.111"
+    ip: "11.11.11.121"
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "11:22:33:44:55:61"
     datastore: "openshift_storage"
   - name: "master02"
     hostname: "ocpmaster02"
-    ip: "11.11.11.112"
+    ip: "11.11.11.122"
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "11:22:33:44:55:62"
     datastore: "openshift_storage"
   - name: "master03"
     hostname: "ocpmaster03"
-    ip: "11.11.11.113"
+    ip: "11.11.11.123"
     cpu: "8"
     ram: "16384"
     disk: "200"
-    mac: "11:22:33:44:55:63"
     datastore: "openshift_storage"
 
 # OpenShift-Worker-Nodes
 workers:
   - name: "worker01"
     hostname: "ocpworker01"
-    ip: "11.11.11.114"
+    ip: "11.11.11.124"
     cpu: "8"
-    ram: "16384"
+    ram: "32768"
     disk: "200"
-    mac: "11:22:33:44:55:64"
     datastore: "openshift_storage"
   - name: "worker02"
     hostname: "ocpworker02"
-    ip: "11.11.11.115"
+    ip: "11.11.11.125"
     cpu: "8"
-    ram: "16384"
+    ram: "32768"
     disk: "200"
-    mac: "11:22:33:44:55:65"
     datastore: "openshift_storage"
   - name: "worker03"
     hostname: "ocpworker03"
-    ip: "11.11.11.116"
+    ip: "11.11.11.126"
     cpu: "8"
-    ram: "16384"
+    ram: "32768"
     disk: "200"
-    mac: "11:22:33:44:55:66"
     datastore: "openshift_storage"
 
 # Temporary Bootstrap-VM
 bstrp:
   name: "bootstrap"
   hostname: "ocpbootstrap"
-  ip: "11.11.11.117"
+  ip: "11.11.11.127"
   cpu: "8"
   ram: "16384"
   disk: "200"
-  mac: "11:22:33:44:55:60"
   datastore: "openshift_storage"
 
 # Install-VM
@@ -191,22 +184,32 @@ install_vm:
 bastion:
   name: "bastion"
   hostname: "ocpbastion"
-  ip: "11.11.11.53"
-  ipexternal: "10.0.249.120"
+  ip: "11.11.11.120"
   cpu: "2"
   ram: "4096"
   disk: "200"
-  mac: "00:50:56:a6:83:ae"
 
 # Image-Registry
 registry:
   name: "registry"
   hostname: "ocpregistry"
-  ip: "11.11.11.118"
+  ip: "11.11.11.119"
   cpu: "2"
   ram: "2048"
   disk: "200"
-  mac: "00:50:56:a6:bf:52"
+
+# Router-VM
+router:
+  name: "router"
+  hostname: "ocprouter"
+  ip: "10.0.249.2"
+  default_gw: "10.0.249.1"
+  ocp1: "11.11.10.1"
+  ocp2: "11.11.11.1"
+  cpu: "1"
+  ram: "1024"
+  disk: "200"
+  
 
 # Router
 router:
@@ -228,23 +231,22 @@ pxe:
 lb:
   name: "load-balancer"
   hostname: "ocplb01"
-  ip: "11.11.11.119"
+  ip: "11.11.11.129"
   cpu: "1"
   ram: "1024"
   disk: "200"
-  mac: "00:50:56:a6:cb:f9"
   app:
-    ip: "11.11.11.119"
+    ip: "11.11.11.129"
   api:
-    ip: "11.11.11.119"
+    ip: "11.11.11.129"
   api_int:
-    ip: "11.11.11.119"
+    ip: "11.11.11.129"
 
 # DNSMASQ-Settings
-dhcp_range: "11.11.11.40,11.11.11.250,255.255.255.0,12h"
+dhcp_range: "11.11.11.110 11.11.11.200"
 dhcp_subnetmask: "255.255.255.0"
 dhcp_gateway: "11.11.11.1"
-ntpserver: "11.11.11.1"
+ntpserver: "10.0.249.1"
 interface: "ens192"
 listen_address: "{{ bastion.ip }}"
 boot_script: "pxelinux.0"
@@ -292,7 +294,7 @@ image_registry:
 
 # NFS-Settings
 nfs_server: "nas.home.local"
-nfs_server_ip: "11.11.11.150"
+nfs_server_ip: "10.0.249.150"
 nfs_server_name: "nas.home.local"
 nfs_path: "/volume1/nfs-iso/downloaded-iso/linux/"
 nfs_mount_path: "/volume1/nfs-iso/"

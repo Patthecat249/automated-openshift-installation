@@ -1,0 +1,41 @@
+---
+- name: "Playbook - Configuration of a router-vm"
+  hosts: "{{ router.ip }}"
+  become: "true"
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+  tasks:
+# Zeitausgabe
+    - name: "--- Starte Playbook: {{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+      debug: msg="{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+
+# Do ssh-copy-id to localhost, so that ansible can communicate with localhost
+    - name: "31 - ssh-copy-id as user-root to {{router.ip}}"
+      become: "true"
+      become_user: "root"
+      raw: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@{{router.ip}}"
+      delegate_to: "localhost"
+
+# Disable Firewall
+    - name: "32 - Disable Firewalld"
+      systemd:
+        name: "firewalld"
+        state: "stopped"
+        enabled: "no"
+
+# Enable Routing-Function 
+    - name: "33 - Enable instant-routing-function"
+      raw: "sysctl -w net.ipv4.ip_forward=1"
+
+
+# Enable Routing-Function persistent
+    - name: "34 - Enable persistent routing-function"
+      lineinfile:
+        path: "/etc/sysctl.conf"
+        line: "net.ipv4.ip_forward = 1"
+
+# Zeitausgabe
+    - name: "--- Ende Playbook: {{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+      debug: msg="{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+...

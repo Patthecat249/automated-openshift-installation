@@ -15,3 +15,8 @@
     state: restarted
     args: eth0
   # shell: "ifdown eth0 && ifup eth0"
+
+- name: restart firewall
+  service:
+    name: firewalld
+    state: restarted

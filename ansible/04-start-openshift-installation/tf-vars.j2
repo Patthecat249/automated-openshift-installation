@@ -6,7 +6,7 @@ variable "ocp-folder" {
 
 # VMware Tag
 variable "guest_id_tag" {
-  default = "centos7_64Guest"
+  default = "coreos64Guest"
 }
 
 # VMware User
@@ -24,26 +24,7 @@ variable "vsphere_server" {
   default = "{{ vsphere_server }}"
 }
 
-# VM-Name
-variable "vm_name" {
-  default = "default-vm-name"
-}
-
-# VM-CPU
-variable "vm_cpu" {
-  default = "1"
-}
-# VM-RAM
-variable "vm_ram" {
-  default = "1024"
-}
-
-# VM-DISK
-variable "vm_disk" {
-  default = "16"
-}
-
 # Boot-Delay
 variable "vm_vsphere_vm_boot_delay" {
-  default = "0"
+  default = "{{vsphere_vm_boot_delay}}"
 }

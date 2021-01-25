@@ -2,20 +2,22 @@
 #| --- DNS-SEKTION ---        |#
 #+----------------------------+#
 # Grundlegende globale DNS-Einstellungen
-#domain-needed
+domain-needed
 #bogus-priv
-#local=/cm1.cloud.intern.fags.dir/
 interface={{ interface }}
 listen-address={{ listen_address }}
+#server=217.237.151.51
+#server=217.237.149.205
 bind-interfaces
 #expand-hosts
-#domain=cm1.cloud.intern.fags.dir
+domain={{clustername}}.{{domain}},{{net_openshift}}{{netmask_openshift_cidr}},local
 #log-queries
 #log-facility=/var/log/dnsmasq.log
 #log-dhcp
 no-resolv
 strict-order
 
+<<<<<<< HEAD
 # DHCP-Host-Entries
 
 
@@ -23,26 +25,58 @@ strict-order
 
 ### Auflösung für Bastion-Host
 address=/{{ bastion.hostname }}.{{ clustername }}.{{ domain }}/{{ bastion.ip }}
+=======
+#+--------------+#
+#| --- DHCP --- |#
+#+--------------+#
+#{% if dhcp_range is defined %}
+# DHCP
+## Gilt nur für alle Master und Worker Nodes
+#dhcp-range={{ dhcp_range }}
+#{% endif %}
 
-## Spezifische DNS-Einstellungen
-### DNS-Namensaufloesung
+# DHCP-Optionen (Default-Gateway, DNS-Server, ...)
+## Gateway (Option=3)
+#dhcp-option=3,{{ dhcp_gateway }}
+
+## DNS-Server (Option=6)
+#dhcp-option=6,{{ bastion.ip }}
+
+#{% if ntpserver is defined %}
+## NTP Server (Option=42)
+#dhcp-option=42,{{ ntpserver }}
+#{% endif %}
+
+## OpenShift-Nodes-DHCP
+
+
+## OpenShift-Nodes-DNS
+
+## DHCP-Boot-Options
+#dhcp-boot=tag:openshift_node,{{ boot_script }},{{ bastion.hostname }}.{{ clustername }}.{{ domain }}
+>>>>>>> dpg-openshift
+
+
+#+-------------+#
+#| --- DNS --- |#
+#+-------------+#
+# DNS
+## DNS-OpenShift-Cluster
 address=/.apps.{{ clustername }}.{{ domain }}/{{ lb.app.ip }}
 address=/api-int.{{ clustername }}.{{ domain }}/{{ lb.api_int.ip }}
 address=/api.{{ clustername }}.{{ domain }}/{{ lb.api.ip }}
 
-# VMware, vCenter, vSphere
-address=/{{ vsphere_server }}/10.0.249.205
-
-### SRV-Records für ETCD im OpenShift-Cluster
+## SRV-Records für ETCD im OpenShift-Cluster
 {% for i in range( 0,masters | length ) %}
 srv-host=_etcd-server-ssl._tcp.{{ clustername }}.{{ domain }},etcd-{{ i }}.{{ clustername }}.{{ domain }}.,2380
 {% endfor %}
 
-### Auflösung für ETCD
+## Auflösung für ETCD
 {% for i in range( 0,masters | length ) %}
 address=/etcd-{{ i }}.{{ clustername }}.{{ domain }}/{{ masters[i].ip }}
 {% endfor %}
 
+<<<<<<< HEAD
 
 ### Auflösung für GPFS-Cluster-IP
 address=/{{ nfs_server_name }}/{{ nfs_server_ip }}
@@ -68,11 +102,21 @@ dhcp-option=6,{{ bastion.ip }}
 ## NTP Server (Option=42)
 dhcp-option=42,{{ ntpserver }}
 {% endif %}
+=======
+## Auflösung für Bastion-Host, Registry, Load-Balancer
+address=/{{ bastion.hostname }}.{{ clustername }}.{{ domain }}/{{ bastion.ip }}
+address=/{{ registry.hostname }}.{{ clustername }}.{{ domain }}/{{ registry.ip }}
+address=/{{ lb.hostname }}.{{ clustername }}.{{ domain }}/{{ lb.ip }}
 
-#+----------------------------+#
-#| --- PXE/TFTP-SEKTION ---   |#
-#+----------------------------+#
-# PXE-Konfiguration > Alle Master und Worker-Nodes booten per PXE und laden die Datei pxelinux.0     aus dem TFTP-Rootverzeichnis
-dhcp-boot=tag:openshift_node,{{ boot_script }},{{ bastion.hostname }}.{{ clustername }}.{{ domain }}
+### Auflösung für NFS-IP
+address=/{{ nfs_server_name }}/{{ nfs_server_ip }}
+
+# VMware, vCenter, vSphere
+address=/{{ vsphere_server }}/10.0.249.205
+>>>>>>> dpg-openshift
+
+#+-------------+#
+#| --- PXE --- |#
+#+-------------+#
 enable-tftp
 tftp-root={{ dir_tftp_root }}

@@ -1,10 +1,10 @@
 ---
 # Dieses Playbook bereitet die CLI-Tools zum Einsatz bzw. zur Verwendung vor.
 # 22.09.2020 - Anpassung: Die TAR-File werden vom Software-Verzeichnis kopiert. Nicht mehr die Tools oc, kubectl und openshift-install einzeln
-- name: "### --- 08 - Copy OC-Client-TAR-File and Openshift-install-TAR-File to bastion"
+- name: "57 - Copy OC-Client-TAR-File and Openshift-install-TAR-File to bastion"
   copy:
     src: "{{ dir_downloaded_images }}{{ item }}"
-    dest: "{{ dir_tools }}{{ item }}"
+    dest: "{{ dir_tools }}"
     owner: root
     group: root
     mode: '0755'
@@ -13,9 +13,11 @@
   with_items:
     - '{{file_openshift_installer}}'
     - '{{file_oc}}'
+  tags:
+    - rerun
 
 # 22.09.2020 - Anpassung: der OC-Client und der OpenShift-Installer werden auf dem Bastion-Host entpackt
-- name: "### --- 09 - Entpacke OC-Client und Openshift-install-Client"
+- name: "58 - Entpacke OC-Client und Openshift-install-Client"
   unarchive:
     src: "{{ dir_tools }}{{ item }}"
     dest: "{{ dir_tools }}"
@@ -23,33 +25,41 @@
   with_items:
     - '{{ file_openshift_installer }}'
     - '{{ file_oc }}' 
+  tags:
+    - rerun
 
 
-- name: "### --- 10 - Copy kubectl to /usr/local/bin/"
+- name: "59 - Copy kubectl to /usr/local/bin/"
   copy:
     src: "{{ dir_tools }}kubectl"
     dest: "/usr/local/bin/kubectl"
     mode: '0755'
     remote_src: yes
     force: yes
+  tags:
+    - rerun
 
-- name: "### --- 11 - Copy oc to /usr/local/bin/"
+- name: "60 - Copy oc to /usr/local/bin/"
   copy:
     src: "{{ dir_tools }}oc"
     dest: "/usr/local/bin/oc"
     mode: '0755'
     remote_src: yes
     force: yes
+  tags:
+    - rerun
 
-- name: "### --- 12 - Copy openshift-install to /usr/local/bin/"
+- name: "61 - Copy openshift-install to /usr/local/bin/"
   copy:
     src: "{{ dir_tools }}openshift-install"
     dest: "/usr/local/bin/openshift-install"
     mode: '0755'
     remote_src: yes
     force: yes
+  tags:
+    - rerun
 
-- name: "### --- 13 - Copy pull-secret-original to '{{ dir_cluster }}'"
+- name: "62 - Copy pull-secret-original to '{{ dir_cluster }}'"
   copy: 
     src: "{{pull_secret}}"
     dest: "{{ dir_cluster }}{{ pull_secret_file_name }}" 
@@ -58,3 +68,5 @@
     mode: '0644'
     #remote_src: yes
     force: yes
+  tags:
+    - rerun

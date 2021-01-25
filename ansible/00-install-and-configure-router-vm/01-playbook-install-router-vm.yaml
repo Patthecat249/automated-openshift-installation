@@ -1,0 +1,49 @@
+- name: "Playbook - Install a Router-VM"
+  become: "true"
+  become_user: "root"
+  hosts: 127.0.0.1
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+  vars:
+    - cpu: "{{ router.cpu }}"
+    - ram: "{{ router.ram }}"
+    - hostname: "{{ router.hostname }}"
+    - ip: "{{ router.ip }}"
+    - kickstart_file: "{{ router.hostname }}.cfg"
+ 
+  tasks:
+# Erstelle Arbeitsverzeichnisse
+    - name: "25 --- Create Working-Directories"
+      file:
+        path: "{{ item }}"
+        state: "directory"
+        recurse: "true"
+      with_items:
+        - "{{ dir_root }}"
+        - "{{ dir_terraform }}{{ router.hostname }}"
+    
+# Erstelle die Terraform-Files "main.tf/output.tf"-files
+# main.tf
+    - name: "26 --- Create main.tf-file"
+      template:
+        src: "../99-jinja-templates/terraform/router-main-tf.j2"
+        dest: "{{ dir_terraform }}{{ router.hostname }}/main.tf"
+    
+# Erzeuge und kopiere das output.tf-file in den VM-Instanz-Ordner
+    - name: "27 --- Create output.tf-file"
+      template:
+        src: "../99-jinja-templates/terraform/router-output-tf.j2"
+        dest: "{{ dir_terraform }}{{ router.hostname }}/output.tf"
+    
+# Erzeuge die virtuelle Maschine
+    - name: "28 --- Create virtual machine with terraform"
+      raw: "cd {{ dir_terraform }}{{ router.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
+
+# Ermittle die MAC-Adresse, der erzeugten VM
+    - name: "29 --- Retrieve first mac-address from created virtual machine"
+      raw: "cd {{ dir_terraform }}{{ router.hostname }} && terraform output -json | jq '.[\"mac-address1\"].value' | sed -e 's|\"||g'"
+      register: mac
+    - name: "30 --- Retrieve second mac-address from created virtual machine"
+      raw: "cd {{ dir_terraform }}{{ router.hostname }} && terraform output -json | jq '.[\"mac-address2\"].value' | sed -e 's|\"||g'"
+      register: mac

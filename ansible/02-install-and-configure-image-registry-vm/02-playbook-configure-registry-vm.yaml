@@ -1,6 +1,6 @@
 ---
-- name: "Configuration of a load-balancer"
-  hosts: "{{ registry.hostname }}"
+- name: "Playbook - Configure the Registry-VM"
+  hosts: "{{ registry.ip }}"
   become: "true"
   gather_facts: "false"
   vars_files:
@@ -11,14 +11,14 @@
       debug: msg="{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
 
 # Do ssh-copy-id to localhost, so that ansible can communicate with localhost
-    - name: "01 - ssh-copy-id as user-root to {{registry.hostname}}"
+    - name: "85 - ssh-copy-id as user-root to {{registry.ip}}"
       become: "true"
       become_user: "root"
-      raw: "ssh-copy-id -o StrictHostKeyChecking=no root@{{registry.hostname}}"
+      raw: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@{{registry.ip}}"
       delegate_to: "localhost"
 
 # Install some software
-    - name: "02 - Install podman"
+    - name: "86 - Install podman"
       yum:
         name: 
           - "podman"
@@ -28,7 +28,7 @@
         state: "present"
 
 # Create Working-Directories on Install-VM
-    - name: "03 --- Create Working-Directories on {{ install_vm.hostname }}"
+    - name: "87 --- Create Working-Directories on {{ install_vm.hostname }}"
       file:
         path: "{{ item }}"
         state: "directory"
@@ -37,8 +37,8 @@
         - "{{ dir_downloads }}"
       delegate_to: "localhost"
 
-# Create Working-Directories on {{ registry.hostname }}
-    - name: "04 --- Create Working-Directories on {{ registry.hostname }}"
+# Create Working-Directories on {{ registry.ip }}
+    - name: "88 --- Create Working-Directories on {{ registry.ip }}"
       file:
         path: "{{ item }}"
         state: "directory"
@@ -50,7 +50,7 @@
 
 # Download openshift software from internet
 # Download oc-client
-    - name: "05 - Download OpenShift - oc-client on {{ install_vm.hostname }}"
+    - name: "89 - Download OpenShift - oc-client on {{ install_vm.hostname }}"
       get_url:
         url="{{link_to_oc}}"
         dest="{{ dir_downloads }}{{file_oc}}"
@@ -60,7 +60,7 @@
       delegate_to: "localhost"
 
 # Download openshift-installer
-    - name: "06 - Download OpenShift - openshift-installer on {{ install_vm.hostname }}"
+    - name: "90 - Download OpenShift - openshift-installer on {{ install_vm.hostname }}"
       get_url:
         url="{{link_to_openshift_installer}}"
         dest="{{ dir_downloads }}{{file_openshift_installer}}"
@@ -71,7 +71,7 @@
 
 
 # Download Kernel
-    - name: "07 - Download CoreOS - Kernel on {{ install_vm.hostname }}"
+    - name: "91 - Download CoreOS - Kernel on {{ install_vm.hostname }}"
       get_url:
         url="{{link_to_coreos_kernel}}"
         dest="{{ dir_downloads }}{{file_coreos_kernel}}"
@@ -88,7 +88,7 @@
     #   delegate_to: "localhost"
 
 # Download Initrd
-    - name: "08 - Download CoreOS - Initrd on {{ install_vm.hostname }}"
+    - name: "92 - Download CoreOS - Initrd on {{ install_vm.hostname }}"
       get_url:
         url="{{link_to_coreos_initrd}}"
         dest="{{ dir_downloads }}{{file_coreos_initrd}}"
@@ -105,7 +105,7 @@
     #   delegate_to: "localhost"
 
 # Download RAW_GZ
-    - name: "09 - Download CoreOS - raw_gz on {{ install_vm.hostname }}"
+    - name: "93 - Download CoreOS - raw_gz on {{ install_vm.hostname }}"
       get_url:
         url="{{link_to_coreos_raw_gz}}"
         dest="{{ dir_downloads }}{{file_coreos_raw_gz}}"
@@ -134,7 +134,7 @@
     #   delegate_to: "localhost"
 
 # Extraction of zip-archive
-    - name: "10 - Extract the oc-client on {{ install_vm.hostname }}"
+    - name: "94 - Extract the oc-client on {{ install_vm.hostname }}"
       unarchive:
         src: "{{ dir_downloads }}openshift-client-linux-{{version_openshift}}.tar.gz"
         dest: "{{ dir_downloads }}"
@@ -142,7 +142,7 @@
       delegate_to: "localhost"
 
 # Extraction of zip-archive
-    - name: "11 - Extract the openshift-installer on {{ install_vm.hostname }}"
+    - name: "95 - Extract the openshift-installer on {{ install_vm.hostname }}"
       unarchive:
         src: "{{ dir_downloads }}openshift-install-linux-{{version_openshift}}.tar.gz"
         dest: "{{ dir_downloads }}"
@@ -150,31 +150,31 @@
       delegate_to: "localhost"
 
 # Make oc executable >> copy to /usr/local/bin/oc
-    - name: "12 - copy oc to /usr/local/bin and make executable"
+    - name: "96 - copy oc to /usr/local/bin and make executable"
       copy:
         src: "{{ dir_downloads }}oc"
         dest: "/usr/local/bin/oc"
         mode: "0755"
 
 # Make openshift-installer executable >> copy to /usr/local/bin/openshift-install
-    - name: "13 - copy oc to /usr/local/bin and make executable"
+    - name: "97 - copy openshift-install to /usr/local/bin and make executable"
       copy:
         src: "{{ dir_downloads }}openshift-install"
         dest: "/usr/local/bin/openshift-install"
         mode: "0755"
 
 # Create SSL-Cert for Registry
-    - name: "14 - Create SSL-Cert for Registry"
-      raw: "cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt -subj '/C=DE/ST=Brandenburg/L=Cottbus/O=Home/OU=local/CN={{registry.hostname}}.{{domain}}'"
+    - name: "98 - Create SSL-Cert for Registry"
+      raw: "cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt -subj '/C=DE/ST=Brandenburg/L=Cottbus/O=Home/OU=local/CN={{registry.hostname}}.{{clustername}}.{{domain}}'"
 
 
 # Create User for registry
-    - name: "15 - Create User {{registry_user}} for Registry"
+    - name: "99 - Create User {{registry_user}} for Registry"
       raw: "htpasswd -bBc {{dir_registry_auth}}htpasswd {{registry_user}} {{registry_pass}}"
 
 
 # Run the mirror-registry with Podman
-    - name: "16 - Start Registry with podman as mirror-registry"
+    - name: "100 - Start Registry with podman as mirror-registry"
       command: "podman run --name mirror-registry -p {{registry_port}}:{{registry_port}} \ 
      -v {{dir_registry_data}}:/var/lib/registry:z \
      -v {{dir_registry_auth}}:/auth:z \
@@ -188,38 +188,48 @@
      -d docker.io/library/registry:2"
 
 # Copy certs to trust-store
-    - name: "17 - Copy registry-certificate to linux-trust-store"
+    - name: "101 - Copy registry-certificate to linux-trust-store"
       copy:
         src: "{{dir_registry_certs}}domain.crt"
         dest: "/etc/pki/ca-trust/source/anchors/domain.crt"
         remote_src: "true"
 
 # Update the Trust-Store
-    - name: "18 - Update Linux Trust-Store"
+    - name: "102 - Update Linux Trust-Store"
       raw: "update-ca-trust" 
 
 # Copy the registry-cert from registry-vm to install-vm
-    - name: "19 - Copy registry-certificate to local Linux Trust-Store"
-      raw: "scp {{registry.hostname}}:{{dir_registry_certs}}domain.crt /etc/pki/ca-trust/source/anchors/domain.crt" 
+    - name: "103 - Copy registry-certificate to local Linux Trust-Store"
+      raw: "scp {{registry.ip}}:{{dir_registry_certs}}domain.crt /etc/pki/ca-trust/source/anchors/domain.crt" 
       delegate_to: "localhost"
 
 # Update the Trust-Store of install-vm
-    - name: "20 - Update local Linux Trust-Store"
+    - name: "104 - Update local Linux Trust-Store"
       raw: "update-ca-trust" 
       delegate_to: "localhost"
 
 # Configure the firewall
-    - name: "21 - Configure firewalld to open port 5000 for mirror-registry"
-      firewalld:
-        permanent: "true"
-        state: "enabled"
-        port: "5000/tcp"
-      notify:
-        - restart firewalld
+    # - name: "21 - Configure firewalld to open port 5000 for mirror-registry"
+    #   firewalld:
+    #     permanent: "true"
+    #     state: "enabled"
+    #     port: "5000/tcp"
+    #   notify:
+    #     - restart firewalld
+
+# Disable Firewalld
+    - name: "105 - Disable Firewalld"
+      systemd:
+        name: "firewalld"
+        state: "stopped"
+        enabled: "no"
 
 # Restart the registry-pod
-    - name: "22 - Restart the registry-pod"
+    - name: "106 - Restart the registry-pod"
       raw: "podman stop mirror-registry && podman start mirror-registry" 
+
+    - name: "107 - Summary"
+      debug: msg="Login with = podman login {{registry.hostname}}.{{clustername}}.{{domain}}:{{registry_port}} -u {{registry_user}}"
 
 
 # Zeitausgabe

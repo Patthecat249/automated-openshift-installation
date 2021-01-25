@@ -1,4 +1,4 @@
-- name: "Registry-VM"
+- name: "Playbook - Install the Registry-VM"
   become: "true"
   become_user: "root"
   hosts: 127.0.0.1
@@ -29,13 +29,14 @@
       when: folder_details.stat.exists == true
 
 # Erstelle Arbeitsverzeichnisse
-    - name: "01 --- Create Working-Directories"
+    - name: "78 --- Create Working-Directories"
       file:
         path: "{{ item }}"
         state: "directory"
         recurse: "true"
       with_items:
         - "{{ dir_root }}"
+<<<<<<< HEAD
         # - "{{ dir_terraform }}"
         - "{{ dir_terraform }}{{ registry.hostname }}"
         # - "{{ dir_terraform_module_vm }}"
@@ -134,9 +135,21 @@
         dest: "{{ dir_terraform }}{{ registry.hostname }}/main.tf"
 
 
-# Erzeuge und kopiere das output.tf-file in den VM-Instanz-Ordner
-    - name: "13 --- Create output.tf-file from jinja-template output.tf"
+=======
+        - "{{ dir_terraform }}{{ registry.hostname }}"
+    
+# Erstelle die Terraform-Files "main.tf/output.tf"-files
+# main.tf
+    - name: "79 --- Create main.tf-file"
       template:
+        src: "../99-jinja-templates/terraform/new-vm-from-clone-with-network-settings-tf.j2"
+        dest: "{{ dir_terraform }}{{ registry.hostname }}/main.tf"
+    
+>>>>>>> dpg-openshift
+# Erzeuge und kopiere das output.tf-file in den VM-Instanz-Ordner
+    - name: "80 --- Create output.tf-file"
+      template:
+<<<<<<< HEAD
         src: "../99-jinja-templates/terraform/output.j2"
         dest: "{{ dir_terraform }}{{ registry.hostname }}/output.tf"
       tags:
@@ -176,15 +189,21 @@
     #   tags:
     #     - create
 
+=======
+        src: "../99-jinja-templates/terraform/new-vm-from-clone-with-network-settings-output-tf.j2"
+        dest: "{{ dir_terraform }}{{ registry.hostname }}/output.tf"
+    
+>>>>>>> dpg-openshift
 # Erzeuge die virtuelle Maschine
-    - name: "17 --- Create virtual machine with terraform"
+    - name: "81 --- Create virtual machine with terraform"
       raw: "cd {{ dir_terraform }}{{ registry.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM
-    - name: "18 --- Retrieve mac-address from created virtual machine"
+    - name: "82 --- Retrieve mac-address from created virtual machine"
       raw: "cd {{ dir_terraform }}{{ registry.hostname }} && terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
       register: mac
 
+<<<<<<< HEAD
 # Erstelle für diese VM, anhand der MAC-Adresse ein PXELINUX-Config-File im TFTPROOT-Dir vom PXE-SERVER
     # - name: "19 --- Create pxelinux-config-file with mac-address-filename on tftproot on pxe-server"
     #   become: "true"
@@ -197,23 +216,32 @@
     #     group: "wheel"
     #   delegate_to: pxe-server
 
+=======
+>>>>>>> dpg-openshift
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DHCP-Eintrag in DNSMASQ
-    - name: "20 --- Add DHCP-entry to dnsmasq.conf"
+    - name: "83 --- Add DHCP-entry to dnsmasq.conf"
       become: "true"
       become_user: "root"
       lineinfile:
         path: /etc/dnsmasq.conf
+<<<<<<< HEAD
         insertafter: "^# OpenShift-Nodes-DHCP"         
         line: "dhcp-host={{ mac.stdout | trim }},{{ registry.hostname }},{{ registry.ip }},set:ocp43"
       delegate_to: "bastion.ip"
+=======
+        insertafter: "^## OpenShift-Nodes-DHCP"         
+        line: "dhcp-host={{ mac.stdout | trim }},{{ registry.hostname }},{{ registry.ip }},set:openshift_node"
+      delegate_to: "{{bastion.ip}}"
+>>>>>>> dpg-openshift
       notify: "restart dnsmasq"
 
 # Erzeuge anhand der Mac-Adresse, IP-Adresse und des Hostnames, einen DNS-Lookup-Eintrag in DNSMASQ
-    - name: "21 --- Add DNS-Lookup-entry to dnsmasq.conf"
+    - name: "84 --- Add DNS-Lookup-entry to dnsmasq.conf"
       become: "true"
       become_user: "root"
       lineinfile:
         path: "/etc/dnsmasq.conf"
+<<<<<<< HEAD
         insertafter: "^# OpenShift-Nodes-DNS" 
         line: "address=/{{ registry.hostname }}.{{domain}}/{{ registry.ip }}"
       delegate_to: "bastion.ip"
@@ -229,6 +257,13 @@
     #     path: "{{ dir_nfs_root }}"
     #     backup: yes
 
+=======
+        insertafter: "^## OpenShift-Nodes-DNS" 
+        line: "address=/{{ registry.hostname }}.{{clustername}}.{{domain}}/{{ registry.ip }}"
+      delegate_to: "{{bastion.ip}}"
+      notify: "restart dnsmasq"
+
+>>>>>>> dpg-openshift
 # Starte den DNS-Dienst erneut, wenn sich etwas an der DNS-Konfiguration geändert hat.
   handlers:
     - name: "restart dnsmasq"
@@ -237,5 +272,9 @@
       service:
         name: dnsmasq
         state: restarted
+<<<<<<< HEAD
       delegate_to: "bastion.ip"
 
+=======
+      delegate_to: "{{bastion.ip}}"
+>>>>>>> dpg-openshift

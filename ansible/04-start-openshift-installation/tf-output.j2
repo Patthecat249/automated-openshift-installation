@@ -1,0 +1,35 @@
+
+output "mac-{{masters[0].hostname}}" {
+ #description = "Mac-Adress of {{masters[0].hostname}}"
+ value = vsphere_virtual_machine.{{masters[0].hostname}}.network_interface[0].mac_address
+}
+
+output "mac-{{masters[1].hostname}}" {
+ #description = "Mac-Adress of {{masters[1].hostname}}"
+ value = vsphere_virtual_machine.{{masters[1].hostname}}.network_interface[0].mac_address
+}
+
+output "mac-{{masters[2].hostname}}" {
+ #description = "Mac-Adress of {{masters[2].hostname}}"
+ value = vsphere_virtual_machine.{{masters[2].hostname}}.network_interface[0].mac_address
+}
+
+output "mac-{{workers[0].hostname}}" {
+ #description = "Mac-Adress of {{workers[0].hostname}}"
+ value = vsphere_virtual_machine.{{workers[0].hostname}}.network_interface[0].mac_address
+}
+
+output "mac-{{workers[1].hostname}}" {
+ #description = "Mac-Adress of {{workers[1].hostname}}"
+ value = vsphere_virtual_machine.{{workers[1].hostname}}.network_interface[0].mac_address
+}
+
+output "mac-{{workers[2].hostname}}" {
+ #description = "Mac-Adress of {{workers[2].hostname}}"
+ value = vsphere_virtual_machine.{{workers[2].hostname}}.network_interface[0].mac_address
+}
+
+output "mac-{{bstrp.hostname}}" {
+ #description = "Mac-Adress of {{bstrp.hostname}}"
+ value = vsphere_virtual_machine.{{bstrp.hostname}}.network_interface[0].mac_address
+}

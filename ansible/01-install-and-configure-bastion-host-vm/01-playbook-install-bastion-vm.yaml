@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 - name: "Registry-VM"
+=======
+- name: "Playbook - Install a the Bastion-Host-VM"
+>>>>>>> dpg-openshift
   become: "true"
   become_user: "root"
   hosts: 127.0.0.1
@@ -13,6 +17,7 @@
     - kickstart_file: "{{ bastion.hostname }}.cfg"
  
   tasks:
+<<<<<<< HEAD
 
   # Check if Folder exists
     - name: "00 - Prüfe, ob Ordner {{ dir_terraform }}{{ bastion.hostname }} existiert"
@@ -31,12 +36,17 @@
 
 # Erstelle Arbeitsverzeichnisse
     - name: "01 --- Create Working-Directories"
+=======
+# Erstelle Arbeitsverzeichnisse
+    - name: "35 --- Create Working-Directories"
+>>>>>>> dpg-openshift
       file:
         path: "{{ item }}"
         state: "directory"
         recurse: "true"
       with_items:
         - "{{ dir_root }}"
+<<<<<<< HEAD
         # - "{{ dir_terraform }}"
         - "{{ dir_terraform }}{{ bastion.hostname }}"
         # - "{{ dir_terraform_module_vm }}"
@@ -241,3 +251,28 @@
   #       state: restarted
   #     delegate_to: pi
 
+=======
+        - "{{ dir_terraform }}{{ bastion.hostname }}"
+    
+# Erstelle die Terraform-Files "main.tf/output.tf"-files
+# main.tf
+    - name: "36 --- Create main.tf-file"
+      template:
+        src: "../99-jinja-templates/terraform/new-vm-from-clone-with-network-settings-tf.j2"
+        dest: "{{ dir_terraform }}{{ bastion.hostname }}/main.tf"
+    
+# Erzeuge und kopiere das output.tf-file in den VM-Instanz-Ordner
+    - name: "37 --- Create output.tf-file"
+      template:
+        src: "../99-jinja-templates/terraform/new-vm-from-clone-with-network-settings-output-tf.j2"
+        dest: "{{ dir_terraform }}{{ bastion.hostname }}/output.tf"
+    
+# Erzeuge die virtuelle Maschine
+    - name: "38 --- Create virtual machine with terraform"
+      raw: "cd {{ dir_terraform }}{{ bastion.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
+
+# Ermittle die MAC-Adresse, der erzeugten VM
+    - name: "39 --- Retrieve mac-address from created virtual machine"
+      raw: "cd {{ dir_terraform }}{{ bastion.hostname }} && terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
+      register: mac
+>>>>>>> dpg-openshift

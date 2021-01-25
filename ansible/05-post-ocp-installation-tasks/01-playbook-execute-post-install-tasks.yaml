@@ -1,7 +1,8 @@
 ---
-- name: "Execution of post-installation-task after an ocp-installation"
-  hosts: "{{ bastion.hostname }}"
-  gather_facts: "false"
+# Execute on install-vm
+- hosts: "{{ bastion.ip }}"
+  vars_files:
+    - "../vars/vars.yaml"
   tasks:
-    - name: "01 - Install software"
+    - import_tasks: tasks/10-ntp-chronyd.yaml
 ...

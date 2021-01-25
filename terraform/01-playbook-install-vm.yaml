@@ -9,8 +9,8 @@
     ip: "10.0.249.111"
     cpu: "1"
     ram: "1024"
-    disksize: "120"
-    boot_delay: "60000"
+    vsphere_general_disksize: "120"
+    vsphere_vm_boot_delay: "60000"
     dir_root: "/opt/sva/"
     dir_terraform: "{{dir_root}}terraform/"
     dir_terraform_modules: "{{dir_terraform}}modules/"
@@ -28,7 +28,7 @@
     iso_centos77: "CentOS-7-x86_64-DVD-1908.iso"
     pxe_vmlinux_kernel: "kernels_initrd/centos77/vmlinuz"
     pxe_initrd_image: "kernels_initrd/centos77/initrd.img"
-    ntp_server: "router.home.local"
+    ntp_server: "10.0.249.1"
     kickstart_file: "{{hostname}}.cfg"
   tasks:
 

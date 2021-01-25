@@ -1,101 +1,51 @@
 # Start-OpenShift-Cluster-Installation
 
-- name: "Playbook - Start-OpenShift-Cluster-Installation"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Start-OpenShift-Cluster-Installation"
   become: "true"
   become_user: "root"
   hosts: 127.0.0.1
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
-  vars:
-    # - cpu: "{{ bstrp.cpu }}"
-    # - ram: "{{ bstrp.ram }}"
-    # - hostname: "{{ bstrp.hostname }}"
-    # - ip: "{{ bstrp.ip }}"
-    # - ignition_file: "{{ignition_filename_bootstrap}}"
- 
   tasks:
 # Erstelle Arbeitsverzeichnisse
-    - name: "129 --- Create Working-Directories"
+    - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | 129 --- Create Working-Directories"
       file:
         path: "{{ item }}"
         state: "directory"
         recurse: "true"
       with_items:
-        - "{{ dir_terraform }}{{ bstrp.hostname }}"
-        - "{{ dir_terraform }}{{ masters[0].hostname }}"
-        - "{{ dir_terraform }}{{ masters[1].hostname }}"
-        - "{{ dir_terraform }}{{ masters[2].hostname }}"
-        - "{{ dir_terraform }}{{ workers[0].hostname }}"
-        - "{{ dir_terraform }}{{ workers[1].hostname }}"
-        - "{{ dir_terraform }}{{ workers[2].hostname }}"
+        - "{{ dir_terraform }}{{ clustername }}-nodes/"
 
 # Create tf-files
 # Erstelle VM-Instanz Terraform "main.tf"-file
 # main.tf
 # Masters / Workers
-    - name: "130 --- Create main.tf"
-      vars:
-        - cpu: "{{ item.cpu }}"
-        - ram: "{{ item.ram }}"
-        - hostname: "{{ item.hostname }}"
-        - ip: "{{ item.ip }}"
-        - disk: "{{ item.disk }}"
+    - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | 130 --- Create main.tf"
       template:
-        src: "../99-jinja-templates/terraform/ocp-master-tf.j2"
-        dest: "{{ dir_terraform }}{{ hostname }}/main.tf"
-      with_items: 
-        - "{{ masters }}"
-        - "{{ workers }}"
-        - "{{ bstrp }}"
+        src: "tf-main.j2"
+        dest: "{{ dir_terraform }}{{ clustername }}-nodes/main.tf"
 
 # output.tf
 # Masters / Workers
-    - name: "131 --- Create output.tf"
-      vars:
-        - cpu: "{{ item.cpu }}"
-        - ram: "{{ item.ram }}"
-        - hostname: "{{ item.hostname }}"
-        - ip: "{{ item.ip }}"
-        - disk: "{{ item.disk }}"
+    - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | 131 --- Create output.tf"
       template:
-        src: "../99-jinja-templates/terraform/output.j2"
-        dest: "{{ dir_terraform }}{{ hostname }}/output.tf"
-      with_items: 
-        - "{{ masters }}"
-        - "{{ workers }}"
-        - "{{ bstrp }}"
+        src: "tf-output.j2"
+        dest: "{{ dir_terraform }}{{ clustername }}-nodes/output.tf"
 
 # vars.tf
-    - name: "132 --- Create vars.tf"
-      vars:
-        - cpu: "{{ item.cpu }}"
-        - ram: "{{ item.ram }}"
-        - hostname: "{{ item.hostname }}"
-        - ip: "{{ item.ip }}"
-        - disk: "{{ item.disk }}"
+    - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | 132 --- Create vars.tf"
       template:
-        src: "../99-jinja-templates/terraform/vars-coreos-tf.j2"
-        dest: "{{ dir_terraform }}{{ hostname }}/vars.tf"
-      with_items: 
-        - "{{ masters }}"
-        - "{{ workers }}"
-        - "{{ bstrp }}"
-
+        src: "tf-vars.j2"
+        dest: "{{ dir_terraform }}{{ clustername }}-nodes/vars.tf"
 
 # # Execute terraform
 # # Erzeuge die virtuelle Maschine
-    - name: "133 --- Terraform - Create virtual machine"
-      vars:
-        hostname: "{{ item.hostname }}"
-      raw: "cd {{ dir_terraform }}{{ hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"      
-      with_items: 
-        - "{{ masters }}"
-        - "{{ workers }}"
-        - "{{ bstrp }}"
+    - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | 133 --- Terraform - Create all OpenShift-virtual-machines"
+      raw: "cd {{ dir_terraform }}{{ clustername }}-nodes/ && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"      
 
-    - name: "134 --- Retrieve mac-address from created virtual machines"
-      raw: "cd {{ dir_terraform }}{{ item.hostname }} && /usr/local/bin/terraform output -json | jq '.[\"mac-address\"].value' | sed -e 's|\"||g'"
+    - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | 134 --- Retrieve mac-address from created virtual machines"
+      raw: "cd {{ dir_terraform }}{{ clustername }}-nodes/ && /usr/local/bin/terraform output -json | jq '.[\"mac-{{item.hostname}}\"].value' | sed -e 's|\"||g'"
       register: mac
       with_items:
         - "{{ masters }}"
@@ -109,7 +59,7 @@
         - getmac
 
 # insert DHCP-entries
-    - name: "135 --- Add DHCP-entry to /etc/dhcp/dhcpd.conf"
+    - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | 135 --- Add DHCP-entry to /etc/dhcp/dhcpd.conf"
       become: "true"
       become_user: "root"
       vars:
@@ -127,13 +77,22 @@
         - 5
         - 6
       delegate_to: "{{bastion.ip}}"
-      notify: "restart dhcpd"
+      #notify: "restart dhcpd"
       tags:
         - getmac
 
+# Restart DHCPD
+    - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | 135a - Restart dhcpd-daemon"
+      become: "true"
+      become_user: "root"
+      service:
+        name: dhcpd
+        state: restarted
+      delegate_to: "{{ bastion.ip }}"
+
 
 # create PXE-files
-    - name: "136 --- PXE - (MASTERS) - Create mac-address-files in {{dir_tftproot}}"
+    - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | 136 --- PXE - (MASTERS) - Create mac-address-files in {{dir_tftproot}}"
       become: "true"
       become_user: "root"
       vars:
@@ -153,7 +112,7 @@
       tags:
         - getmac
 
-    - name: "137 --- PXE - (WORKERS) - Create mac-address-files in {{dir_tftproot}}"
+    - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | 137 --- PXE - (WORKERS) - Create mac-address-files in {{dir_tftproot}}"
       become: "true"
       become_user: "root"
       vars:
@@ -173,7 +132,7 @@
       tags:
         - getmac
 
-    - name: "138 --- PXE - (BOOTSTRAP) - Create mac-address-files in {{dir_tftproot}}"
+    - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | 138 --- PXE - (BOOTSTRAP) - Create mac-address-files in {{dir_tftproot}}"
       become: "true"
       become_user: "root"
       vars:
@@ -192,7 +151,7 @@
         - getmac
 
 # insert DNS-entries
-    - name: "139 --- Add DNS-Lookup-entry to dnsmasq.conf"
+    - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | 139 --- Add DNS-Lookup-entry to dnsmasq.conf"
       become: "true"
       become_user: "root"
       lineinfile:

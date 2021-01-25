@@ -1,6 +1,6 @@
 ---
 # Dieses Playbook bereitet die OpenShift-Installation, inbesondere die install-config.yaml vor.
-- name: "### --- 20 - Render basic install-config.yaml from template"
+- name: "111 - Render basic install-config.yaml from template"
   template:
     src: ../99-jinja-templates/install-config/install-config.yaml.j2
     dest: "{{ dir_cluster }}install-config.yaml"
@@ -8,67 +8,89 @@
     group: root
     mode: '0644'
     force: yes
+  tags:
+    - rerun
 
-- name: "### --- 21 - Compact pull-secret in one line"
+- name: "112 - Compact pull-secret in one line"
   shell: "cat {{ dir_cluster }}{{ pull_secret_file_name }} | tr -d '\t\n\r[:space:]'"
   register: pull_secret_details
   no_log: True
+  tags:
+    - rerun
 
-- name: "### --- 22 - Add pull-secret into install-config.yaml"
+- name: "113 - Add pull-secret into install-config.yaml"
   lineinfile: 
     path: "{{ dir_cluster }}install-config.yaml"
     regexp: '^pullSecret: '
     line: "pullSecret: '{{ pull_secret_details.stdout }}'"
   no_log: True
+  tags:
+    - rerun
 
-- name: "### --- 23 - Show ssh public key content"
+- name: "114 - Show ssh public key content"
   shell: "cat {{ dir_key_to_nodes }}{{ key_to_nodes_name }}.pub"
   register: ssh_public_key_details
+  tags:
+    - rerun
 
-- name: "### --- 24 - Add ssh-public-key-content to install-config.yaml"
+- name: "115 - Add ssh-public-key-content to install-config.yaml"
   lineinfile: 
     path: "{{ dir_cluster }}install-config.yaml"
     regexp: '^sshKey: '
     line: "sshKey: '{{ ssh_public_key_details.stdout }}'"
+  tags:
+    - rerun
 
-- name: "### --- 25 - Show certificate of JFrog"
+- name: "116 - Show certificate of JFrog"
   shell: |
     openssl s_client -connect {{local_registry}}:{{registry_port}} \
      -showcerts < /dev/null 2>/dev/null \
      | awk '/BEGIN/{p=1}p;/END/{p=0}' \
      > "{{ dir_cluster }}{{local_registry}}.crt"
+  tags:
+    - rerun
 
-- name: "### --- 26 - Add two blank spaces in"
+- name: "117 - Add two blank spaces in"
   shell: |
     cat "{{ dir_cluster }}{{local_registry}}.crt" \
      | sed 's/^/  /' \
      | sed '1 i\additionalTrustBundle: |'
   register: cert_details
+  tags:
+    - rerun
 
-- name: "### --- 27 - Add certificate to install-config.yaml"
+- name: "118 - Add certificate to install-config.yaml"
   blockinfile:
     path: "{{ dir_cluster }}install-config.yaml"
     insertafter: EOF
     marker: ""
     block: "{{ cert_details.stdout }}"
+  tags:
+    - rerun
 
-- name: "### --- 28 - Add imageContentSources into install-config.yaml"
+- name: "119 - Add imageContentSources into install-config.yaml"
   blockinfile:
     path: "{{ dir_cluster }}install-config.yaml"
     insertafter: EOF
     marker: ""
     block: "{{ image_block }}"
+  tags:
+    - rerun
 
-- name: "### --- 29 - Copy install-config.yaml to install-config-folder"
+- name: "120 - Copy install-config.yaml to install-config-folder"
   copy:
     src: "{{ dir_cluster }}install-config.yaml"
     dest: "{{ dir_install_config }}install-config.yaml"
     remote_src: yes
     force: yes
+  tags:
+    - rerun
 
 # 21.09.2020 - New Feature to backup the install-config.yaml-file
-- name: "### --- 30 - Backup install-config.yaml to /opt/sva/backup"
+- name: "121 - Backup install-config.yaml to /opt/sva/backup"
   copy:
     src: "{{ dir_cluster }}install-config.yaml"
     dest: "{{ dir_backup_install_config }}install-config.yaml"
     remote_src: yes
+  tags:
+    - rerun

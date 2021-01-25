@@ -1,0 +1,208 @@
+provider "vsphere" {
+  vsphere_server = var.vsphere_server
+  user = var.vsphere_user
+  password = var.vsphere_pass
+  allow_unverified_ssl = true
+}
+
+# --- VARIABLE-DECLARATION
+
+data "vsphere_datacenter" "dc" {
+  name = "{{vsphere_datacenter}}"
+}
+
+data "vsphere_compute_cluster" "cluster" {
+  name = "{{vsphere_cluster}}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_resource_pool" "pool" {
+  name = "{{vsphere_rp}}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_datastore" "datastore" {
+  name = "{{vsphere_datastore}}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_network" "network" {
+  name = "{{vsphere_network}}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+
+# OCPMASTER-NODE#1
+# --- Create VM {{ masters[0].hostname }} --- #
+resource "vsphere_virtual_machine" "{{ masters[0].hostname }}" {
+  name                        = "{{ masters[0].hostname }}"
+  folder                      = "{{ vsphere_folder }}"
+  guest_id                    = "coreos64Guest"
+  resource_pool_id            = data.vsphere_resource_pool.pool.id
+  firmware                    = "bios"
+  datastore_id                = data.vsphere_datastore.datastore.id
+  num_cpus                    = {{ masters[0].cpu }}
+  memory                      = {{ masters[0].ram }}
+  boot_delay                  = var.vm_vsphere_vm_boot_delay
+  wait_for_guest_ip_timeout   = 0
+  wait_for_guest_net_timeout  = 0
+  network_interface {
+    network_id = data.vsphere_network.network.id
+    adapter_type = "vmxnet3"
+  }
+  disk {
+    label                     = "disk0"
+    size                      = {{ masters[0].disk }}
+    thin_provisioned          = "true"
+  }
+}
+
+# OCPMASTER-NODE#2
+# --- Create VM {{ masters[1].hostname }} --- #
+resource "vsphere_virtual_machine" "{{ masters[1].hostname }}" {
+  name                        = "{{ masters[1].hostname }}"
+  folder                      = "{{ vsphere_folder }}"
+  guest_id                    = "coreos64Guest"
+  resource_pool_id            = data.vsphere_resource_pool.pool.id
+  firmware                    = "bios"
+  datastore_id                = data.vsphere_datastore.datastore.id
+  num_cpus                    = {{ masters[1].cpu }}
+  memory                      = {{ masters[1].ram }}
+  boot_delay                  = var.vm_vsphere_vm_boot_delay
+  wait_for_guest_ip_timeout   = 0
+  wait_for_guest_net_timeout  = 0
+  network_interface {
+    network_id = data.vsphere_network.network.id
+    adapter_type = "vmxnet3"
+  }
+  disk {
+    label                     = "disk0"
+    size                      = {{ masters[1].disk }}
+    thin_provisioned          = "true"
+  }
+}
+
+# OCPMASTER-NODE#3
+# --- Create VM {{ masters[2].hostname }} --- #
+resource "vsphere_virtual_machine" "{{ masters[2].hostname }}" {
+  name                        = "{{ masters[2].hostname }}"
+  folder                      = "{{ vsphere_folder }}"
+  guest_id                    = "coreos64Guest"
+  resource_pool_id            = data.vsphere_resource_pool.pool.id
+  firmware                    = "bios"
+  datastore_id                = data.vsphere_datastore.datastore.id
+  num_cpus                    = {{ masters[2].cpu }}
+  memory                      = {{ masters[2].ram }}
+  boot_delay                  = var.vm_vsphere_vm_boot_delay
+  wait_for_guest_ip_timeout   = 0
+  wait_for_guest_net_timeout  = 0
+  network_interface {
+    network_id = data.vsphere_network.network.id
+    adapter_type = "vmxnet3"
+  }
+  disk {
+    label                     = "disk0"
+    size                      = {{ masters[2].disk }}
+    thin_provisioned          = "true"
+  }
+}
+
+# OCPWORKER-NODE#1
+# --- Create VM {{ workers[0].hostname }} --- #
+resource "vsphere_virtual_machine" "{{ workers[0].hostname }}" {
+  name                        = "{{ workers[0].hostname }}"
+  folder                      = "{{ vsphere_folder }}"
+  guest_id                    = "coreos64Guest"
+  resource_pool_id            = data.vsphere_resource_pool.pool.id
+  firmware                    = "bios"
+  datastore_id                = data.vsphere_datastore.datastore.id
+  num_cpus                    = {{ workers[0].cpu }}
+  memory                      = {{ workers[0].ram }}
+  boot_delay                  = var.vm_vsphere_vm_boot_delay
+  wait_for_guest_ip_timeout   = 0
+  wait_for_guest_net_timeout  = 0
+  network_interface {
+    network_id = data.vsphere_network.network.id
+    adapter_type = "vmxnet3"
+  }
+  disk {
+    label                     = "disk0"
+    size                      = {{ workers[0].disk }}
+    thin_provisioned          = "true"
+  }
+}
+
+# OCPWORKER-NODE#2
+# --- Create VM {{ workers[1].hostname }} --- #
+resource "vsphere_virtual_machine" "{{ workers[1].hostname }}" {
+  name                        = "{{ workers[1].hostname }}"
+  folder                      = "{{ vsphere_folder }}"
+  guest_id                    = "coreos64Guest"
+  resource_pool_id            = data.vsphere_resource_pool.pool.id
+  firmware                    = "bios"
+  datastore_id                = data.vsphere_datastore.datastore.id
+  num_cpus                    = {{ workers[1].cpu }}
+  memory                      = {{ workers[1].ram }}
+  boot_delay                  = var.vm_vsphere_vm_boot_delay
+  wait_for_guest_ip_timeout   = 0
+  wait_for_guest_net_timeout  = 0
+  network_interface {
+    network_id = data.vsphere_network.network.id
+    adapter_type = "vmxnet3"
+  }
+  disk {
+    label                     = "disk0"
+    size                      = {{ workers[1].disk }}
+    thin_provisioned          = "true"
+  }
+}
+
+# OCPWORKER-NODE#3
+# --- Create VM {{ workers[2].hostname }} --- #
+resource "vsphere_virtual_machine" "{{ workers[2].hostname }}" {
+  name                        = "{{ workers[2].hostname }}"
+  folder                      = "{{ vsphere_folder }}"
+  guest_id                    = "coreos64Guest"
+  resource_pool_id            = data.vsphere_resource_pool.pool.id
+  firmware                    = "bios"
+  datastore_id                = data.vsphere_datastore.datastore.id
+  num_cpus                    = {{ workers[2].cpu }}
+  memory                      = {{ workers[2].ram }}
+  boot_delay                  = var.vm_vsphere_vm_boot_delay
+  wait_for_guest_ip_timeout   = 0
+  wait_for_guest_net_timeout  = 0
+  network_interface {
+    network_id = data.vsphere_network.network.id
+    adapter_type = "vmxnet3"
+  }
+  disk {
+    label                     = "disk0"
+    size                      = {{ workers[2].disk }}
+    thin_provisioned          = "true"
+  }
+}
+
+# Bootstrap-Node
+# --- Create VM {{ bstrp.hostname }} --- #
+resource "vsphere_virtual_machine" "{{ bstrp.hostname }}" {
+  name                        = "{{ bstrp.hostname }}"
+  folder                      = "{{ vsphere_folder }}"
+  guest_id                    = "coreos64Guest"
+  resource_pool_id            = data.vsphere_resource_pool.pool.id
+  firmware                    = "bios"
+  datastore_id                = data.vsphere_datastore.datastore.id
+  num_cpus                    = {{ bstrp.cpu }}
+  memory                      = {{ bstrp.ram }}
+  boot_delay                  = var.vm_vsphere_vm_boot_delay
+  wait_for_guest_ip_timeout   = 0
+  wait_for_guest_net_timeout  = 0
+  network_interface {
+    network_id = data.vsphere_network.network.id
+    adapter_type = "vmxnet3"
+  }
+  disk {
+    label                     = "disk0"
+    size                      = {{ bstrp.disk }}
+    thin_provisioned          = "true"
+  }
+}

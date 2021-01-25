@@ -1,6 +1,6 @@
 ---
-- name: "Mirror the registry"
-  hosts: "{{ registry.hostname }}"
+- name: "Playbook - Mirror Image-Content into the registry"
+  hosts: "{{ registry.ip }}"
   become: "true"
   gather_facts: "false"
   vars_files:
@@ -11,7 +11,7 @@
       debug: msg="{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
 
 # Create Working-Directories on Install-VM
-    - name: "01 --- Create Working-Directories on Install-VM"
+    - name: "108 --- Create Working-Directories on Install-VM"
       file:
         path: "{{ item }}"
         state: "directory"
@@ -20,15 +20,15 @@
         - "{{ dir_tools }}"
 
 # Copy pull-secret from install-vm to registry-vm
-    - name: "02 - Copy pull-secret from install-vm to ocp-registry"
+    - name: "109 - Copy pull-secret from install-vm to ocp-registry"
       copy:
         src: "{{pull_secret_for_mirror}}"
         dest: "{{ dir_tools }}pull-secret"
         mode: "0600"
 
 # Mirror images from Red Hat to mirror-registry
-    - name: "03 - Mirror the Images from Red Hat into mirror-registry"
-      command: "/usr/local/bin/oc adm -a {{ dir_tools }}pull-secret release mirror --from=quay.io/{{product_repo}}/{{release_name}}:{{ocp_release}} --to={{local_registry}}/{{local_repository}} --to-release-image={{local_registry}}/{{local_repository}}:{{ocp_release}}"
+    - name: "110 - Mirror the Images from Red Hat into mirror-registry"
+      command: "/usr/local/bin/oc adm -a {{ dir_tools }}pull-secret release mirror --from=quay.io/{{product_repo}}/{{release_name}}:{{ocp_release}} --to={{local_registry}}:{{registry_port}}/{{local_repository}} --to-release-image={{local_registry}}:{{registry_port}}/{{local_repository}}:{{ocp_release}}"
 
 # Time End
     - name: "--- Ende Playbook: {{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"

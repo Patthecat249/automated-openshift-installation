@@ -1,0 +1,16 @@
+---
+# Dieses Playbook konfiguriert den NTP-Dienst chronyd
+- name: "### --- 01 - Chronyd - Set Timezone to Europe/Berlin"
+  command: "ssh -i {{dir_key_to_nodes}}{{key_to_nodes_name}} core@{{item.hostname}} 'sudo timedatectl set-timezone Europe/Berlin'"
+  with_items:
+    - "{{masters}}"
+    - "{{workers}}"
+
+- name: "### --- 02 - Chronyd - Restart Daemon"
+  command: "ssh -i {{dir_key_to_nodes}}{{key_to_nodes_name}} core@{{item.hostname}} 'sudo systemctl restart chronyd'"
+  with_items:
+    - "{{masters}}"
+    - "{{workers}}"
+
+
+  

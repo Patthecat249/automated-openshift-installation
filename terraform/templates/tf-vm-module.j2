@@ -3,6 +3,6 @@ module "{{ hostname }}" {
     vm_name = "{{ hostname }}"
     vm_cpu = "{{ cpu }}"
     vm_ram = "{{ ram }}"
-    vm_boot_delay = "{{ boot_delay }}"
-    vm_disk = "{{ disksize }}"
+    vm_vsphere_vm_boot_delay = "{{ vsphere_vm_boot_delay }}"
+    vm_disk = "{{ vsphere_general_disksize }}"
 }
