@@ -69,7 +69,7 @@
 
 
 
-It's possible to recreate cluster from here
+# It's possible to recreate cluster from here
 # remove host-entries from vi /etc/dhcp/dhcpd.conf
 # restart dhcpd
 # remove all-files from bastion-host rm -f /tftproot/pxelinux.cfg/*
