@@ -165,8 +165,9 @@
 
 # Create SSL-Cert for Registry
     - name: "98 - Create SSL-Cert for Registry"
-      raw: "cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt -subj '/C=DE/ST=Brandenburg/L=Cottbus/O=Home/OU=local/CN={{registry.hostname}}.{{clustername}}.{{domain}}'"
-
+      raw: "cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt -subj '/C=DE/ST=Brandenburg/L=Cottbus/O=Home/OU=local/CN={{registry.hostname}}.{{clustername}}.{{domain}}' -addext 'subjectAltName = DNS:{{registry.hostname}}.{{clustername}}.{{domain}}'"
+      tags:
+        - "SSL"
 
 # Create User for registry
     - name: "99 - Create User {{registry_user}} for Registry"
