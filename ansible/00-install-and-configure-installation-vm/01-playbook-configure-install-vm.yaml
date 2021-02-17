@@ -43,6 +43,12 @@
         dest: "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
       tags:
         - download
+    - name: "04a - Download CoreOS-Rootfs"
+      get_url:
+        url: "{{ link_to_rootfs }}"
+        dest: "{{ dir_downloaded_images }}{{file_coreos_rootfs}}"
+      tags:
+        - download
 
     - name: "05 - Download CoreOS-Initrd"
       get_url:
