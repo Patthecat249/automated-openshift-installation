@@ -141,9 +141,9 @@
     src: "{{item}}"
     dest: "{{ dir_http_server }}"  
   loop:
-    #- "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
-    #- "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
-    - "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
+    - "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
+    - "{{ dir_downloaded_images }}{{file_coreos_rootfs}}"
+    - "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
   tags:
     - rerun
 
