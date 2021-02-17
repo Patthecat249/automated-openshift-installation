@@ -1,24 +1,12 @@
 ---
-<<<<<<< HEAD
 - name: "### --- 31 - Allow incoming connections to the tftp service in the firewall"
-=======
-- name: "73 - Allow incoming connections to the tftp service in the firewall"
->>>>>>> dpg-openshift
   firewalld:
     service: tftp
     permanent: yes
     state: enabled
-<<<<<<< HEAD
 
 
 - name: "### --- 32 - Copy pxelinux.0 and menu.c32 to '{{ dir_tftp_root }}'"
-=======
-  tags:
-    - rerun
-
-
-- name: "74 - Copy pxelinux.0 and menu.c32 to '{{ dir_tftp_root }}'"
->>>>>>> dpg-openshift
   copy:
     src: "/usr/share/syslinux/{{ item }}"
     dest: "{{ dir_tftp_root }}{{ item }}"
@@ -29,38 +17,20 @@
   with_items: 
     - 'pxelinux.0'
     - 'menu.c32'
-<<<<<<< HEAD
 
 - name: "### --- 33 - Make sure folder '{{ dir_tftp_root }}pxelinux.cfg/' exists"
-=======
-  tags:
-    - rerun
-
-- name: "75 - Make sure folder '{{ dir_tftp_root }}pxelinux.cfg/' exists"
->>>>>>> dpg-openshift
   file:
     path: "{{ dir_tftp_root }}pxelinux.cfg"
     state: directory
     owner: dnsmasq
     group: wheel
     mode: '0755'
-<<<<<<< HEAD
 
 # Hinweis !!!
 
 ### --- Diese Aufgaben sollte bei Erstellen der Core-OS-VM-Erstellung mit Terraform ausgeführt werden
 # damit die MAC-Adressen verwendet werden können. 
 # - name: "### --- 34 - Render pxelinux.cfg from templates for masters"
-=======
-  tags:
-    - rerun
-
-# Hinweis !!!
-
-#Diese Aufgaben sollte bei Erstellen der Core-OS-VM-Erstellung mit Terraform ausgeführt werden
-# damit die MAC-Adressen verwendet werden können. 
-# - name: "34 - Render pxelinux.cfg from templates for masters"
->>>>>>> dpg-openshift
 #   template:
 #     src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
 #     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
@@ -71,11 +41,7 @@
 #     ignition_file: master.ign
 #   with_items: "{{ masters }}"
 
-<<<<<<< HEAD
 # - name: "### --- 35 - Render pxelinux.cfg from templates for workers"
-=======
-# - name: "35 - Render pxelinux.cfg from templates for workers"
->>>>>>> dpg-openshift
 #   template:
 #     src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
 #     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
@@ -86,11 +52,7 @@
 #     ignition_file: worker.ign
 #   with_items: "{{ workers }}"
 
-<<<<<<< HEAD
 # - name: "### --- 36 - Render pxelinux.cfg from templates for bootstrap"
-=======
-# - name: "36 - Render pxelinux.cfg from templates for bootstrap"
->>>>>>> dpg-openshift
 #   template:
 #     src: ../99-jinja-templates/pxe/pxelinux.cfg.j2
 #     dest: "{{ dir_tftp_root }}pxelinux.cfg/01-{{ item.mac | regex_replace(':','-') }}"
@@ -102,27 +64,12 @@
 #   with_items: 
 #     - "{{ bstrp }}"
 
-<<<<<<< HEAD
 - name: "### --- 37 - Start and enable HTTP server"
-=======
-- name: "76 - Start and enable HTTP server"
->>>>>>> dpg-openshift
   service:
     name: httpd
     state: started
     enabled: yes
-<<<<<<< HEAD
 
 # 21.09.2020 - New Feature to backup the TFTP-Folder-Content
 - name: "### --- 38 - Backup TFTP-Folder to /opt/sva/backup"
   command: cp -r  "{{ dir_tftp_root }}" "{{ dir_backup_tftp }}"
-=======
-  tags:
-    - rerun
-
-# 21.09.2020 - New Feature to backup the TFTP-Folder-Content
-- name: "77 - Backup TFTP-Folder to /opt/sva/backup"
-  command: cp -r  "{{ dir_tftp_root }}" "{{ dir_backup_tftp }}"
-  tags:
-    - rerun
->>>>>>> dpg-openshift

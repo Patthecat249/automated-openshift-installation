@@ -1,10 +1,6 @@
 ---
 # Dieses Playbook erstellt die Arbeitsverzeichnisse auf dem Bastion-Host
-<<<<<<< HEAD:ansible/01-install-and-configure-bastion-host-vm/tasks/01_prerequisites.yml
 - name: "01 - Create SSH-Connection to {{bastion.ip}}"
-=======
-- name: "40 - Create SSH-Connection to {{bastion.ip}}"
->>>>>>> dpg-openshift:ansible/03-install-and-configure-bastion-host-vm/tasks/01_prerequisites.yml
   command: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no {{bastion.ip}}"
   delegate_to: "localhost"
 
@@ -13,7 +9,6 @@
     src: "{{rootpw}}"
     dest: "{{rootpw}}"
 
-<<<<<<< HEAD:ansible/01-install-and-configure-bastion-host-vm/tasks/01_prerequisites.yml
 - name: "03a- yum makecache fast"
   raw: "yum makecache fast"
 
@@ -22,13 +17,6 @@
   yum:
     name:
       - "epel-release.noarch"
-=======
-- name: "42 - Update yum-repos EPEL-RELEASE"
-  become: "true"
-  yum:
-    name:
-      - "epel-release"
->>>>>>> dpg-openshift:ansible/03-install-and-configure-bastion-host-vm/tasks/01_prerequisites.yml
     state: "present"
 
 - name: "43 - Update yum-repos centos-release-ansible-29.noarch"
