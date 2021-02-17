@@ -9,5 +9,5 @@ ONTIMEOUT coreOS
 
 LABEL coreOS
 menu label Add {{ hostname }} Node
-kernel http://{{ bastion.ip }}/{{ clustername }}/{{ file_coreos_kernel }} 
-append initrd=http://{{ bastion.ip }}/{{ clustername }}/{{file_coreos_initrd}} coreos.live.rootfs_url=http://{{ bastion.ip }}/{{ clustername }}/{{file_coreos_rootfs}} coreos.inst.install_dev=/dev/sda coreos.inst.ignition_url=http://{{ bastion.ip }}/{{ clustername }}/{{ ignition_file }}
+kernel kernel_initrd/{{ file_coreos_kernel }} 
+append initrd=kernel_initrd/{{file_coreos_initrd}} coreos.live.rootfs_url=http://{{ bastion.ip }}/{{ clustername }}/{{file_coreos_rootfs}} coreos.inst.install_dev=/dev/sda coreos.inst.ignition_url=http://{{ bastion.ip }}/{{ clustername }}/{{ ignition_file }}
