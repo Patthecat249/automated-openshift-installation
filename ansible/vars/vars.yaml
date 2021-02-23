@@ -89,6 +89,7 @@ download_tf_vsphere_plugin: "https://releases.hashicorp.com/terraform-provider-v
 dir_root: "/opt/sva/"
 dir_certs: "{{dir_root}}certs/"
 dir_cluster: "{{dir_root}}{{clustername}}/"
+pull_secret_fullpath: "{{dir_cluster}}{{pull_secret_file_name}}"
 dir_install_config: "{{dir_cluster}}install-config/"
 kubeconfig: "{{dir_install_config}}auth/kubeconfig"
 dir_terraform: "{{dir_root}}terraform/"
