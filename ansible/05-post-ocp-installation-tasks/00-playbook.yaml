@@ -1,16 +1,17 @@
 ---
+# Execute on Install-VM
 - hosts: 127.0.0.1
 
   vars_files:
-    - ../ccisl30_vars.yaml
+    - "../vars/vars.yaml"
 
   tasks:
     - import_tasks: tasks/01-oc-login-certificate.yaml
-    - import_tasks: tasks/02-create-nfs-provisioner-rbac.yaml
-    - import_tasks: tasks/03-create-image-pull-secret.yaml
-    - import_tasks: tasks/04-create-nfs-provisioner-class.yaml
-    - import_tasks: tasks/05-create-nfs-provisioner-deployment.yaml
-    - import_tasks: tasks/06-create-static-pv-for-image-registry.yaml
-    - import_tasks: tasks/07-configure-openshift-internal-registry.yaml
-    - import_tasks: tasks/08-configure-ldap-connection.yaml
-    - import_tasks: tasks/09-prune-image.yaml
+    #- import_tasks: tasks/02-create-nfs-provisioner-rbac.yaml
+    #- import_tasks: tasks/03-create-image-pull-secret.yaml
+    #- import_tasks: tasks/04-create-nfs-provisioner-class.yaml
+    #- import_tasks: tasks/05-create-nfs-provisioner-deployment.yaml
+    #- import_tasks: tasks/06-create-static-pv-for-image-registry.yaml
+    #- import_tasks: tasks/07-configure-openshift-internal-registry.yaml
+    #- import_tasks: tasks/08-configure-ldap-connection.yaml
+    #- import_tasks: tasks/09-prune-image.yaml
