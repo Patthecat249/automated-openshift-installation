@@ -8,6 +8,7 @@
     group: root
     mode: '0644'
     force: yes
+  delegate_to: "{{bastion.ip}}"
 
 # Führe folgendes "oc create"-Kommando aus um die Storage-Class zu erstellen
 - name: "### --- 13 - Deploy nfs_provisioner_class.yaml for nfs-client-provisioner"
