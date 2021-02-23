@@ -13,6 +13,6 @@
 - name: "### --- 13 - Deploy nfs_provisioner_class.yaml for nfs-client-provisioner"
   shell: |
     oc create -f "{{ dir_post_install_config }}nfs_provisioner_class.yaml" \
-      --config="{{ kubeconfig_path }}" 
+      --config="{{ kubeconfig }}" 
 
     

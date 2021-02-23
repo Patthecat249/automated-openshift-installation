@@ -14,6 +14,6 @@
 - name: "### --- 15 - Deploy nfs_provisioner_deployment.yaml for nfs-client-provisioner"
   shell: |
     oc create -f "{{ dir_post_install_config }}nfs_provisioner_deployment.yaml" \
-      --config="{{ kubeconfig_path }}" 
+      --config="{{ kubeconfig }}" 
 
     

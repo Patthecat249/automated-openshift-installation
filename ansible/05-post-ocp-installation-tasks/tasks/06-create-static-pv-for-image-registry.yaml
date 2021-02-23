@@ -14,6 +14,6 @@
 - name: "### --- 17 - Deploy storage_pv_image_registry.yaml"
   shell: |
     oc create -f "{{ dir_post_install_config }}storage_pv_image_registry.yaml" \
-      --config="{{ kubeconfig_path }}" 
+      --config="{{ kubeconfig }}" 
 
     

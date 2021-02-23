@@ -6,7 +6,7 @@
     oc patch configs.imageregistry.operator.openshift.io cluster \
      --type merge \
      --patch '{"spec":{"managementState":"Managed"}}' \
-     --config="{{ kubeconfig_path }}" 
+     --config="{{ kubeconfig }}" 
   
   # Entferne eine eventuell vorhandene Storage-Konfiguration
 - name: "### --- 19 - Patch configs.imageregistry.operator.openshift.io - Delete emptyDir"
@@ -14,7 +14,7 @@
     oc patch configs.imageregistry.operator.openshift.io cluster \
      --type merge \
      --patch '{"spec":{"storage":null}}' \
-     --config="{{ kubeconfig_path }}" 
+     --config="{{ kubeconfig }}" 
 
 # Konfiguriere die Registry so, dass sie einen Persistent Volume Claim verwendet
 - name: "### --- 20 - Patch configs.imageregistry.operator.openshift.io - Leave the claim field blank to allow the automatic creation of an image-registry-storage PVC"
@@ -22,11 +22,11 @@
     oc patch configs.imageregistry.operator.openshift.io cluster \
      --type merge \
      --patch '{"spec":{"storage":{"pvc":{"claim":""}}}}' \
-     --config="{{ kubeconfig_path }}" 
+     --config="{{ kubeconfig }}" 
 
 # Setze den Schalter der Default-Route auf true, so dass man die Registry von extern nutzen kann.
 - name: "### --- 21 - Patch configs.imageregistry.operator.openshift.io - Set defaultRoute to True"
-  raw: oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"defaultRoute":true}}' --kubeconfig="{{ kubeconfig_path }}"
+  raw: oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"defaultRoute":true}}' --kubeconfig="{{ kubeconfig }}"
 
 
 
