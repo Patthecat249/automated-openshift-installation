@@ -40,6 +40,7 @@
     group: root
     mode: '0644'
     force: yes
+    remote_src: "true"
   register: copy_pem_details
   delegate_to: "{{ bastion.ip }}"
 
