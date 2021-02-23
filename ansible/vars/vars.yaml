@@ -304,6 +304,9 @@ nfs_kickstart_folder: "/volume1/nfs-iso/kickstart-configs/"
 nfs_path_os_rhel77: "CentOS-7-x86_64-DVD-1908.iso"
 iso_centos77: "CentOS-7-x86_64-DVD-1908.iso"
 
+nfs_bastion_ip: "{{bastion.ip}}"
+nfs_bastion_path: "/nfs"
+
 # PXE-Settings
 pxe_vmlinux_kernel: "kernels_initrd/centos77/vmlinuz"
 pxe_initrd_image: "kernels_initrd/centos77/initrd.img"
