@@ -3,7 +3,7 @@
 # Das jinja-Template wird mit Variablen gefüllt
 - name: "### --- 16 - Render storage_pv_image_registry.yaml from a template"
   template: 
-    src: templates/storage_pv_image_registry.yaml.j2
+    src: "../99-jinja-templates/nfs-provisioner/storage_pv_image_registry.yaml.j2"
     dest: "{{ dir_post_install_config }}storage_pv_image_registry.yaml"
     owner: root
     group: root

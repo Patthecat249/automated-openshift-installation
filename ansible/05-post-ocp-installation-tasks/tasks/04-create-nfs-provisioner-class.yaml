@@ -2,7 +2,7 @@
 # Dieses Playbook erstellt eine Storage-Class
 - name: "### --- 12 - Render nfs_provisioner_class.yaml from a template"
   template: 
-    src: templates/storage_class.yaml.j2
+    src: "../99-jinja-templates/nfs-provisioner/storage_class.yaml.j2"
     dest: "{{ dir_post_install_config }}nfs_provisioner_class.yaml"
     owner: root
     group: root

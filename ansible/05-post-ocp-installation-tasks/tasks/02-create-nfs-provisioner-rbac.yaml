@@ -11,7 +11,7 @@
 # Kopiere die YAML-Datei auf den Bastion Host
 - name: "### --- 08 - Copy nfs_provisioner_rbac to remote host"
   copy: 
-    src: "templates/storage_rbac.yaml"
+    src: "../99-jinja-templates/nfs-provisioner/storage_rbac.yaml"
     dest: "{{ dir_post_install_config }}nfs_provisioner_rbac.yaml"
     owner: root
     group: root

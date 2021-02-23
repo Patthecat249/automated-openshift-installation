@@ -3,7 +3,7 @@
 # Das YAML-File wird automatisch mit Variablen gefüllt und an die Stelle im Bastion kopiert
 - name: "### --- 14 - Render nfs_provisioner_deployment.yaml from a template"
   template: 
-    src: templates/storage_deployment.yaml.j2
+    src: "../99-jinja-templates/nfs-provisioner/storage_deployment.yaml.j2"
     dest: "{{ dir_post_install_config }}nfs_provisioner_deployment.yaml"
     owner: root
     group: root
