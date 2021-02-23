@@ -9,6 +9,7 @@
     group: root
     mode: '0644'
     force: yes
+  delegate_to: "{{bastion.ip}}"
 
 # Führe folgendes "oc create"-Kommando aus um das Deployment zu starten
 - name: "### --- 15 - Deploy nfs_provisioner_deployment.yaml for nfs-client-provisioner"
