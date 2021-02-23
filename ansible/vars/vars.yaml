@@ -38,7 +38,8 @@ vsphere_bstrp_disksize: "120"
 vsphere_guest_id: "centos7_64Guest"
 vsphere_vm_boot_delay: "15000"
 
-
+# Storage
+storage_class_name: "nfs"
 
 # Network
 net_openshift: "11.11.11.0"
