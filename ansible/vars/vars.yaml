@@ -304,6 +304,7 @@ nfs_kickstart_folder: "/volume1/nfs-iso/kickstart-configs/"
 nfs_path_os_rhel77: "CentOS-7-x86_64-DVD-1908.iso"
 iso_centos77: "CentOS-7-x86_64-DVD-1908.iso"
 nfs_client_provisioner_image: "ocpregistry.openshift.home.local:5000/external_storage/nfs-client-provisioner:latest"
+nfs_client_provisioner_image_quay: "quay.io/external_storage/nfs-client-provisioner:latest"
 nfs_bastion_ip: "{{bastion.ip}}"
 nfs_bastion_path: "/nfs"
 
