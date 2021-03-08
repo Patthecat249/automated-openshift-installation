@@ -1,5 +1,5 @@
 # OpenShift
-clustername: "openshift"
+clustername: "openshift12"
 domain: "home.local"
 version_openshift: "4.7.1"
 version_core_os: "4.7.0"
@@ -20,10 +20,10 @@ vsphere_cluster: "cluster-home"
 vsphere_datacenter: "dc-home"
 vsphere_rp: "rp-home"
 vsphere_datastore: "openshift_storage"
-vsphere_network: "dpg-openshift"
+vsphere_network: "dpg-openshift-12"
 vsphere_network_home: "dpg-home-prod"
-vsphere_network_openshift_gw: "11.11.11.1"
-vsphere_network_openshift_broadcast: "11.11.11.255"
+vsphere_network_openshift_gw: "11.11.12.1"
+vsphere_network_openshift_broadcast: "11.11.12.255"
 vsphere_folder: "/dc-home/vm/openshift"
 vsphere_master_cpu: "8"
 vsphere_master_ram: "16384"
@@ -42,7 +42,7 @@ vsphere_vm_boot_delay: "15000"
 storage_class_name: "nfs"
 
 # Network
-net_openshift: "11.11.11.0"
+net_openshift: "11.11.12.0"
 netmask_openshift_cidr: "/24"
 
 
@@ -127,22 +127,22 @@ dir_post_install_config: "{{dir_cluster}}post_install_config/"
 # OpenShift-Master-Nodes
 masters:
   - name: "master01"
-    hostname: "ocpmaster01"
-    ip: "11.11.11.121"
+    hostname: "ocpmaster01-12"
+    ip: "11.11.12.121"
     cpu: "8"
     ram: "16384"
     disk: "200"
     datastore: "openshift_storage"
   - name: "master02"
-    hostname: "ocpmaster02"
-    ip: "11.11.11.122"
+    hostname: "ocpmaster02-12"
+    ip: "11.11.12.122"
     cpu: "8"
     ram: "16384"
     disk: "200"
     datastore: "openshift_storage"
   - name: "master03"
-    hostname: "ocpmaster03"
-    ip: "11.11.11.123"
+    hostname: "ocpmaster03-12"
+    ip: "11.11.12.123"
     cpu: "8"
     ram: "16384"
     disk: "200"
@@ -151,22 +151,22 @@ masters:
 # OpenShift-Worker-Nodes
 workers:
   - name: "worker01"
-    hostname: "ocpworker01"
-    ip: "11.11.11.124"
+    hostname: "ocpworker01-12"
+    ip: "11.11.12.124"
     cpu: "8"
     ram: "32768"
     disk: "200"
     datastore: "openshift_storage"
   - name: "worker02"
-    hostname: "ocpworker02"
-    ip: "11.11.11.125"
+    hostname: "ocpworker02-12"
+    ip: "11.11.12.125"
     cpu: "8"
     ram: "32768"
     disk: "200"
     datastore: "openshift_storage"
   - name: "worker03"
-    hostname: "ocpworker03"
-    ip: "11.11.11.126"
+    hostname: "ocpworker03-12"
+    ip: "11.11.12.126"
     cpu: "8"
     ram: "32768"
     disk: "200"
@@ -175,8 +175,8 @@ workers:
 # Temporary Bootstrap-VM
 bstrp:
   name: "bootstrap"
-  hostname: "ocpbootstrap"
-  ip: "11.11.11.127"
+  hostname: "ocpbootstrap-12"
+  ip: "11.11.12.127"
   cpu: "8"
   ram: "16384"
   disk: "200"
@@ -184,14 +184,14 @@ bstrp:
 
 # Install-VM
 install_vm:
-  name: "Install-VM"
-  hostname: "install-vm"
+  name: "Install-VM-12"
+  hostname: "install-vm-12"
 
 # Bastion-Host
 bastion:
   name: "bastion"
-  hostname: "ocpbastion"
-  ip: "11.11.11.120"
+  hostname: "ocpbastion-12"
+  ip: "11.11.12.120"
   cpu: "2"
   ram: "4096"
   disk: "200"
@@ -199,8 +199,8 @@ bastion:
 # Image-Registry
 registry:
   name: "registry"
-  hostname: "ocpregistry"
-  ip: "11.11.11.119"
+  hostname: "ocpregistry-12"
+  ip: "11.11.12.119"
   cpu: "2"
   ram: "2048"
   disk: "200"
@@ -208,11 +208,11 @@ registry:
 # Router-VM
 router:
   name: "router"
-  hostname: "ocprouter"
-  ip: "10.0.249.2"
+  hostname: "ocprouter-12"
+  ip: "10.0.249.3"
   default_gw: "10.0.249.1"
   ocp1: "11.11.10.1"
-  ocp2: "11.11.11.1"
+  ocp2: "11.11.12.1"
   cpu: "1"
   ram: "1024"
   disk: "200"
@@ -231,22 +231,22 @@ pxe:
 # Load-Balancer
 lb:
   name: "load-balancer"
-  hostname: "ocplb01"
-  ip: "11.11.11.129"
+  hostname: "ocplb01-12"
+  ip: "11.11.12.129"
   cpu: "1"
   ram: "1024"
   disk: "200"
   app:
-    ip: "11.11.11.129"
+    ip: "11.11.12.129"
   api:
-    ip: "11.11.11.129"
+    ip: "11.11.12.129"
   api_int:
-    ip: "11.11.11.129"
+    ip: "11.11.12.129"
 
 # DNSMASQ-Settings
-dhcp_range: "11.11.11.110 11.11.11.200"
+dhcp_range: "11.11.12.110 11.11.12.200"
 dhcp_subnetmask: "255.255.255.0"
-dhcp_gateway: "11.11.11.1"
+dhcp_gateway: "11.11.12.1"
 ntpserver: "10.0.249.1"
 interface: "ens192"
 listen_address: "{{ bastion.ip }}"
