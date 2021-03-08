@@ -1,3 +1,6 @@
+# Install-VM
+- import_playbook: "../00-install-and-configure-installation-vm/01-playbook-configure-install-vm.yaml"
+
 # Router-VM
 - import_playbook: "../00-install-and-configure-router-vm/01-playbook-install-router-vm.yaml"
 - name: "Wait for {{ router.hostname }} ({{ router.ip }}) to become available"
