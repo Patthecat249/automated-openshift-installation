@@ -1,4 +1,4 @@
-[pi]
+[raspi]
 {{pi.hostname}} ansible_user=pi
 
 [pxe]
@@ -6,9 +6,16 @@
 
 [lb]
 {{lb.hostname}}
+{{lb.ip}}
 
 [registry]
 {{registry.hostname}}
+{{registry.ip}}
 
 [bastion]
 {{bastion.hostname}}
+{{bastion.ip}}
+
+[router]
+{{router.hostname}}
+{{router.ip}}
