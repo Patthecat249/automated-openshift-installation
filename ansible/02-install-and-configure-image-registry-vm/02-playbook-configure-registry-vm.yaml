@@ -18,7 +18,13 @@
       delegate_to: "localhost"
 
 # Install some software
-    - name: "86 - Install podman"
+    - name: "86a - Install Epel-Release"
+      yum:
+        name: 
+          - "epel-release"
+        state: "present"
+      
+    - name: "86b - Install podman"
       yum:
         name: 
           - "podman"
