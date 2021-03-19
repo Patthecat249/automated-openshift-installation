@@ -36,7 +36,7 @@ vsphere_bstrp_cpu: "8"
 vsphere_bstrp_ram: "16384"
 vsphere_bstrp_disksize: "120"
 vsphere_guest_id: "centos7_64Guest"
-vsphere_vm_boot_delay: "15000"
+vsphere_vm_boot_delay: "30000"
 
 # Storage
 storage_class_name: "nfs"
