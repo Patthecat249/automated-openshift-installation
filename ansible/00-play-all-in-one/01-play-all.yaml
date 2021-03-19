@@ -74,14 +74,14 @@
 
 # It's possible to recreate cluster from here
 # On Bastion-Host
-# remove host-entries from vi /etc/dhcp/dhcpd.conf
-# restart dhcpd
-# remove all-files from bastion-host rm -f /tftproot/pxelinux.cfg/*
-# remove all-files from bastion-host rm -f /var/www/html/openshift/*.ign
-# restart httpd systemctl stop httpd && systemctl start httpd && systemctl status httpd
-# empty folder from bastion-host  rm -rf /opt/sva/openshift/install-config/*
-# bastion-host rm -f /opt/sva/openshift/install-config.yaml
-# install-vM: terraform destroy nodes cd /opt/sva/terraform && ./cleanup-openshift-nodes.sh
+# vi /etc/dhcp/dhcpd.conf                                               # remove host-entries from 
+# systemctl restart dhcpd                                               # restart dhcpd
+# rm -f /tftproot/pxelinux.cfg/*                                        # remove all-files from bastion-host 
+# rm -f /var/www/html/openshift/*.ign                                   # remove all-files from bastion-host 
+# systemctl stop httpd && systemctl start httpd && systemctl status httpd # restart httpd 
+# rm -rf /opt/sva/openshift473/install-config/*                            # empty folder from bastion-host  
+# rm -f /opt/sva/openshift473/install-config.yaml                          # remove install-config.yaml on bastion-host 
+# cd /opt/sva/terraform && ././cleanup-openshift-nodes473.sh                 # install-vM: terraform destroy nodes 
 
 # Prepare install-config.yaml
 - import_playbook: "../01-install-and-configure-bastion-host-vm/03-prepare-openshift-install-config.yaml"
