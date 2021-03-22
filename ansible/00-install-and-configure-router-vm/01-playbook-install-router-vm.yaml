@@ -37,7 +37,7 @@
         dest: "{{ dir_terraform }}{{ router.hostname }}/output.tf"
     
 # Erzeuge die virtuelle Maschine
-    - name: "28 --- Create virtual machine with terraform"
+    - name: "28 --- Create virtual machine ({{ router.hostname }}) with terraform"
       raw: "cd {{ dir_terraform }}{{ router.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM
