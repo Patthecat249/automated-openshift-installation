@@ -94,14 +94,14 @@
     #   delegate_to: "localhost"
 
 # Download Initrd
-    - name: "92 - Download CoreOS - Initrd on {{ install_vm.hostname }}"
-      get_url:
-        url="{{link_to_coreos_initrd}}"
-        dest="{{ dir_downloads }}{{file_coreos_initrd}}"
-      register: get_initrd
-      tags:
-        - downloads
-      delegate_to: "localhost"
+    # - name: "92 - Download CoreOS - Initrd on {{ install_vm.hostname }}"
+    #   get_url:
+    #     url="{{link_to_coreos_initrd}}"
+    #     dest="{{ dir_downloads }}{{file_coreos_initrd}}"
+    #   register: get_initrd
+    #   tags:
+    #     - downloads
+    #   delegate_to: "localhost"
 
     # - debug: 
     #     msg="{{file_coreos_kernel}} was downloaded"
@@ -111,14 +111,14 @@
     #   delegate_to: "localhost"
 
 # Download RAW_GZ
-    - name: "93 - Download CoreOS - raw_gz on {{ install_vm.hostname }}"
-      get_url:
-        url="{{link_to_coreos_raw_gz}}"
-        dest="{{ dir_downloads }}{{file_coreos_raw_gz}}"
-      register: get_rawgz
-      tags:
-        - downloads
-      delegate_to: "localhost"
+    # - name: "93 - Download CoreOS - raw_gz on {{ install_vm.hostname }}"
+    #   get_url:
+    #     url="{{link_to_coreos_raw_gz}}"
+    #     dest="{{ dir_downloads }}{{file_coreos_raw_gz}}"
+    #   register: get_rawgz
+    #   tags:
+    #     - downloads
+    #   delegate_to: "localhost"
 
     # - debug: 
     #     msg="{{file_coreos_kernel}} was downloaded"
@@ -148,12 +148,12 @@
       delegate_to: "localhost"
 
 # Extraction of zip-archive
-    - name: "95 - Extract the openshift-installer on {{ install_vm.hostname }}"
-      unarchive:
-        src: "{{ dir_downloads }}openshift-install-linux-{{version_openshift}}.tar.gz"
-        dest: "{{ dir_downloads }}"
-        remote_src: "true"
-      delegate_to: "localhost"
+    # - name: "95 - Extract the openshift-installer on {{ install_vm.hostname }}"
+    #   unarchive:
+    #     src: "{{ dir_downloads }}openshift-install-linux-{{version_openshift}}.tar.gz"
+    #     dest: "{{ dir_downloads }}"
+    #     remote_src: "true"
+    #   delegate_to: "localhost"
 
 # Make oc executable >> copy to /usr/local/bin/oc
     - name: "96 - copy oc to /usr/local/bin and make executable"
@@ -163,11 +163,11 @@
         mode: "0755"
 
 # Make openshift-installer executable >> copy to /usr/local/bin/openshift-install
-    - name: "97 - copy openshift-install to /usr/local/bin and make executable"
-      copy:
-        src: "{{ dir_downloads }}openshift-install"
-        dest: "/usr/local/bin/openshift-install"
-        mode: "0755"
+    # - name: "97 - copy openshift-install to /usr/local/bin and make executable"
+    #   copy:
+    #     src: "{{ dir_downloads }}openshift-install"
+    #     dest: "/usr/local/bin/openshift-install"
+    #     mode: "0755"
 
 # Create SSL-Cert for Registry
     - name: "98 - Create SSL-Cert for Registry"
