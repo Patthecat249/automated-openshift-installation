@@ -1,7 +1,7 @@
 # OpenShift
 clustername: "openshift473"
 domain: "home.local"
-version_openshift: "4.7.3"
+version_openshift: "4.6.22"
 version_core_os: "4.6.8"
 version_major: "4.6"
 clusternetwork: "10.254.0.0/16"
