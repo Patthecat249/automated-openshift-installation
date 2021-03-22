@@ -5,6 +5,12 @@
   vars_files:
     - "../vars/vars.yaml"
   tasks:
+# Zeitausgabe
+    - name: "--- Starte Playbook: {{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+      debug: msg="{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+
+
+# Install Software packages
     - name: "01 - Install necassary software programs"
       become: "true"
       yum:
