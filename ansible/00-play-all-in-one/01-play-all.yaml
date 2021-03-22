@@ -1,76 +1,78 @@
-# # Install-VM
-# - import_playbook: "../00-install-and-configure-installation-vm/01-playbook-configure-install-vm.yaml"
+# Install-VM
+- import_playbook: "../00-install-and-configure-installation-vm/01-playbook-configure-install-vm.yaml"
 
-# # Router-VM
-# - import_playbook: "../00-install-and-configure-router-vm/01-playbook-install-router-vm.yaml"
-# - name: "Wait for {{ router.hostname }} ({{ router.ip }}) to become available"
-#   gather_facts: "false"
-#   vars_files:
-#     - "../vars/vars.yaml"
-#   hosts: "127.0.0.1"
-#   tasks:
-#     - name: "Check if Port: 22 is open at {{ router.ip }} - check every 10 seconds"
-#       wait_for:
-#         host: "{{ router.ip }}"
-#         delay: 10
-#         timeout: 300
-#         port: 22
-# - import_playbook: "../00-install-and-configure-router-vm/02-playbook-configure-router-vm.yaml"
+# Router-VM
+- import_playbook: "../00-install-and-configure-router-vm/01-playbook-install-router-vm.yaml"
+- name: "Wait for {{ router.hostname }} ({{ router.ip }}) to become available"
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+  hosts: "127.0.0.1"
+  tasks:
+    - name: "Check if Port: 22 is open at {{ router.ip }} - check every 10 seconds"
+      wait_for:
+        host: "{{ router.ip }}"
+        delay: 10
+        timeout: 300
+        port: 22
+- import_playbook: "../00-install-and-configure-router-vm/02-playbook-configure-router-vm.yaml"
 
-# # Bastion-VM
-# - import_playbook: "../01-install-and-configure-bastion-host-vm/01-playbook-install-bastion-vm.yaml"
-# - name: "Wait for {{ bastion.hostname }} ({{ bastion.ip }}) to become available"
-#   gather_facts: "false"
-#   vars_files:
-#     - "../vars/vars.yaml"
-#   hosts: "127.0.0.1"
-#   tasks:
-#     - name: "Check if Port: 22 is open at {{ bastion.ip }} - check every 10 seconds"
-#       wait_for:
-#         host: "{{ bastion.ip }}"
-#         delay: 10
-#         timeout: 300
-#         port: 22
-# - import_playbook: "../01-install-and-configure-bastion-host-vm/02-playbook-configure-bastion-vm.yaml"
+# Bastion-VM
+- import_playbook: "../01-install-and-configure-bastion-host-vm/01-playbook-install-bastion-vm.yaml"
+- name: "Wait for {{ bastion.hostname }} ({{ bastion.ip }}) to become available"
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+  hosts: "127.0.0.1"
+  tasks:
+    - name: "Check if Port: 22 is open at {{ bastion.ip }} - check every 10 seconds"
+      wait_for:
+        host: "{{ bastion.ip }}"
+        delay: 10
+        timeout: 300
+        port: 22
+- import_playbook: "../01-install-and-configure-bastion-host-vm/02-playbook-configure-bastion-vm.yaml"
 
-# # Load-Balancer
-# - import_playbook: "../03-install-and-configure-load-balancer-vm/01-playbook-install-lb-vm.yaml"
-# - name: "Wait for {{ lb.hostname }} ({{ lb.ip }}) to become available"
-#   gather_facts: "false"
-#   vars_files:
-#     - "../vars/vars.yaml"
-#   hosts: "127.0.0.1"
-#   tasks:
-#     - name: "Check if Port: 22 is open at {{ lb.ip }} - check every 10 seconds"
-#       wait_for:
-#         host: "{{ lb.ip }}"
-#         delay: 10
-#         timeout: 300
-#         port: 22
-# - import_playbook: "../03-install-and-configure-load-balancer-vm/02-playbook-configure-load-balancer-vm.yaml"
-
-
-# # Registry-VM
-# - import_playbook: "../02-install-and-configure-image-registry-vm/01-playbook-install-registry-vm.yaml"
-
-# - name: "Wait for {{ registry.hostname }} ({{ registry.ip }}) to become available"
-#   gather_facts: "false"
-#   vars_files:
-#     - "../vars/vars.yaml"
-#   hosts: "127.0.0.1"
-#   tasks:
-#     - name: "Check if Port: 22 is open at {{ registry.ip }} - check every 10 seconds"
-#       wait_for:
-#         host: "{{ registry.ip }}"
-#         delay: 10
-#         timeout: 300
-#         port: 22
-
-# - import_playbook: "../02-install-and-configure-image-registry-vm/02-playbook-configure-registry-vm.yaml"
-# - import_playbook: "../02-install-and-configure-image-registry-vm/03-playbook-mirror-the-registry.yaml"
+# Load-Balancer
+- import_playbook: "../03-install-and-configure-load-balancer-vm/01-playbook-install-lb-vm.yaml"
+- name: "Wait for {{ lb.hostname }} ({{ lb.ip }}) to become available"
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+  hosts: "127.0.0.1"
+  tasks:
+    - name: "Check if Port: 22 is open at {{ lb.ip }} - check every 10 seconds"
+      wait_for:
+        host: "{{ lb.ip }}"
+        delay: 10
+        timeout: 300
+        port: 22
+- import_playbook: "../03-install-and-configure-load-balancer-vm/02-playbook-configure-load-balancer-vm.yaml"
 
 
+# Registry-VM
+- import_playbook: "../02-install-and-configure-image-registry-vm/01-playbook-install-registry-vm.yaml"
 
+- name: "Wait for {{ registry.hostname }} ({{ registry.ip }}) to become available"
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+  hosts: "127.0.0.1"
+  tasks:
+    - name: "Check if Port: 22 is open at {{ registry.ip }} - check every 10 seconds"
+      wait_for:
+        host: "{{ registry.ip }}"
+        delay: 10
+        timeout: 300
+        port: 22
+
+- import_playbook: "../02-install-and-configure-image-registry-vm/02-playbook-configure-registry-vm.yaml"
+- import_playbook: "../02-install-and-configure-image-registry-vm/03-playbook-mirror-the-registry.yaml"
+
+
+### ---------------------------------------------------------------------------------------------------------------- ###
+### RECREATION of Cluster
+### ---------------------------------------------------------------------------------------------------------------- ###
 
 # It's possible to recreate cluster from here
 # On Bastion-Host
