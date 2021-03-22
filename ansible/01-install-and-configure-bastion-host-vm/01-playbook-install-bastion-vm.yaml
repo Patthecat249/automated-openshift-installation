@@ -37,7 +37,7 @@
         dest: "{{ dir_terraform }}{{ bastion.hostname }}/output.tf"
     
 # Erzeuge die virtuelle Maschine
-    - name: "38 --- Create virtual machine with terraform"
+    - name: "38 --- Create virtual machine ({{ bastion.hostname }}) with terraform"
       raw: "cd {{ dir_terraform }}{{ bastion.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM
