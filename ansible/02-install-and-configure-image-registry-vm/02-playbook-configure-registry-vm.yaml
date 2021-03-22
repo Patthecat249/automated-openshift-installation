@@ -66,25 +66,25 @@
       delegate_to: "localhost"
 
 # Download openshift-installer
-    - name: "90 - Download OpenShift - openshift-installer on {{ install_vm.hostname }}"
-      get_url:
-        url="{{link_to_openshift_installer}}"
-        dest="{{ dir_downloads }}{{file_openshift_installer}}"
-      register: get_installer
-      tags:
-        - downloads
-      delegate_to: "localhost"
+    # - name: "90 - Download OpenShift - openshift-installer on {{ install_vm.hostname }}"
+    #   get_url:
+    #     url="{{link_to_openshift_installer}}"
+    #     dest="{{ dir_downloads }}{{file_openshift_installer}}"
+    #   register: get_installer
+    #   tags:
+    #     - downloads
+    #   delegate_to: "localhost"
 
 
 # Download Kernel
-    - name: "91 - Download CoreOS - Kernel on {{ install_vm.hostname }}"
-      get_url:
-        url="{{link_to_coreos_kernel}}"
-        dest="{{ dir_downloads }}{{file_coreos_kernel}}"
-      register: get_kernel
-      tags:
-        - downloads
-      delegate_to: "localhost"
+    # - name: "91 - Download CoreOS - Kernel on {{ install_vm.hostname }}"
+    #   get_url:
+    #     url="{{link_to_coreos_kernel}}"
+    #     dest="{{ dir_downloads }}{{file_coreos_kernel}}"
+    #   register: get_kernel
+    #   tags:
+    #     - downloads
+    #   delegate_to: "localhost"
 
     # - debug: 
     #     msg="{{file_coreos_kernel}} was downloaded"

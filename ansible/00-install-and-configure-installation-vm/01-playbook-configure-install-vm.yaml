@@ -110,6 +110,7 @@
     - name: "13 - Create SSH-Key for root-user"
       become: "true"
       raw: "ssh-keygen -q -t rsa -N '' -f /root/.ssh/id_rsa <<<y 2>&1 >/dev/null"
+
 # Copy SSH-Key to localhost
     - name: "14 - SSH-COPY-ID"
       become: "true"
@@ -179,7 +180,8 @@
       become: "true"
       template:
         src: "../99-jinja-templates/ansible/ansible.cfg.j2"
-        dest: "/root/.ansible.cfg" 
+        dest: "/root/.ansible.cfg"
+
 # Create inventory file in /root-dir
     - name: "24 --- Create .ansible.cfg and inventory-file in /root"
       become: "true"
