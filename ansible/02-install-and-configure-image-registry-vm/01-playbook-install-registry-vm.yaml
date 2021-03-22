@@ -37,7 +37,7 @@
         dest: "{{ dir_terraform }}{{ registry.hostname }}/output.tf"
     
 # Erzeuge die virtuelle Maschine
-    - name: "81 --- Create virtual machine with terraform"
+    - name: "81 --- Create virtual machine ({{ registry.hostname }}) with terraform"
       raw: "cd {{ dir_terraform }}{{ registry.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM
