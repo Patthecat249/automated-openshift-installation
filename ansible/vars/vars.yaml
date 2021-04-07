@@ -1,5 +1,5 @@
 # OpenShift
-clustername: "openshift473"
+clustername: "openshift"
 domain: "home.local"
 version_openshift: "4.7.5"
 version_core_os: "4.7.0"
@@ -128,21 +128,21 @@ dir_post_install_config: "{{dir_cluster}}post_install_config/"
 # OpenShift-Master-Nodes
 masters:
   - name: "master01"
-    hostname: "ocpmaster01-12"
+    hostname: "ocpmaster01"
     ip: "11.11.12.121"
     cpu: "8"
     ram: "16384"
     disk: "200"
     datastore: "openshift_storage"
   - name: "master02"
-    hostname: "ocpmaster02-12"
+    hostname: "ocpmaster02"
     ip: "11.11.12.122"
     cpu: "8"
     ram: "16384"
     disk: "200"
     datastore: "openshift_storage"
   - name: "master03"
-    hostname: "ocpmaster03-12"
+    hostname: "ocpmaster03"
     ip: "11.11.12.123"
     cpu: "8"
     ram: "16384"
@@ -152,21 +152,21 @@ masters:
 # OpenShift-Worker-Nodes
 workers:
   - name: "worker01"
-    hostname: "ocpworker01-12"
+    hostname: "ocpworker01"
     ip: "11.11.12.124"
     cpu: "8"
     ram: "32768"
     disk: "200"
     datastore: "openshift_storage"
   - name: "worker02"
-    hostname: "ocpworker02-12"
+    hostname: "ocpworker02"
     ip: "11.11.12.125"
     cpu: "8"
     ram: "32768"
     disk: "200"
     datastore: "openshift_storage"
   - name: "worker03"
-    hostname: "ocpworker03-12"
+    hostname: "ocpworker03"
     ip: "11.11.12.126"
     cpu: "8"
     ram: "32768"
@@ -176,7 +176,7 @@ workers:
 # Temporary Bootstrap-VM
 bstrp:
   name: "bootstrap"
-  hostname: "ocpbootstrap-12"
+  hostname: "ocpbootstrap"
   ip: "11.11.12.127"
   cpu: "8"
   ram: "16384"
@@ -185,13 +185,13 @@ bstrp:
 
 # Install-VM
 install_vm:
-  name: "Install-VM-12"
-  hostname: "install-vm-12"
+  name: "Install-VM"
+  hostname: "install-vm"
 
 # Bastion-Host
 bastion:
   name: "bastion"
-  hostname: "ocpbastion-12"
+  hostname: "ocpbastion"
   ip: "11.11.12.120"
   cpu: "2"
   ram: "4096"
@@ -200,7 +200,7 @@ bastion:
 # Image-Registry
 registry:
   name: "registry"
-  hostname: "ocpregistry-12"
+  hostname: "ocpregistry"
   ip: "11.11.12.119"
   cpu: "2"
   ram: "2048"
@@ -209,7 +209,7 @@ registry:
 # Router-VM
 router:
   name: "router"
-  hostname: "ocprouter-12"
+  hostname: "ocprouter"
   ip: "10.0.249.3"
   default_gw: "10.0.249.1"
   ocp1: "11.11.10.1"
@@ -232,7 +232,7 @@ pxe:
 # Load-Balancer
 lb:
   name: "load-balancer"
-  hostname: "ocplb01-12"
+  hostname: "ocplb01"
   ip: "11.11.12.129"
   cpu: "1"
   ram: "1024"
