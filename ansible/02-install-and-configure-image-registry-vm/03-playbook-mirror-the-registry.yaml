@@ -1,5 +1,5 @@
 ---
-- name: "Playbook - Mirror Image-Content into the registry"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Mirror Image-Content into the registry"
   hosts: "{{ registry.ip }}"
   become: "true"
   gather_facts: "false"

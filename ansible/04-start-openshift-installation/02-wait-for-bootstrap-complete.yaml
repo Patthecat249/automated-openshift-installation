@@ -1,4 +1,4 @@
-- name: "Playbook - OpenShift-Installation - wait-for bootstrap to complete"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - OpenShift-Installation - wait-for bootstrap to complete"
   become: "true"
   gather_facts: "false"
   vars_files:

@@ -1,4 +1,4 @@
-- name: "Playbook - Install a the Bastion-Host-VM"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Install a the Bastion-Host-VM"
   become: "true"
   become_user: "root"
   hosts: 127.0.0.1

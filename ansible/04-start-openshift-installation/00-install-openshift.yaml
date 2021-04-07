@@ -1,6 +1,6 @@
 # Start-OpenShift-Cluster-Installation
 
-- name: "Playbook - Start-OpenShift-Cluster-Installation"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Start-OpenShift-Cluster-Installation"
   become: "true"
   become_user: "root"
   hosts: 127.0.0.1

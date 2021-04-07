@@ -1,5 +1,5 @@
 ---
-- name: "Playbook - Configure the load-balancer"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Configure the load-balancer"
   hosts: "{{ lb.ip }}"
   become: "true"
   gather_facts: "false"

@@ -1,6 +1,6 @@
 # Execute on install-vm
 ---
-- name: "Playbook - Prepare for OpenShift-Update"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Prepare for OpenShift-Update"
   hosts: 127.0.0.1
   gather_facts: "false"
   vars_files:

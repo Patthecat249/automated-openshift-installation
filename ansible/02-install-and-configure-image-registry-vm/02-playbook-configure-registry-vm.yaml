@@ -1,5 +1,5 @@
 ---
-- name: "Playbook - Configure the Registry-VM"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Configure the Registry-VM"
   hosts: "{{ registry.ip }}"
   become: "true"
   gather_facts: "false"

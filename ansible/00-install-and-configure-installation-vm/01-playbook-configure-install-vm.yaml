@@ -1,5 +1,5 @@
 ---
-- name: "Playbook - Install-VM - Configuration"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Install-VM - Configuration"
   hosts: 127.0.0.1
   gather_facts: "false"
   vars_files:
