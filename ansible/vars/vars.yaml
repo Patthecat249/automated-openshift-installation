@@ -38,6 +38,7 @@ vsphere_bstrp_disksize: "120"
 vsphere_guest_id: "centos7_64Guest"
 vsphere_vm_boot_delay: "90000"
 vsphere_hardware_version: "13"
+vsphere_hardware_version_non_coreos: "14"
 
 # Storage
 storage_class_name: "nfs"
