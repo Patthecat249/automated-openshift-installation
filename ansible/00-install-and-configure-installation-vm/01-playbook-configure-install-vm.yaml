@@ -89,7 +89,7 @@
     - name: "09 - Download terraform"
       get_url:
         url: "{{ download_tf }}"
-        dest: "{{ dir_terraform }}"
+        dest: "{{ dir_tools }}"
 
 # Download terraform vSphere-Provider-Plugin from internet
     - name: "10 - Download terraform vSphere-Provider-Plugin"
@@ -100,7 +100,7 @@
 # Extraction of zip-archive
     - name: "11 - Entpacken von terraform"
       unarchive:
-        src: "{{ dir_terraform }}terraform_{{ tf_version }}_linux_amd64.zip"
+        src: "{{ dir_tools }}terraform_{{ tf_version }}_linux_amd64.zip"
         dest: "{{ dir_tools }}"
         remote_src: "true"
 
