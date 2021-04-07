@@ -60,7 +60,14 @@
         - download
 
     # CoreOS-Rootfs
-    - name: "04a - Download CoreOS-Rootfs"
+    - name: "04c - Check, if CoreOS-Rootfs was already downloaded"
+      stat:
+        path: "{{ dir_downloaded_images }}{{file_coreos_rootfs}}"
+      register: stat_result
+      tags:
+        - download
+
+    - name: "04d - Download CoreOS-Rootfs"
       get_url:
         url: "{{ link_to_rootfs }}"
         dest: "{{ dir_downloaded_images }}{{file_coreos_rootfs}}"
@@ -68,7 +75,14 @@
         - download
 
     # CoreOS-Initrd
-    - name: "05 - Download CoreOS-Initrd"
+    - name: "05a - Check, if CoreOS-Initrd was already downloaded"
+      stat:
+        path: "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
+      register: stat_result
+      tags:
+        - download
+
+    - name: "05b - Download CoreOS-Initrd"
       get_url:
         url: "{{ link_to_coreos_initrd }}"
         dest: "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
@@ -76,7 +90,14 @@
         - download
 
     # CoreOS-RawGz
-    - name: "06 - Download CoreOS-RawGz"
+    - name: "06a - Check, if CoreOS-RawGz was already downloaded"
+      stat:
+        path: "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
+      register: stat_result
+      tags:
+        - download
+
+    - name: "06b - Download CoreOS-RawGz"
       get_url:
         url: "{{ link_to_coreos_raw_gz }}"
         dest: "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
@@ -84,7 +105,14 @@
         - download
 
     # OC-Client
-    - name: "07 - Download oc-client {{link_to_oc}}"
+    - name: "07a - Check, if OC-Client was already downloaded"
+      stat:
+        path: "{{ dir_downloaded_images }}{{file_oc}}"
+      register: stat_result
+      tags:
+        - download
+
+    - name: "07b - Download oc-client {{link_to_oc}}"
       get_url:
         url: "{{ link_to_oc }}"
         dest: "{{ dir_downloaded_images }}{{file_oc}}"
@@ -92,7 +120,14 @@
         - download
 
     # openshift-install-Client
-    - name: "08 - Download openshift-installer {{link_to_openshift_installer}}"
+    - name: "08a - Check, if Openshift-Install-Client was already downloaded"
+      stat:
+        path: "{{ dir_downloaded_images }}{{file_openshift_installer}}"
+      register: stat_result
+      tags:
+        - download
+
+    - name: "08b - Download openshift-installer {{link_to_openshift_installer}}"
       get_url:
         url: "{{ link_to_openshift_installer }}"
         dest: "{{ dir_downloaded_images }}{{file_openshift_installer}}"
