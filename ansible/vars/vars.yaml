@@ -80,9 +80,9 @@ ocp_release: "{{version_openshift}}-x86_64"
 pull_secret_for_mirror: "/root/pull-secret.json"
 
 # Terraform / vSphere-Plugin
-tf_version: "0.14.2"
+tf_version: "0.14.10"
 tf_zip_filename: "terraform_{{tf_version}}_linux_amd64.zip"
-tf_vsphere_plugin_version: "1.24.2"
+tf_vsphere_plugin_version: "1.24.3"
 tf_vsphere_plugin_zip_filename: "terraform-provider-vsphere_{{tf_vsphere_plugin_version}}_linux_amd64.zip"
 tf_jinja_template: "ocp-master-worker-nodes.tf.j2"
 download_tf: "https://releases.hashicorp.com/terraform/{{tf_version}}/terraform_{{tf_version}}_linux_amd64.zip"
