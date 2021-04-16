@@ -57,7 +57,8 @@ resource "vsphere_virtual_machine" "{{hostname}}" {
     thin_provisioned  = "true"
   }
   clone {
-    template_uuid = "4226b890-4986-d6b5-f3ef-e3458f22cfee"
+    #template_uuid = "4226b890-4986-d6b5-f3ef-e3458f22cfee"
+    template_uuid = "4226c049-c489-6758-069c-686148c8be78"    # CentOS 8.3
     customize {
       linux_options {
         host_name = "{{hostname}}"
