@@ -73,7 +73,7 @@ resource "vsphere_virtual_machine" "{{hostname}}" {
   clone {
     #template_uuid = "4226b890-4986-d6b5-f3ef-e3458f22cfee"
     #template_uuid = "422652beee351c16-f5d55f8da16da847"    # CentOS 8.3
-    template_uuid = "${data.vsphere_virtual_machine.template.id}"
+    template_uuid = data.vsphere_virtual_machine.template.id
     customize {
       linux_options {
         host_name = "{{hostname}}"
