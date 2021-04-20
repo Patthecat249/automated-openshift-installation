@@ -29,7 +29,7 @@
     name:
       - ansible.noarch
       - git
-      - dhcp
+      - dhcp-server
       - sshpass
       - wget.x86_64
       - jq.x86_64
@@ -38,7 +38,7 @@
       - nfs-utils.x86_64
       - unzip
       - dnsmasq
-      - policycoreutils-python
+      - policycoreutils-python-utils
       - syslinux
       - httpd
       - unzip
