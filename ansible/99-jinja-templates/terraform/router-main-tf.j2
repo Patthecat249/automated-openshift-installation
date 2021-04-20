@@ -37,7 +37,7 @@ data "vsphere_network" "network_home" {
 
 data "vsphere_virtual_machine" "template" {
   name          = "{{vpshere_vmtemplate_name}}"
-  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+  datacenter_id = "data.vsphere_datacenter.dc.id"
 }
 
 
