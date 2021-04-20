@@ -29,7 +29,8 @@
         name: 
           - "podman"
           - "wget"
-          - "openssl11"
+          #- "openssl11"
+          - "openssl"
           - "httpd-tools"
         state: "present"
 
