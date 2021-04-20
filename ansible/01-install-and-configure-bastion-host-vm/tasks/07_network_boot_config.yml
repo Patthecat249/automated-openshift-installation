@@ -20,6 +20,7 @@
     - 'pxelinux.0'
     - 'menu.c32'
     - 'ldlinux.c32'
+    - 'libutil.c32'
   tags:
     - rerun
 
