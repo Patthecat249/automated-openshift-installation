@@ -22,7 +22,7 @@
     - 'ldlinux.c32'
     - 'libutil.c32'
   tags:
-    - rerun
+    - linuxbootfiles
 
 - name: "75 - Make sure folder '{{ dir_tftp_root }}pxelinux.cfg/' exists"
   file:
@@ -32,7 +32,7 @@
     group: wheel
     mode: '0755'
   tags:
-    - rerun
+    - linuxbootfiles
 
 # Hinweis !!!
 
