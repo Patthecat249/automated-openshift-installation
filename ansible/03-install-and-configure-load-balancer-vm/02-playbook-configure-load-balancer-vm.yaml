@@ -16,7 +16,7 @@
       yum:
         name: 
           - "haproxy"
-          - "policycoreutils-python"
+          - "policycoreutils-python-utils"
           - "chrony.x86_64"
         state: "present"
 
