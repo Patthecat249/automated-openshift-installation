@@ -1,7 +1,7 @@
 # OpenShift
 clustername: "openshift"
 domain: "home.local"
-version_openshift: "4.7.7"
+version_openshift: "4.7.5"
 version_core_os: "4.7.0"
 version_major: "4.7"
 clusternetwork: "10.254.0.0/16"
@@ -25,7 +25,6 @@ vsphere_network_home: "dpg-home-prod"
 vsphere_network_openshift_gw: "11.11.12.1"
 vsphere_network_openshift_broadcast: "11.11.12.255"
 vsphere_folder: "/dc-home/vm/openshift"
-vpshere_vmtemplate_name: "centos83-template"
 vsphere_master_cpu: "8"
 vsphere_master_ram: "16384"
 vsphere_general_disksize: "120"
@@ -40,6 +39,8 @@ vsphere_guest_id: "centos8_64Guest"
 vsphere_vm_boot_delay: "90000"
 vsphere_hardware_version: "13"
 vsphere_hardware_version_non_coreos: "14"
+
+
 
 # Storage
 storage_class_name: "nfs"
@@ -81,7 +82,7 @@ ocp_release: "{{version_openshift}}-x86_64"
 pull_secret_for_mirror: "/root/pull-secret.json"
 
 # Terraform / vSphere-Plugin
-tf_version: "0.14.10"
+tf_version: "0.14.2"
 tf_zip_filename: "terraform_{{tf_version}}_linux_amd64.zip"
 tf_vsphere_plugin_version: "1.24.2"
 tf_vsphere_plugin_zip_filename: "terraform-provider-vsphere_{{tf_vsphere_plugin_version}}_linux_amd64.zip"
