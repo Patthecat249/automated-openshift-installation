@@ -72,6 +72,7 @@
     - "{{ dir_root }}"
     - "{{ dir_tools }}"
     - "{{ dir_cluster }}"
+    - "{{ dir_spectrumscale }}"
     - "{{ dir_install_config }}"
     - "{{ dir_http_server }}"
     - "{{ dir_mnt }}"

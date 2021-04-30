@@ -1,0 +1,70 @@
+---
+# Dieses Playbook installiert und konfiguriert Spectrum Scale-CNSA in OpenShift
+
+# Copy des Tar-Files Spectrum_Scale_Container_Native_Storage_Access-<version>-<arch>.tgz von Install-Node auf Bastion-Host
+
+# Entpacken von Spectrum_Scale_Container_Native_Storage_Access-<version>-<arch>.tgz
+- name: "### --- 01 - "
+  command: ""
+
+# Increase PIDS_LIMIT (von 1024 > 4096) UND
+# Installieren der Kernel-Abhängigkeit "kernel-devel" im OpenShift per Operator
+# Machine-Config-Template erstellen mit beiden
+    # ---
+    # apiVersion: machineconfiguration.openshift.io/v1
+    # kind: ContainerRuntimeConfig
+    # metadata:
+    #   name: increase-pid-limit
+    # spec:
+    #   machineConfigPoolSelector:
+    #     matchLabels:
+    #       pid-crio: config-pid
+    #   containerRuntimeConfig:
+    #     pidsLimit: 4096
+    # ---
+    # apiVersion: machineconfiguration.openshift.io/v1
+    # kind: MachineConfig
+    # metadata:
+    #   labels:
+    #     machineconfiguration.openshift.io/role: "worker"
+    #   name: 02-worker-kernel-devel
+    # spec:
+    #   config:
+    #     ignition:
+    #       version: 3.1.0
+    #   extensions:
+    #     - kernel-devel
+# Alternativ: 
+# oc create -f spectrumscale/machineconfig/increase_pid_mco.yaml
+# oc create -f spectrumscale/machineconfig/machineconfigoperator.yaml
+
+
+# Login into Registry
+podman login -u {{registry_user}} -p {{registry_pass}} {{local_registry}}:{{registry_port}}
+
+
+# Load, Tag, Push der Images aus TAR-File
+for file in `ls spectrumscale/*.tar`; do
+    tarname=${file##*/}
+    tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`
+    tagname=`echo $tarname | sed 's/.tar//g' | sed "s/-$tag/:$tag/g"`
+
+    podman tag localhost/$tagname {{local_registry}}:{{registry_port}}/$tagname
+    podman push {{local_registry}}:{{registry_port}}/$tagname
+done
+
+
+# Create Secret for GUI-User in SPS-OpenShift
+oc create secret generic {{secret_name_gui_user}} --from-literal=username='{{user_cnsa_storage_gui}}' --from-literal=password='{{pass_cnsa_storage_gui}}' -n {{namespace_cnsa}}
+
+# Edit the spectrumscale/deploy/operator.yaml and modify the imagenames
+# template
+
+
+# Edit the spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml file 
+
+
+# Deploy the CNSA-Cluster into OpenShift
+oc create -f spectrumscale/deploy/crds/ibm_v1_scalecluster_crd.yaml -n ibm-spectrum-scale-ns
+oc create -f spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml -n ibm-spectrum-scale-ns
+oc create -f spectrumscale/deploy -n ibm-spectrum-scale-ns
