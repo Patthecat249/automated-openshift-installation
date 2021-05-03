@@ -26,48 +26,23 @@
 # Increase PIDS_LIMIT (von 1024 > 4096) UND
 # Installieren der Kernel-Abhängigkeit "kernel-devel" im OpenShift per Operator
 # Machine-Config-Template erstellen mit beiden
-    # ---
-    # apiVersion: machineconfiguration.openshift.io/v1
-    # kind: ContainerRuntimeConfig
-    # metadata:
-    #   name: increase-pid-limit
-    # spec:
-    #   machineConfigPoolSelector:
-    #     matchLabels:
-    #       pid-crio: config-pid
-    #   containerRuntimeConfig:
-    #     pidsLimit: 4096
-    # ---
-    # apiVersion: machineconfiguration.openshift.io/v1
-    # kind: MachineConfig
-    # metadata:
-    #   labels:
-    #     machineconfiguration.openshift.io/role: "worker"
-    #   name: 02-worker-kernel-devel
-    # spec:
-    #   config:
-    #     ignition:
-    #       version: 3.1.0
-    #   extensions:
-    #     - kernel-devel
 # Alternativ: 
 # oc create -f spectrumscale/machineconfig/increase_pid_mco.yaml
 # oc create -f spectrumscale/machineconfig/machineconfigoperator.yaml
-
+- name: "### --- 04 - Create Template machineconfig and ContainerRuntimeConfig in one file"
+  template:
+    src: "../../99-jinja-templates/spectrumscale/worker-machine-config.j2"
+    dest: "{{dir_spectrumscale}}worker-machine-config.yaml"
 
 # Login into Registry
 # podman login -u {{registry_user}} -p {{registry_pass}} {{local_registry}}:{{registry_port}}
 
 
 # Load, Tag, Push der Images aus TAR-File
-# for file in `ls spectrumscale/*.tar`; do
-#     tarname=${file##*/}
-#     tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`
-#     tagname=`echo $tarname | sed 's/.tar//g' | sed "s/-$tag/:$tag/g"`
-
-#     podman tag localhost/$tagname {{local_registry}}:{{registry_port}}/$tagname
-#     podman push {{local_registry}}:{{registry_port}}/$tagname
-# done
+- name: "### --- 05 - Load, Tag, Push der Images aus TAR-File"
+  raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed "s/-$tag/:$tag/g"`; podman tag localhost/$tagname {{local_registry}}:{{registry_port}}/$tagname; podman push --authfile {{pull_secret_fullpath}} {{local_registry}}:{{registry_port}}/$tagname; done"
+  tags:
+    - untar
 
 
 # Create Secret for GUI-User in SPS-OpenShift
