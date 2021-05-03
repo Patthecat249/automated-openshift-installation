@@ -1,0 +1,9 @@
+# This playbook must be run on install-vm node 
+---
+# This Playbook implements the CSI-Driver-Operator and configures it to Point to SPS-Storage-Cluster
+
+# 
+- name: "### --- 01 - Copy TAR-File from Install to Bastion-Host"
+  copy:
+    src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+    dest: "{{dir_spectrumscale}}{{cnsa_install_file}}"

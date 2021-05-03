@@ -1,0 +1,9 @@
+# This playbook must be run on install-vm node 
+---
+# Dieses Playbook implementiert eine Storageclass
+
+# Copy des Tar-Files Spectrum_Scale_Container_Native_Storage_Access-<version>-<arch>.tgz von Install-Node auf Bastion-Host
+- name: "### --- 01 - Copy TAR-File from Install to Bastion-Host"
+  copy:
+    src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+    dest: "{{dir_spectrumscale}}{{cnsa_install_file}}"

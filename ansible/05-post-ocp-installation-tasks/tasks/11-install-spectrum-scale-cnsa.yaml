@@ -47,6 +47,11 @@
 - name: "### --- 06 - Label machine-config-pool worker"
   raw: "oc label machineconfigpool worker pid-crio=config-pid --kubeconfig={{kubeconfig}}"
 
+# Label the Worker-Nodes
+- name: "### --- 06 - Label Worker-Nodes with Scale=True"
+  raw: "oc label nodes -l node-role.kubernetes.io/worker= scale=true --kubeconfig={{kubeconfig}}"
+
+
 # Load der Images aus TAR-File
 - name: "### --- 07 - Load of Images from TAR-File"
   raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed \"s/-$tag/:$tag/g\"`; podman load -i $file localhost/$tagname; done"
