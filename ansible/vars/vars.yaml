@@ -352,6 +352,12 @@ sps_filesystem_fs1: "spsopenshift"
 
 sps_insecureSkipVerify: "true"
 
+# --- Spectrum-Node-Names
+node1: "sps-patrick1"
+node2: "sps-patrick2"
+node3: "sps-patrick3"
+domain: "home.local"
+
 sps:
   sps1:
     hostname: "{{node1}}"
