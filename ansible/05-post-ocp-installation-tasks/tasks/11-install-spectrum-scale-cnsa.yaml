@@ -43,6 +43,10 @@
 # Login into Registry
 # podman login -u {{registry_user}} -p {{registry_pass}} {{local_registry}}:{{registry_port}}
 
+# Label the machineconfigpool
+- name: "### --- 06 - Label machine-config-pool worker"
+  raw: "oc label machineconfigpool worker pid-crio=config-pid --kubeconfig={{kubeconfig}}"
+
 # Load, Tag, Push der Images aus TAR-File
 - name: "### --- 07 - Load, Tag, Push der Images aus TAR-File"
   raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed \"s/-$tag/:$tag/g\"`; podman tag localhost/$tagname {{local_registry}}:{{registry_port}}/$tagname; podman push --authfile {{pull_secret_fullpath}} {{local_registry}}:{{registry_port}}/$tagname; done"
