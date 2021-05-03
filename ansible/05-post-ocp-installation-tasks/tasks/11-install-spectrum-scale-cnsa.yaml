@@ -1,11 +1,27 @@
+# This playbook must be run on install-vm node 
 ---
 # Dieses Playbook installiert und konfiguriert Spectrum Scale-CNSA in OpenShift
 
 # Copy des Tar-Files Spectrum_Scale_Container_Native_Storage_Access-<version>-<arch>.tgz von Install-Node auf Bastion-Host
+- name: "Copy TAR-File from Install to Bastion-Host"
+  copy:
+    src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+    dest: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+
+# Prevent Nodes from auto-rebooting
+- name: "### --- 01 - Prevent Master-OCP-Nodes from autorebooting"
+  shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":true}}' machineconfigpool/master --kubeconfig={{kubeconfig}}"
+
+- name: "### --- 02 - Prevent Worker-OCP-Nodes from autorebooting"
+  shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":true}}' machineconfigpool/worker --kubeconfig={{kubeconfig}}"
 
 # Entpacken von Spectrum_Scale_Container_Native_Storage_Access-<version>-<arch>.tgz
-- name: "### --- 01 - "
-  command: ""
+# Extraction of zip-archive
+- name: "### --- 03 - Entpacken von terraform"
+  unarchive:
+    src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+    dest: "{{dir_spectrumscale}}"
+    remote_src: "true"
 
 # Increase PIDS_LIMIT (von 1024 > 4096) UND
 # Installieren der Kernel-Abhängigkeit "kernel-devel" im OpenShift per Operator
@@ -40,22 +56,22 @@
 
 
 # Login into Registry
-podman login -u {{registry_user}} -p {{registry_pass}} {{local_registry}}:{{registry_port}}
+# podman login -u {{registry_user}} -p {{registry_pass}} {{local_registry}}:{{registry_port}}
 
 
 # Load, Tag, Push der Images aus TAR-File
-for file in `ls spectrumscale/*.tar`; do
-    tarname=${file##*/}
-    tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`
-    tagname=`echo $tarname | sed 's/.tar//g' | sed "s/-$tag/:$tag/g"`
+# for file in `ls spectrumscale/*.tar`; do
+#     tarname=${file##*/}
+#     tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`
+#     tagname=`echo $tarname | sed 's/.tar//g' | sed "s/-$tag/:$tag/g"`
 
-    podman tag localhost/$tagname {{local_registry}}:{{registry_port}}/$tagname
-    podman push {{local_registry}}:{{registry_port}}/$tagname
-done
+#     podman tag localhost/$tagname {{local_registry}}:{{registry_port}}/$tagname
+#     podman push {{local_registry}}:{{registry_port}}/$tagname
+# done
 
 
 # Create Secret for GUI-User in SPS-OpenShift
-oc create secret generic {{secret_name_gui_user}} --from-literal=username='{{user_cnsa_storage_gui}}' --from-literal=password='{{pass_cnsa_storage_gui}}' -n {{namespace_cnsa}}
+# oc create secret generic {{secret_name_gui_user}} --from-literal=username='{{user_cnsa_storage_gui}}' --from-literal=password='{{pass_cnsa_storage_gui}}' -n {{namespace_cnsa}}
 
 # Edit the spectrumscale/deploy/operator.yaml and modify the imagenames
 # template
@@ -65,6 +81,6 @@ oc create secret generic {{secret_name_gui_user}} --from-literal=username='{{use
 
 
 # Deploy the CNSA-Cluster into OpenShift
-oc create -f spectrumscale/deploy/crds/ibm_v1_scalecluster_crd.yaml -n ibm-spectrum-scale-ns
-oc create -f spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml -n ibm-spectrum-scale-ns
-oc create -f spectrumscale/deploy -n ibm-spectrum-scale-ns
+# oc create -f spectrumscale/deploy/crds/ibm_v1_scalecluster_crd.yaml -n ibm-spectrum-scale-ns
+# oc create -f spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml -n ibm-spectrum-scale-ns
+# oc create -f spectrumscale/deploy -n ibm-spectrum-scale-ns

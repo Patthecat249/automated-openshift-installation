@@ -4,5 +4,6 @@
   vars_files:
     - "../vars/vars.yaml"
   tasks:
-    - import_tasks: tasks/10-ntp-chronyd.yaml
+    #- import_tasks: "tasks/10-ntp-chronyd.yaml"
+    - import_tasks: "tasks/11-install-spectrum-scale-cnsa.yaml"
 ...

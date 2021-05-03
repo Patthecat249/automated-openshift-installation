@@ -338,3 +338,5 @@ pass_cnsa_storage_gui: "Test1234"
 grp_containeroperator: "ContainerOperator" # Case-sensitive
 role_containeroperator: "containeroperator" # Case-sensitive
 secret_name_gui_user: "secret_csna" 
+
+cnsa_install_file: "Spectrum_Scale_Container_Native_Storage_Access-5.1.0.3-x86_64-Linux.tgz"
