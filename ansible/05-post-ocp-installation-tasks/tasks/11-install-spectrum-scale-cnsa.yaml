@@ -49,7 +49,7 @@
 
 # Load der Images aus TAR-File
 - name: "### --- 07 - Load of Images from TAR-File"
-  raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed "s/-$tag/:$tag/g"`; podman load -i $file localhost/$tagname; done"
+  raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed \"s/-$tag/:$tag/g\"`; podman load -i $file localhost/$tagname; done"
   tags:
     - untar
 
