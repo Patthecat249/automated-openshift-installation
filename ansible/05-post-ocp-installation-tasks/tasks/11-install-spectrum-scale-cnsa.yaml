@@ -32,30 +32,54 @@
 - name: "### --- 04 - Create Template machineconfig and ContainerRuntimeConfig in one file"
   template:
     src: "../../99-jinja-templates/spectrumscale/worker-machine-config.j2"
-    dest: "{{dir_spectrumscale}}worker-machine-config.yaml"
+    dest: "{{dir_spectrumscale}}sps-worker-machine-config.yaml"
 
+- name: "### --- 05 - Create machine-config"
+  raw: "oc create -f {{dir_spectrumscale}}sps-worker-machine-config.yaml"
 # Login into Registry
 # podman login -u {{registry_user}} -p {{registry_pass}} {{local_registry}}:{{registry_port}}
 
-
 # Load, Tag, Push der Images aus TAR-File
-- name: "### --- 05 - Load, Tag, Push der Images aus TAR-File"
+- name: "### --- 08 - Load, Tag, Push der Images aus TAR-File"
   raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed \"s/-$tag/:$tag/g\"`; podman tag localhost/$tagname {{local_registry}}:{{registry_port}}/$tagname; podman push --authfile {{pull_secret_fullpath}} {{local_registry}}:{{registry_port}}/$tagname; done"
   tags:
     - untar
 
-
 # Create Secret for GUI-User in SPS-OpenShift
-# oc create secret generic {{secret_name_gui_user}} --from-literal=username='{{user_cnsa_storage_gui}}' --from-literal=password='{{pass_cnsa_storage_gui}}' -n {{namespace_cnsa}}
+# User in OpenShift AND SPS-Storage-Cluster must be the same!
+- name: "### --- 09 - Create Secret for GUI-User in SPS-OpenShift"
+  raw: "oc create secret generic {{secret_name_gui_user}} --from-literal=username='{{user_cnsa_storage_gui}}' --from-literal=password='{{pass_cnsa_storage_gui}}' -n {{namespace_cnsa}}"
 
 # Edit the spectrumscale/deploy/operator.yaml and modify the imagenames
-# template
+- name: "### --- 07 - Create Template for the SPS-Operator"
+  template:
+    src: "../../99-jinja-templates/spectrumscale/operator.j2"
+    dest: "{{dir_spectrumscale}}spectrumscale/deploy/operator.yaml"
+    force: "yes"
+    backup: "yes"
 
+# Edit the Custom Resource spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml file 
+- name: "### --- 08 - Create Template for the SPectrum-Custom-Resource in OpenShift"
+  template:
+    src: "../../99-jinja-templates/spectrumscale/ibm_v1_scalecluster_cr.j2"
+    dest: "{{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml"
+    force: "yes"
+    backup: "yes"
 
-# Edit the spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml file 
+# Enable Nodes to auto-rebooting
+- name: "### --- 06 - Enable Master-OCP-Nodes to autoreboot"
+  shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":false}}' machineconfigpool/master --kubeconfig={{kubeconfig}}"
+
+- name: "### --- 07 - Enable Worker-OCP-Nodes to autoreboot"
+  shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":false}}' machineconfigpool/worker --kubeconfig={{kubeconfig}}"
+
+# Wait for Nodes to reboot
 
 
 # Deploy the CNSA-Cluster into OpenShift
-# oc create -f spectrumscale/deploy/crds/ibm_v1_scalecluster_crd.yaml -n ibm-spectrum-scale-ns
-# oc create -f spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml -n ibm-spectrum-scale-ns
-# oc create -f spectrumscale/deploy -n ibm-spectrum-scale-ns
+# - name: "### --- 09 - Create Secret for GUI-User in SPS-OpenShift"
+#   raw: "{{item}}"
+#   with_items:
+#     - "oc create -f spectrumscale/deploy/crds/ibm_v1_scalecluster_crd.yaml -n {{namespace_spectrumscale}}"
+#     - "oc create -f spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml -n {{namespace_spectrumscale}}"
+#     - "oc create -f spectrumscale/deploy -n {{namespace_spectrumscale}}"

@@ -1,0 +1,40 @@
+apiVersion: scale.ibm.com/v1
+kind: ScaleCluster
+metadata:
+  name: ibm-spectrum-scale
+spec:
+  nodeSelector:
+    node-role.kubernetes.io/worker: ""
+
+  images:
+    core: {{REPLACE_CONTAINER_REGISTRY}}/ibm-spectrum-scale-core:v5.1.0.3
+    coreInit: {{REPLACE_CONTAINER_REGISTRY}}/ibm-spectrum-scale-core:v5.1.0.3
+    gui: {{REPLACE_CONTAINER_REGISTRY}}/ibm-spectrum-scale-gui:v5.1.0.3
+    postgres: "docker.io/library/postgres@sha256:a2da8071b8eba341c08577b13b41527eab3968bf1c8d28123b5b07a493a26862"
+    pmcollector: {{REPLACE_CONTAINER_REGISTRY}}/ibm-spectrum-scale-pmcollector:v5.1.0.3
+    sysmon: {{REPLACE_CONTAINER_REGISTRY}}/ibm-spectrum-scale-monitor:v5.1.0.3
+    logs: "registry.access.redhat.com/ubi8/ubi-minimal:8.3"
+
+  filesystems:
+    - name: "{{sps_filesystem_fs1}}"
+      remoteMount:
+        storageCluster: "storageCluster1"
+        storageFs: "{{sps_filesystem_fs1}}"
+      # mountPoint must start with `/mnt`
+      mountPoint: "{{sps_mountpoint_fs1}}"
+
+  remoteClusters:
+    - name: storageCluster1
+      gui:
+        cacert: "cacert-storage-cluster-1"
+        host: ""
+        secretName: "{{secret_name_gui_user}}"
+        insecureSkipVerify: {{sps_insecureSkipVerify}}
+
+  hostAliases:
+    - hostname: {{sps.sps1.fqdn}}
+      ip: {{sps.sps1.ip}}
+    - hostname: {{sps.sps2.fqdn}}
+      ip: {{sps.sps2.ip}}
+    - hostname: {{sps.sps3.fqdn}}
+      ip: {{sps.sps3.ip}}
