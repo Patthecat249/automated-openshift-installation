@@ -17,7 +17,7 @@
 
 # Entpacken von Spectrum_Scale_Container_Native_Storage_Access-<version>-<arch>.tgz
 # Extraction of zip-archive
-- name: "### --- 03 - Entpacken von terraform"
+- name: "### --- 03 - Entpacken von {{cnsa_install_file}}"
   unarchive:
     src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
     dest: "{{dir_spectrumscale}}"
@@ -51,7 +51,7 @@
   raw: "oc create secret generic {{secret_name_gui_user}} --from-literal=username='{{user_cnsa_storage_gui}}' --from-literal=password='{{pass_cnsa_storage_gui}}' -n {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
 
 # Edit the spectrumscale/deploy/operator.yaml and modify the imagenames
-- name: "### --- 07 - Create Template for the SPS-Operator"
+- name: "### --- 10 - Create Template for the SPS-Operator"
   template:
     src: "../../99-jinja-templates/spectrumscale/operator.j2"
     dest: "{{dir_spectrumscale}}spectrumscale/deploy/operator.yaml"
@@ -59,7 +59,7 @@
     backup: "yes"
 
 # Edit the Custom Resource spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml file 
-- name: "### --- 08 - Create Template for the SPectrum-Custom-Resource in OpenShift"
+- name: "### --- 11 - Create Template for the Spectrum-Custom-Resource in OpenShift"
   template:
     src: "../../99-jinja-templates/spectrumscale/ibm_v1_scalecluster_cr.j2"
     dest: "{{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml"
@@ -67,10 +67,10 @@
     backup: "yes"
 
 # Enable Nodes to auto-rebooting
-- name: "### --- 06 - Enable Master-OCP-Nodes to autoreboot"
+- name: "### --- 12 - Enable Master-OCP-Nodes to autoreboot"
   shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":false}}' machineconfigpool/master --kubeconfig={{kubeconfig}}"
 
-- name: "### --- 07 - Enable Worker-OCP-Nodes to autoreboot"
+- name: "### --- 13 - Enable Worker-OCP-Nodes to autoreboot"
   shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":false}}' machineconfigpool/worker --kubeconfig={{kubeconfig}}"
 
 # Wait for Nodes to reboot
