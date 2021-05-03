@@ -6,11 +6,11 @@
   hosts: "{{bastion.ip}}"
   tasks:
     - name: "Wait for SSH-Login into bootstrap-node is possible"
-      wait_for:
-        host: "{{ bstrp.ip }}"
-        delay: 10
-        timeout: 300
-        port: 22
+      shell: "ssh -i /root/.ssh/id_openshift core@ocpbootstrap"
+      register: cmd_res
+      retries: 90
+      delay: 20
+      until: cmd_res.stdout_lines | list | count >=1
       
     - name: "Wait for bootstrap to complete"
       raw: "/usr/local/bin/openshift-install --dir={{dir_install_config}} wait-for bootstrap-complete"
