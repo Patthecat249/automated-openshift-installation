@@ -356,7 +356,6 @@ sps_insecureSkipVerify: "true"
 node1: "sps-patrick1"
 node2: "sps-patrick2"
 node3: "sps-patrick3"
-domain: "home.local"
 
 sps:
   sps1:
