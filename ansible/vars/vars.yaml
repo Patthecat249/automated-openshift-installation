@@ -339,7 +339,7 @@ grp_containeroperator: "ContainerOperator" # Case-sensitive
 role_containeroperator: "containeroperator" # Case-sensitive
 secret_name_gui_user: "secret-csna" 
 namespace_spectrumscale: "ibm-spectrum-scale-ns"
-image_scale_core_operator: "ibm-spectrum-scale-core-operator-v5.1.0.3"
+image_scale_core_operator: "ibm-spectrum-scale-core-operator:v5.1.0.3"
 REPLACE_SCALE_CORE_OPERATOR_IMAGE: "{{local_registry}}:{{registry_port}}/{{image_scale_core_operator}}"
 REPLACE_CONTAINER_REGISTRY: "{{local_registry}}:{{registry_port}}"
 cnsa_install_file: "Spectrum_Scale_Container_Native_Storage_Access-5.1.0.3-x86_64-Linux.tgz"
