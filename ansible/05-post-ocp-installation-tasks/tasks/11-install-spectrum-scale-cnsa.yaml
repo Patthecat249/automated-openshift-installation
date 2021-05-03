@@ -40,8 +40,7 @@
 
 # Load, Tag, Push der Images aus TAR-File
 - name: "### --- 05 - Load, Tag, Push der Images aus TAR-File"
-  #raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed "s/-$tag/:$tag/g"`; podman tag localhost/$tagname {{local_registry}}:{{registry_port}}/$tagname; podman push --authfile {{pull_secret_fullpath}} {{local_registry}}:{{registry_port}}/$tagname; done"
-  raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do echo geht; done"
+  raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed \"s/-$tag/:$tag/g\"`; podman tag localhost/$tagname {{local_registry}}:{{registry_port}}/$tagname; podman push --authfile {{pull_secret_fullpath}} {{local_registry}}:{{registry_port}}/$tagname; done"
   tags:
     - untar
 
