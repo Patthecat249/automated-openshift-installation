@@ -6,7 +6,7 @@
   hosts: "{{bastion.ip}}"
   tasks:
     - name: "Wait for SSH-Login into bootstrap-node is possible"
-      shell: "ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_openshift core@ocpbootstrap"
+      shell: "ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_openshift core@ocpbootstrap \"journalctl -b -f -u release-image.service -u bootkube.service\""
       register: cmd_res
       retries: 90
       delay: 20
