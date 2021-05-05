@@ -7,6 +7,8 @@
   copy:
     src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
     dest: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+  tags:
+    - reinstall
 
 # Prevent Nodes from auto-rebooting
 - name: "### --- 01 - Prevent Master-OCP-Nodes from autorebooting"
@@ -18,7 +20,8 @@
 # Create a Namespace for SpectrumScale CNSA installation in OpenShift
 - name: "### --- 03 - Create the Namespace {{namespace_cnsa}}"
   shell: "oc create namespace {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
-
+  tags:
+    - reinstall
 # Entpacken von Spectrum_Scale_Container_Native_Storage_Access-<version>-<arch>.tgz
 # Extraction of zip-archive
 - name: "### --- 04 - Entpacken von {{cnsa_install_file}}"
@@ -26,7 +29,8 @@
     src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
     dest: "{{dir_spectrumscale}}"
     remote_src: "true"
-
+  tags:
+    - reinstall
 # Increase PIDS_LIMIT (von 1024 > 4096) UND
 # Installieren der Kernel-Abhängigkeit "kernel-devel" im OpenShift per Operator
 # Machine-Config-Template erstellen mit beiden
@@ -57,19 +61,22 @@
   raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed \"s/-$tag/:$tag/g\"`; podman load -i $file localhost/$tagname; done"
   tags:
     - untar
-
+  tags:
+    - reinstall
 
 # Tag, Push der Images aus TAR-File
 - name: "### --- 07 - Tag, Push der Images aus TAR-File in Registry"
   raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed \"s/-$tag/:$tag/g\"`; podman tag localhost/$tagname {{local_registry}}:{{registry_port}}/$tagname; podman push --authfile {{pull_secret_fullpath}} {{local_registry}}:{{registry_port}}/$tagname; done"
   tags:
     - untar
-
+  tags:
+    - reinstall
 # Create Secret for GUI-User in SPS-OpenShift
 # User in OpenShift AND SPS-Storage-Cluster must be the same!
 - name: "### --- 08 - Create Secret for GUI-User in SPS-OpenShift"
   raw: "oc create secret generic {{secret_name_gui_user}} --from-literal=username='{{user_cnsa_storage_gui}}' --from-literal=password='{{pass_cnsa_storage_gui}}' -n {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
-
+  tags:
+    - reinstall
 # Edit the spectrumscale/deploy/operator.yaml and modify the imagenames
 - name: "### --- 09 - Create Template for the SPS-Operator"
   template:
@@ -77,7 +84,8 @@
     dest: "{{dir_spectrumscale}}spectrumscale/deploy/operator.yaml"
     force: "yes"
     backup: "yes"
-
+  tags:
+    - reinstall
 # Edit the Custom Resource spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml file 
 - name: "### --- 10 - Create Template for the Spectrum-Custom-Resource in OpenShift"
   template:
@@ -85,7 +93,8 @@
     dest: "{{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml"
     force: "yes"
     backup: "yes"
-
+  tags:
+    - reinstall
 # Enable Nodes to auto-rebooting
 - name: "### --- 11 - Enable Master-OCP-Nodes to autoreboot"
   shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":false}}' machineconfigpool/master --kubeconfig={{kubeconfig}}"
@@ -105,3 +114,4 @@
     - "oc create -f {{dir_spectrumscale}}spectrumscale/deploy -n {{namespace_spectrumscale}} --kubeconfig={{kubeconfig}}"
   tags:
     - deploysps
+    - reinstall
