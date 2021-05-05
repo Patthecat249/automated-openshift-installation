@@ -337,6 +337,8 @@ user_cnsa_storage_gui: "cnsa"
 pass_cnsa_storage_gui: "Test1234!"
 grp_containeroperator: "ContainerOperator" # Case-sensitive
 role_containeroperator: "containeroperator" # Case-sensitive
+user_containeroperator: "ContainerOperator" # Case-sensitive
+pass_containeroperator: "Test1234"
 secret_name_gui_user: "secret-csna" 
 namespace_spectrumscale: "ibm-spectrum-scale-ns"
 image_scale_core_operator: "ibm-spectrum-scale-core-operator:v5.1.0.3"

@@ -111,3 +111,25 @@
   tags:
     - deploysps
     - reinstall
+
+
+# Delete secret
+- name: "### --- 14 - Delete default secret ibm-spectrum-scale-gui-containeroperator"
+  raw: "oc delete secret ibm-spectrum-scale-gui-containeroperator -n {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
+  tags:
+    - reinstall
+    - secret
+
+# Create secret
+- name: "### --- 15 - Create default secret ibm-spectrum-scale-gui-containeroperator"
+  raw: "oc create secret generic ibm-spectrum-scale-gui-containeroperator --from-literal=username='{{user_containeroperator}}' --from-literal=password='{{pass_containeroperator}}' --from-literal=group='{{grp_containeroperator}}' -n {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
+  tags:
+    - reinstall
+    - secret
+    
+# Change Password from ContainerOperator in GUI-Pod
+- name: "### --- 16 - Change Password from ContainerOperator in GUI-Pod"
+  raw: "oc exec $(oc get pods -lapp=scale-gui -ojsonpath=\"{.items[0].metadata.name}\" -n ibm-spectrum-scale-ns) -n {{namespace_cnsa}} -- /usr/lpp/mmfs/gui/cli/chuser {{user_containeroperator}} -p {{pass_containeroperator}} --kubeconfig={{kubeconfig}}"
+  tags:
+    - reinstall
+    - secret
