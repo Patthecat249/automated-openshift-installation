@@ -347,7 +347,7 @@ cnsa_install_file: "Spectrum_Scale_Container_Native_Storage_Access-5.1.0.3-x86_6
 # Custom Resource Spectrum Scale CNSA
 yaml_ibm_v1_scalecluster_cr: "{{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml"
 yaml_operator: "{{dir_spectrumscale}}spectrumscale/deploy/operator.yaml"
-sps_mountpoint_fs1: "/mnt/spsopenshift/"
+sps_mountpoint_fs1: "/mnt/spsopenshift"
 sps_filesystem_fs1: "spsopenshift"
 
 sps_insecureSkipVerify: "true"
