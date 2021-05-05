@@ -39,7 +39,7 @@
     dest: "{{dir_spectrumscale}}sps-worker-machine-config.yaml"
 
 - name: "### --- 06 - Create machine-config"
-  raw: "oc create -f {{dir_spectrumscale}}sps-worker-machine-config.yaml --kubeconfig={{kubeconfig}}"
+  raw: "oc create -f {{dir_spectrumscale}}sps-worker-machine-config.yaml --kubeconfig={{kubeconfig}} --overwrite=true"
 # Login into Registry
 # podman login -u {{registry_user}} -p {{registry_pass}} {{local_registry}}:{{registry_port}}
 
