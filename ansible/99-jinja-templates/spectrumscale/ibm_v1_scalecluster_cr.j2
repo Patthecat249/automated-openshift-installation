@@ -27,7 +27,7 @@ spec:
     - name: storageCluster1
       gui:
         cacert: "cacert-storage-cluster-1"
-        host: ""
+        host: "{{sps.sps3.ip}}"
         secretName: "{{secret_name_gui_user}}"
         insecureSkipVerify: {{sps_insecureSkipVerify}}
 
