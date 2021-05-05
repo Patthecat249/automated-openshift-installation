@@ -45,7 +45,7 @@
 
 # Label the machineconfigpool
 - name: "### --- 06 - Label machine-config-pool worker"
-  raw: "oc label machineconfigpool worker pid-crio=config-pid --kubeconfig={{kubeconfig}}"
+  raw: "oc label machineconfigpool worker pid-crio=config-pid --kubeconfig={{kubeconfig}} --overwrite=true"
 
 # # Label the Worker-Nodes
 # - name: "### --- 06 - Label Worker-Nodes with Scale=True"
