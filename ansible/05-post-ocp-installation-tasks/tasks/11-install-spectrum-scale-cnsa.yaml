@@ -97,11 +97,11 @@
 
 
 # Deploy the CNSA-Cluster into OpenShift
-# - name: "### --- 13 - Create Secret for GUI-User in SPS-OpenShift"
-#   raw: "{{item}}"
-#   with_items:
-#     - "oc create -f {{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_crd.yaml -n {{namespace_spectrumscale}} --kubeconfig={{kubeconfig}}"
-#     - "oc create -f {{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml -n {{namespace_spectrumscale}} --kubeconfig={{kubeconfig}}"
-#     - "oc create -f {{dir_spectrumscale}}spectrumscale/deploy -n {{namespace_spectrumscale}} --kubeconfig={{kubeconfig}}"
-#   tags:
-#     - deploysps
+- name: "### --- 13 - Create Secret for GUI-User in SPS-OpenShift"
+  raw: "{{item}}"
+  with_items:
+    - "oc create -f {{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_crd.yaml -n {{namespace_spectrumscale}} --kubeconfig={{kubeconfig}}"
+    - "oc create -f {{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml -n {{namespace_spectrumscale}} --kubeconfig={{kubeconfig}}"
+    - "oc create -f {{dir_spectrumscale}}spectrumscale/deploy -n {{namespace_spectrumscale}} --kubeconfig={{kubeconfig}}"
+  tags:
+    - deploysps
