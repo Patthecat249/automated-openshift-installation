@@ -16,12 +16,12 @@ spec:
     logs: "registry.access.redhat.com/ubi8/ubi-minimal:8.3"
 
   filesystems:
-    - name: "{{sps_filesystem_fs1}}"
+    - name: "fs1"
       remoteMount:
         storageCluster: "storageCluster1"
         storageFs: "{{sps_filesystem_fs1}}"
       # mountPoint must start with `/mnt`
-      mountPoint: "{{sps_mountpoint_fs1}}"
+      mountPoint: "/mnt/fs1"
 
   remoteClusters:
     - name: storageCluster1
