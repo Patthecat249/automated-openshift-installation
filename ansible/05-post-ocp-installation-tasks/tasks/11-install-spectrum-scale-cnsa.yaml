@@ -116,7 +116,8 @@
 - name: "Wait two Minutes..."
   wait_for:
     timeout: 120
-
+  tags:
+    - reinstall
 
 # Delete secret
 - name: "### --- 14 - Delete default secret ibm-spectrum-scale-gui-containeroperator"
