@@ -92,6 +92,8 @@
   tags:
     - reinstall
 # Enable Nodes to auto-rebooting
+# !!!!!  Falscher Zeit muss angepasst werden
+
 - name: "### --- 11 - Enable Master-OCP-Nodes to autoreboot"
   shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":false}}' machineconfigpool/master --kubeconfig={{kubeconfig}}"
 
@@ -113,9 +115,9 @@
     - reinstall
 
 # Wait two minutes
-- name: "Wait two Minutes..."
+- name: "Wait ten seconds..."
   wait_for:
-    timeout: 120
+    timeout: 10
   tags:
     - reinstall
 
