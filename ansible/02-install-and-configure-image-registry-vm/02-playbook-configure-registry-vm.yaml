@@ -207,7 +207,7 @@
     - name: "101b - Fetch domain.crt - Copy from registry-host to localhost"
       fetch:
         src: "{{dir_registry_certs}}domain.crt"
-        dest: "{{dir_tools}}ocpregistry.crt"
+        dest: "{{dir_tools}}{{registry.hostname}}.crt"
         flat: "yes"
       tags:
         - ocpregistrycert
@@ -215,8 +215,8 @@
 # Copy to bastion-Host
     - name: "101c - Copy registry-certificate to linux-trust-store"
       copy:
-        src: "{{dir_tools}}ocpregistry.crt"
-        dest: "/etc/pki/ca-trust/source/anchors/ocpregistry.crt"
+        src: "{{dir_tools}}{{registry.hostname}}.crt"
+        dest: "/etc/pki/ca-trust/source/anchors/{{registry.hostname}}.crt"
       delegate_to: "{{bastion.ip}}"
       tags:
         - ocpregistrycert
