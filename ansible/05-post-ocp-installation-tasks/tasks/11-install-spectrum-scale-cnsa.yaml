@@ -70,7 +70,7 @@
 # Create Secret for GUI-User in SPS-OpenShift
 # User in OpenShift AND SPS-Storage-Cluster must be the same!
 - name: "### --- 08 - Create Secret for GUI-User in SPS-OpenShift"
-  raw: "oc create secret generic {{secret_name_gui_user}} --from-literal=username='{{user_cnsa_storage_gui}}' --from-literal=password='{{pass_cnsa_storage_gui}}' -n {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
+  raw: "oc create secret generic {{secret_name_cnsa_cluster}} --from-literal=username='{{user_cnsa_storage_gui}}' --from-literal=password='{{pass_cnsa_storage_gui}}' -n {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
   tags:
     - reinstall
 # Edit the spectrumscale/deploy/operator.yaml and modify the imagenames

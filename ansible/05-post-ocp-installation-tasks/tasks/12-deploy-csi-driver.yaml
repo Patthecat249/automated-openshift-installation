@@ -7,3 +7,26 @@
   copy:
     src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
     dest: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+
+# Ensure the following pre-installation tasks on the CNSA cluster are completed.
+# Label Worker-Nodes
+- name: "### --- ** - Label Worker-Nodes"
+  raw: "oc --kubeconfig={{kubeconfig}} label nodes -l node-role.kubernetes.io/worker= scale=true"
+
+
+# Create a CNSA GUI user for CSI
+- name: "### --- ** - Create a CNSA GUI user for CSI"
+  raw: "oc --kubeconfig={{kubeconfig}} exec -c liberty ibm-spectrum-scale-gui-0 -- /usr/lpp/mmfs/gui/cli/mkuser {{user_csi_admin}} -p {{pass_csi_admin}} -g CsiAdmin"
+
+
+# Identify node mapping:
+- name: "### --- ** - Identify node mapping"
+  raw: "oc --kubeconfig={{kubeconfig}} exec <ibm-spectrum-scale-core-pod> -- curl -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/filesystems/{{sps_filesystem_fs1}}?fields=mount -u \"{{user_csi_admin}}:{{pass_csi_admin}}\""
+
+# Retrieve and note down the CNSA cluster ID:
+- name: "### --- ** - Retrieve and note down the CNSA cluster ID"
+  raw: "oc --kubeconfig={{kubeconfig}} exec <ibm-spectrum-scale-core-pod> -- curl -s -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId"
+
+# Retrieve and note down the Storage cluster ID:
+- name: "### --- ** - Retrieve and note down the Storage cluster ID"
+  raw: "curl -s -k https://{{sps.sps3.ip}}/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId"
