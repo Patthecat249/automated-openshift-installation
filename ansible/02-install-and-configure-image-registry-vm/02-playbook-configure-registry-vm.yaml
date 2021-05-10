@@ -197,15 +197,34 @@
      -d docker.io/library/registry:2"
 
 # Copy certs to trust-store
-    - name: "101 - Copy registry-certificate to linux-trust-store"
+    - name: "101a - Copy registry-certificate to linux-trust-store"
       copy:
         src: "{{dir_registry_certs}}domain.crt"
         dest: "/etc/pki/ca-trust/source/anchors/domain.crt"
         remote_src: "true"
 
+# Copy domain.crt to localhost
+    - name: "101b - Fetch domain.crt - Copy from registry-host to localhost"
+      fetch:
+        src: "{{dir_registry_certs}}domain.crt"
+        dest: "{{dir_tools}}ocpregistry.crt"
+
+# Copy to bastion-Host
+    - name: "101c - Copy registry-certificate to linux-trust-store"
+      copy:
+        src: "{{dir_tools}}ocpregistry.crt"
+        dest: "/etc/pki/ca-trust/source/anchors/ocpregistry.crt"
+      delegate_to: "{{bastion.ip}}"
+
 # Update the Trust-Store
-    - name: "102 - Update Linux Trust-Store"
+    - name: "102a - Update Linux Trust-Store"
       raw: "update-ca-trust" 
+
+# Update the Trust-Store
+    - name: "102b - Update Linux Trust-Store from Bastion-Host"
+      raw: "update-ca-trust" 
+      delegate_to: "{{bastion.ip}}"
+
 
 # Copy the registry-cert from registry-vm to install-vm
     - name: "103 - Copy registry-certificate to local Linux Trust-Store"
