@@ -43,13 +43,13 @@
     dest: "{{dir_spectrumscale}}sps-worker-machine-config.yaml"
 
 - name: "### --- 06 - Create machine-config"
-  raw: "oc create -f {{dir_spectrumscale}}sps-worker-machine-config.yaml --kubeconfig={{kubeconfig}} --overwrite=true"
+  raw: "oc create -f {{dir_spectrumscale}}sps-worker-machine-config.yaml --kubeconfig={{kubeconfig}}"
 # Login into Registry
 # podman login -u {{registry_user}} -p {{registry_pass}} {{local_registry}}:{{registry_port}}
 
 # Label the machineconfigpool
 - name: "### --- 06 - Label machine-config-pool worker"
-  raw: "oc label machineconfigpool worker pid-crio=config-pid --kubeconfig={{kubeconfig}} --overwrite=true"
+  raw: "oc label machineconfigpool worker pid-crio=config-pid --kubeconfig={{kubeconfig}}"
 
 # # Label the Worker-Nodes
 # - name: "### --- 06 - Label Worker-Nodes with Scale=True"
