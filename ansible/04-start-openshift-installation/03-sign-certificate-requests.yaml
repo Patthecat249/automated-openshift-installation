@@ -18,7 +18,7 @@
       shell: "/usr/local/bin/oc get csr --kubeconfig=\"{{kubeconfig}}\" | grep -i pending | grep csr"
       register: cmd_res
       retries: 90
-      delay: 20
+      delay: 30
       until: cmd_res.stdout_lines | list | count >= 1
 
     - name: "Sign OpenShift Certificate Requests automatically"
