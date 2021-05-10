@@ -1,7 +1,7 @@
 # OpenShift
 clustername: "openshift"
 domain: "home.local"
-version_openshift: "4.7.10"
+version_openshift: "4.7.8"
 version_core_os: "4.7.7"
 version_major: "4.7"
 clusternetwork: "10.254.0.0/16"
@@ -37,7 +37,7 @@ vsphere_bstrp_ram: "16384"
 vsphere_bstrp_disksize: "120"
 vsphere_guest_id: "centos8_64Guest"
 vsphere_vm_boot_delay: "90000"
-vsphere_hardware_version: "14"
+vsphere_hardware_version: "13"
 vsphere_hardware_version_non_coreos: "14"
 vsphere_vmtemplate_name: "centos83-template"
 
