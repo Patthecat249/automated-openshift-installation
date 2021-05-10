@@ -208,6 +208,8 @@
       fetch:
         src: "{{dir_registry_certs}}domain.crt"
         dest: "{{dir_tools}}ocpregistry.crt"
+      tags:
+        - ocpregistrycert
 
 # Copy to bastion-Host
     - name: "101c - Copy registry-certificate to linux-trust-store"
@@ -215,6 +217,8 @@
         src: "{{dir_tools}}ocpregistry.crt"
         dest: "/etc/pki/ca-trust/source/anchors/ocpregistry.crt"
       delegate_to: "{{bastion.ip}}"
+      tags:
+        - ocpregistrycert
 
 # Update the Trust-Store
     - name: "102a - Update Linux Trust-Store"
@@ -224,6 +228,8 @@
     - name: "102b - Update Linux Trust-Store from Bastion-Host"
       raw: "update-ca-trust" 
       delegate_to: "{{bastion.ip}}"
+      tags:
+        - ocpregistrycert
 
 
 # Copy the registry-cert from registry-vm to install-vm
