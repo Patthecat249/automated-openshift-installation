@@ -337,8 +337,11 @@ user_csi_admin: "csiadmin"
 pass_csi_admin: "Test1234"
 
 namespace_cnsa: "ibm-spectrum-scale-ns"
-user_cnsa_storage_gui: "cnsa"
-pass_cnsa_storage_gui: "Test1234!"
+namespace_csi_driver: "ibm-spectrum-scale-csi-driver"
+storage_gui_user: "cnsa"
+storage_gui_pass: "Test1234!"
+cnsa_gui_user: "cnsa"
+cnsa_gui_pass: "Test1234!"
 grp_containeroperator: "ContainerOperator" # Case-sensitive
 role_containeroperator: "containeroperator" # Case-sensitive
 user_containeroperator: "ContainerOperator" # Case-sensitive
@@ -350,6 +353,14 @@ image_scale_core_operator: "ibm-spectrum-scale-core-operator:v5.1.0.3"
 REPLACE_SCALE_CORE_OPERATOR_IMAGE: "{{local_registry}}:{{registry_port}}/{{image_scale_core_operator}}"
 REPLACE_CONTAINER_REGISTRY: "{{local_registry}}:{{registry_port}}"
 cnsa_install_file: "Spectrum_Scale_Container_Native_Storage_Access-5.1.0.3-x86_64-Linux.tgz"
+
+# Images for CSI-Operator
+image_csi_driver: "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-driver:v2.2.0"
+image_attacher: "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-attacher:v3.1.0"
+image_provisioner: "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-provisioner:v2.1.0"
+image_driverRegistrar: "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-node-driver-registrar:v2.1.0"
+image_snapshotter: "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-snapshotter:v4.0.0"
+image_spectrumScale_csi_plugin: "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-driver:v2.2.0"
 
 # Custom Resource Spectrum Scale CNSA
 yaml_ibm_v1_scalecluster_cr: "{{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml"
