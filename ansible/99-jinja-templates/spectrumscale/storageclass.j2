@@ -4,7 +4,7 @@ metadata:
   name: "{{sps_filesystem_fs1}}"
 provisioner: spectrumscale.csi.ibm.com
 parameters:
-  clusterId: "{{result_storage_cluster_id.stdout_lines}}"
+  clusterId: "{{result_storage_cluster_id.stdout_lines | regex_replace('[^0-9]*', '')}}"
   volBackendFs: "{{sps_filesystem_fs1}}"
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
