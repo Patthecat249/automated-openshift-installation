@@ -52,7 +52,7 @@
       raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete ns {{namespace_cnsa}}"
       
     - name: "999o --- Remove Label from Node {{workers[0].hostname}}"      
-      raw: "oc --kubeconfig={{kubeconfig}} label node {{workers[0].hostname}} app.kubernetes.io/component-"
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} label node {{workers[0].hostname}} app.kubernetes.io/component-"
       
     - name: "999p --- Remove Label from Node {{workers[1].hostname}}"      
       raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} label node {{workers[1].hostname}} app.kubernetes.io/component-"
