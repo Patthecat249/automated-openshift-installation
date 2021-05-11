@@ -1,4 +1,5 @@
 ### HOW To DELETE IBM Spectrum SCALE CNSA
+cd /opt/sva/spectrumscale
 oc project ibm-spectrum-scale-ns
 oc scale sts ibm-spectrum-scale-gui --replicas=0
 oc scale sts ibm-spectrum-scale-pmcollector --replicas=0
