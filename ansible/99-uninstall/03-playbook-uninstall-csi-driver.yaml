@@ -23,12 +23,12 @@
       
     - name: "999e --- Delete ServiceAccount"      
       raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete ServiceAccount/ibm-spectrum-scale-csi-operator -n {{namespace_csi_driver}}"
-    
-    - name: "999f --- Remove CustomResourceDefinition"      
-      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete CustomResourceDefinition/csiscaleoperators.csi.ibm.com -n {{namespace_csi_driver}}"
+
+    - name: "999g --- Remove CustomResourceDefinition scaleclusters.scale.ibm.com"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete CustomResourceDefinition/scaleclusters.scale.ibm.com"
+
+    - name: "999f --- Remove CustomResourceDefinition csiscaleoperators.csi.ibm.com"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete CustomResourceDefinition/csiscaleoperators.csi.ibm.com"
     
     - name: "999g --- Remove Namespace {{namespace_csi_driver}}"      
       raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete ns {{namespace_csi_driver}}"
-
-
-
