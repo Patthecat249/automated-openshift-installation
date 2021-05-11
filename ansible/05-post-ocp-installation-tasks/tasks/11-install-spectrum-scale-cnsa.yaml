@@ -55,7 +55,7 @@
 - name: "### --- 09 - Label Worker-Nodes with Label app.kubernetes.io/component=scale"
   raw: "oc label node {{item.hostname}} app.kubernetes.io/component=scale --overwrite --kubeconfig={{kubeconfig}}"
   with_items:
-    - workers
+    - "{{workers}}"
 
 
 # Load der Images aus TAR-File
