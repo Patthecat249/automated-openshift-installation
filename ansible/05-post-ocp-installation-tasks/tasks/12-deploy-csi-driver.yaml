@@ -27,7 +27,8 @@
     - nodemapping
 
 - debug: 
-  var: stat_result
+    var: stat_result
+    verbosity: 2
   tags:
     - nodemapping
 
