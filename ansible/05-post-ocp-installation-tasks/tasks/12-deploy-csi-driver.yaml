@@ -26,7 +26,8 @@
   tags:
     - nodemapping
 
-- debug: "msg={{stat_result.results}}"
+- debug: 
+  var: stat_result
   tags:
     - nodemapping
 
