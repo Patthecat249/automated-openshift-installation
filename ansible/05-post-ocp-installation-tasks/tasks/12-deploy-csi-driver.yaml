@@ -26,7 +26,7 @@
 
 # Retrieve and note down the CNSA cluster ID:
 - name: "### --- 04 - Retrieve and note down the CNSA cluster ID"
-  raw: "oc --kubeconfig={{kubeconfig}} exec ibm-spectrum-scale-core-4xwhz -- curl -s -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId"
+  raw: "oc --kubeconfig={{kubeconfig}} exec ibm-spectrum-scale-core-4xwhz -- curl -s -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId | grep -oP \"[0-9]*\""
   register: stat_result
   tags:
     - nodemapping
