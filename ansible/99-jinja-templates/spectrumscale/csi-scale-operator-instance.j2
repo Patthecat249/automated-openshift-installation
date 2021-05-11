@@ -34,7 +34,8 @@ spec:
         remoteCluster: "{{result_storage_cluster_id.stdout_lines | regex_replace('[^0-9]*', '')}}"            # Optional - This is only required if primaryFs is remote cluster's filesystem and this ID should have separate entry in Clusters map too.
 #      cacert:  "< Name of CA cert configmap for GUI >"   # Optional
       restApi:
-        - guiHost: "{{sps.sps3.ip}}"
+#        - guiHost: "{{sps.sps3.ip}}" #ibm-spectrum-scale-gui.ibm-spectrum-scale-ns
+        - guiHost: "ibm-spectrum-scale-gui.ibm-spectrum-scale-ns"
 #
 # In the case we have multiple clusters, specify their configuration below.
 # ==================================================================================
