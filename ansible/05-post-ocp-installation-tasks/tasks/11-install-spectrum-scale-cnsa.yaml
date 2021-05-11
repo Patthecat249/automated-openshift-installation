@@ -140,7 +140,7 @@
 
 # Change Password from ContainerOperator in GUI-Pod
 - name: "### --- 18 - Change Password from ContainerOperator in GUI-Pod"
-  raw: "oc exec --kubeconfig={{kubeconfig}} $(oc --kubeconfig={{kubeconfig}} get pods -lapp=scale-gui -ojsonpath=\"{.items[0].metadata.name}\" -n {{namespace_cnsa}}) liberty -n {{namespace_cnsa}} -- /usr/lpp/mmfs/gui/cli/chuser {{user_containeroperator}} -p {{pass_containeroperator}}"
+  raw: "oc exec --kubeconfig={{kubeconfig}} $(oc --kubeconfig={{kubeconfig}} get pods -lapp=scale-gui -ojsonpath=\"{.items[0].metadata.name}\" -n {{namespace_cnsa}}) liberty -n {{namespace_cnsa}} -- /usr/lpp/mmfs/gui/cli/chuser {{user_containeroperator}} -p \"{{pass_containeroperator}}\""
   tags:
     - reinstall
     - secret
