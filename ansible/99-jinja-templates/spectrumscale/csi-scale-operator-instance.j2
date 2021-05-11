@@ -42,7 +42,8 @@ spec:
       secrets: "{{secret_name_storage_cluster}}" # Secret for the Storage-Cluster (csiadmin)
       secureSslMode: false
       restApi:
-      - guiHost: "{{workers[0].ip}}"
+#      - guiHost: "{{workers[0].ip}}"
+      - guiHost: "{{sps.sps3.ip}}"
 #      cacert:  "< Name of CA cert configmap for GUI >"   # Optional
 
 # Attacher image name, in case we do not want to use default image.

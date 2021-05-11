@@ -75,6 +75,7 @@
   template:
     src: "../99-jinja-templates/spectrumscale/csi-driver-operator.j2"
     dest: "{{dir_spectrumscale}}csi-driver-operator.yaml"
+    force: "true"
 
 # Create the CSI-Driver-Operator in OpenShift
 - name: "### --- 10 - Create CSI-Driver-Operator"
@@ -83,8 +84,9 @@
 # Create template for CSI-Driver-Operator-Instanz
 - name: "### --- 11 - Create template for CSI-Driver-Operator-Instanz"
   template:
-    src: "../99-jinja-templates/spectrumscale/csi-scale-operator-instanz.j2"
+    src: "../99-jinja-templates/spectrumscale/csi-scale-operator-instance.j2"
     dest: "{{dir_spectrumscale}}csi-scale-operator-instance.yaml"
+    force: "true"
 
 # Create the CSI-Driver-Operator-Instance in OpenShift
 # - name: "### --- 12 - Create CSI-Driver-Operator-Instance"
