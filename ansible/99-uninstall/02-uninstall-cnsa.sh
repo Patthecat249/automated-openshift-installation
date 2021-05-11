@@ -13,3 +13,6 @@ oc delete pvc datadir-ibm-spectrum-scale-pmcollector-1
 oc delete pv ocpworker01-pv
 oc delete pv ocpworker02-pv
 oc delete ns ibm-spectrum-scale-ns
+oc label node ocpworker01 app.kubernetes.io/component-
+oc label node ocpworker02 app.kubernetes.io/component-
+oc label node ocpworker03 app.kubernetes.io/component-
