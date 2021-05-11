@@ -13,11 +13,17 @@
 - name: "### --- 01 - Label Worker-Nodes"
   raw: "oc --kubeconfig={{kubeconfig}} label nodes -l node-role.kubernetes.io/worker= scale=true --overwrite"
 
+- name: "### --- 02a - Wait for all 9/9 Pods of GUI are running"
+  shell: "/usr/local/bin/oc --kubeconfig=\"{{kubeconfig}}\" get pods -n {{namespace_cnsa}} | grep gui | grep 9/9"
+  register: cmd_res
+  retries: 90
+  delay: 30
+  until: cmd_res.stdout_lines | list | count >= 1
 
 # Create a CNSA GUI user for CSI
 # Wird bereits im vorhergehende Playbook angelegt
-# - name: "### --- 02 - Create a CNSA GUI user for CSI"
-#   raw: "oc --kubeconfig={{kubeconfig}} exec -c liberty ibm-spectrum-scale-gui-0 -- /usr/lpp/mmfs/gui/cli/mkuser {{user_csi_admin}} -p {{pass_csi_admin}} -g CsiAdmin"
+- name: "### --- 02b - Create a CNSA GUI user for CSI"
+  raw: "oc --kubeconfig={{kubeconfig}} exec -c liberty ibm-spectrum-scale-gui-0 -- /usr/lpp/mmfs/gui/cli/mkuser {{user_csi_admin}} -p {{pass_csi_admin}} -g CsiAdmin"
 
 
 # Identify node mapping:
