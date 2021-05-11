@@ -21,12 +21,12 @@
 
 
 # Identify node mapping:
-- name: "### --- 03 - Identify node mapping"
+- name: "### --- 02 - Identify node mapping"
   raw: "oc --kubeconfig={{kubeconfig}} -n {{namespace_cnsa}} exec $(oc --kubeconfig={{kubeconfig}} get pods -n {{namespace_cnsa}} | grep -i -m1 \"ibm-spectrum-scale-core-\" | awk '{print $1}') -- curl -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/filesystems/fs1?fields=mount -u \"{{user_csi_admin}}:{{pass_csi_admin}}\""
 
 
 # Retrieve and note down the CNSA cluster ID:
-- name: "### --- 04 - Retrieve and note down the CNSA cluster ID"
+- name: "### --- 03 - Retrieve and note down the CNSA cluster ID"
   raw: "oc --kubeconfig={{kubeconfig}} -n {{namespace_cnsa}} exec $(oc --kubeconfig={{kubeconfig}} get pods -n {{namespace_cnsa}} | grep -i -m1 \"ibm-spectrum-scale-core-\" | awk '{print $1}') -- curl -s -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId | grep -oP \"[0-9]*\""
   register: result_cnsa_cluster_id
   tags:
@@ -40,7 +40,7 @@
     - nodemapping
 
 # Retrieve and note down the Storage cluster ID:
-- name: "### --- 05 - Retrieve and note down the Storage cluster ID"
+- name: "### --- 04 - Retrieve and note down the Storage cluster ID"
   raw: "curl -s -k https://{{sps.sps3.ip}}/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId | grep -oP \"[0-9]*\""
   register: result_storage_cluster_id
   tags:
@@ -53,35 +53,39 @@
     - nodemapping
 
 # Initgui
-- name: "### --- 06 - Initialize the IBM Spectrum Scale CNSA GUI"
+- name: "### --- 05 - Initialize the IBM Spectrum Scale CNSA GUI"
   raw: "oc exec --kubeconfig={{kubeconfig}} $(oc --kubeconfig={{kubeconfig}} get pods -lapp=scale-gui -ojsonpath=\"{.items[0].metadata.name}\" -n {{namespace_cnsa}}) liberty -n {{namespace_cnsa}} -- /usr/lpp/mmfs/gui/cli/initgui"
 
 
 # Create Namespace for CSI-Driver
-- name: "### --- 07 - Create Namespace for CSI-Driver"
+- name: "### --- 06 - Create Namespace for CSI-Driver"
   raw: "oc  --kubeconfig={{kubeconfig}} new-project {{namespace_csi_driver}}"
 
 # Create secret for the CNSA-Cluster
-- name: "### --- xx - Create Secret for GUI-User of ISS-Storage-Cluster"
+- name: "### --- 07 - Create Secret for GUI-User of ISS-Storage-Cluster"
   raw: "oc create secret generic {{secret_name_cnsa_cluster}} --from-literal=username='{{cnsa_gui_user}}' --from-literal=password='{{cnsa_gui_pass}}' -n {{namespace_csi_driver}} --kubeconfig={{kubeconfig}}"
 
 # Create secret for the Storage-Cluster
-- name: "### --- xx - Create Secret for GUI-User of ISS-Storage-Cluster"
+- name: "### --- 08 - Create Secret for GUI-User of ISS-Storage-Cluster"
   raw: "oc create secret generic {{secret_name_storage_cluster}} --from-literal=username='{{storage_gui_user}}' --from-literal=password='{{storage_gui_pass}}' -n {{namespace_csi_driver}} --kubeconfig={{kubeconfig}}"
 
 
 # Create template for CSI-Driver-Operator
-- name: "### --- 08 - Create template for CSI-Driver-Operator"
+- name: "### --- 09 - Create template for CSI-Driver-Operator"
   template:
     src: "../99-jinja-templates/spectrumscale/csi-driver-operator.j2"
     dest: "{{dir_spectrumscale}}csi-driver-operator.yaml"
 
 # Create the CSI-Driver-Operator in OpenShift
-- name: "### --- 09 - Create CSI-Driver-Operator"
+- name: "### --- 10 - Create CSI-Driver-Operator"
   raw: "oc --kubeconfig={{kubeconfig}} create -f {{dir_spectrumscale}}csi-driver-operator.yaml"
 
 # Create template for CSI-Driver-Operator-Instanz
-- name: "### --- 10 - Create template for CSI-Driver-Operator-Instanz"
+- name: "### --- 11 - Create template for CSI-Driver-Operator-Instanz"
   template:
     src: "../99-jinja-templates/spectrumscale/csi-scale-operator-instanz.j2"
-    dest: "{{dir_spectrumscale}}csi-scale-operator-instanz.yaml"
+    dest: "{{dir_spectrumscale}}csi-scale-operator-instance.yaml"
+
+# Create the CSI-Driver-Operator-Instance in OpenShift
+- name: "### --- 12 - Create CSI-Driver-Operator-Instance"
+  raw: "oc --kubeconfig={{kubeconfig}} create -f {{dir_spectrumscale}}csi-scale-operator-instance.yaml"
