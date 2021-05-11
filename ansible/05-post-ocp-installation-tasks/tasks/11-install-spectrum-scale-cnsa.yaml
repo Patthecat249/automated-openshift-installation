@@ -54,7 +54,7 @@
 # # Label the Worker-Nodes
 - name: "### --- 09 - Label Worker-Nodes with Label app.kubernetes.io/component=scale"
   raw: "oc label node {{item.hostname}} app.kubernetes.io/component=scale --overwrite --kubeconfig={{kubeconfig}}"
-  with_item:
+  with_items:
     - workers
 
 
