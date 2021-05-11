@@ -77,8 +77,8 @@
     dest: "{{dir_spectrumscale}}csi-driver-operator.yaml"
 
 # Create the CSI-Driver-Operator in OpenShift
-# - name: "### --- 10 - Create CSI-Driver-Operator"
-#   raw: "oc --kubeconfig={{kubeconfig}} create -f {{dir_spectrumscale}}csi-driver-operator.yaml"
+- name: "### --- 10 - Create CSI-Driver-Operator"
+  raw: "oc --kubeconfig={{kubeconfig}} create -f {{dir_spectrumscale}}csi-driver-operator.yaml"
 
 # Create template for CSI-Driver-Operator-Instanz
 - name: "### --- 11 - Create template for CSI-Driver-Operator-Instanz"
