@@ -30,13 +30,22 @@
   shell: "oc create namespace {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
   tags:
     - reinstall
+
+
 # Entpacken von Spectrum_Scale_Container_Native_Storage_Access-<version>-<arch>.tgz
+- name: "05a - Check, if {{cnsa_install_file}} was already extracted"
+  stat:
+    path: "{{dir_spectrumscale}}spectrumscale"
+  register: stat_result_scale
+
+
 # Extraction of zip-archive
-- name: "### --- 05 - Entpacken von {{cnsa_install_file}}"
+- name: "### --- 05b - Entpacken von {{cnsa_install_file}}"
   unarchive:
     src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
     dest: "{{dir_spectrumscale}}"
     remote_src: "true"
+  when: not stat_result_scale.stat.exists
   tags:
     - reinstall
 # Increase PIDS_LIMIT (von 1024 > 4096) UND
