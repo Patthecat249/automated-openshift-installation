@@ -27,17 +27,26 @@
 # Retrieve and note down the CNSA cluster ID:
 - name: "### --- 04 - Retrieve and note down the CNSA cluster ID"
   raw: "oc --kubeconfig={{kubeconfig}} exec ibm-spectrum-scale-core-4xwhz -- curl -s -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId | grep -oP \"[0-9]*\""
-  register: stat_result
+  register: result_cnsa_cluster_id
   tags:
     - nodemapping
 
 
 - debug: 
-    var: stat_result.stdout_lines
+    var: result_cnsa_cluster_id.stdout_lines
     #verbosity: 2
   tags:
     - nodemapping
 
 # Retrieve and note down the Storage cluster ID:
 - name: "### --- 05 - Retrieve and note down the Storage cluster ID"
-  raw: "curl -s -k https://{{sps.sps3.ip}}/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId"
+  raw: "curl -s -k https://{{sps.sps3.ip}}/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId | grep -oP \"[0-9]*\""
+  register: result_storage_cluster_id
+  tags:
+    - nodemapping
+
+- debug: 
+    var: result_storage_cluster_id.stdout_lines
+    #verbosity: 2
+  tags:
+    - nodemapping
