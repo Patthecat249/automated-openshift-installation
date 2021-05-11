@@ -8,6 +8,6 @@
     # - import_tasks: "tasks/10-ntp-chronyd.yaml"
     # - import_tasks: "tasks/11-install-spectrum-scale-cnsa.yaml"
     # - import_tasks: "tasks/12-deploy-csi-driver.yaml"
-    - import_tasks: "tasks/13-deploy-spectrum-scale-storageclass.yaml"
-
+    # - import_tasks: "tasks/13-deploy-spectrum-scale-storageclass.yaml"
+    - import_tasks: "tasks/14-deploy-spectrum-scale-snapshotclass.yaml" 
 ...
