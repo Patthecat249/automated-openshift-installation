@@ -368,6 +368,8 @@ yaml_ibm_v1_scalecluster_cr: "{{dir_spectrumscale}}spectrumscale/deploy/crds/ibm
 yaml_operator: "{{dir_spectrumscale}}spectrumscale/deploy/operator.yaml"
 sps_mountpoint_fs1: "/mnt/spsopenshift"
 sps_filesystem_fs1: "spsopenshift"
+filesystem_name_cnsa: "fs1"
+filesystem_mountpoint_cnsa: "/mnt/fs1"
 
 sps_insecureSkipVerify: "true"
 

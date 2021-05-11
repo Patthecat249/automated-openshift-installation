@@ -28,13 +28,12 @@ spec:
       secrets: "{{secret_name_cnsa_cluster}}" # Secret for the Storage-Cluster (ContainerOperator)
       secureSslMode: false
       primary:
-        primaryFs: "fs1" # Filesystem-Name of CNSA-Cluster
+        primaryFs: "{{filesystem_name_cnsa}}" # Filesystem-Name of CNSA-Cluster
 #        primaryFset: "< Fileset in Primary Filesystem >"   # Optional - default:spectrum-scale-csi-volume-store
 #        inodeLimit: "< inode limit for Primary Fileset >" # Optional
         remoteCluster: "{{result_storage_cluster_id.stdout_lines | regex_replace('[^0-9]*', '')}}"            # Optional - This is only required if primaryFs is remote cluster's filesystem and this ID should have separate entry in Clusters map too.
 #      cacert:  "< Name of CA cert configmap for GUI >"   # Optional
       restApi:
-#        - guiHost: "{{sps.sps3.ip}}" #ibm-spectrum-scale-gui.ibm-spectrum-scale-ns
         - guiHost: "ibm-spectrum-scale-gui.ibm-spectrum-scale-ns"
 #
 # In the case we have multiple clusters, specify their configuration below.
@@ -43,7 +42,6 @@ spec:
       secrets: "{{secret_name_storage_cluster}}" # Secret for the Storage-Cluster (csiadmin)
       secureSslMode: false
       restApi:
-#      - guiHost: "{{workers[0].ip}}"
       - guiHost: "{{sps.sps3.ip}}"
 #      cacert:  "< Name of CA cert configmap for GUI >"   # Optional
 
