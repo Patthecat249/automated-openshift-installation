@@ -19,3 +19,8 @@
 - name: "### --- 03 - Create the StorageClass in OpenShift"
   raw: "oc --kubeconfig={{kubeconfig}} create -f {{dir_spectrumscale}}storageclass-{{sps_filesystem_fs1}}.yaml"
 
+- name: "### --- 04 - Make StorageClass as default"
+  raw: "oc --kubeconfig={{kubeconfig}} patch storageclass spsopenshift -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"true\"}}}'"
+  tags:
+    - defaultstg
+
