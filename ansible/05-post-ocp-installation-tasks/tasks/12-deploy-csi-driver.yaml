@@ -33,7 +33,7 @@
 
 
 - debug: 
-    var: stat_result
+    var: stat_result.stdout_lines
     #verbosity: 2
   tags:
     - nodemapping
