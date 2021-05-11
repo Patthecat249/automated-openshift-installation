@@ -29,7 +29,7 @@
 
 - debug: 
     var: stat_result
-    verbosity: 2
+    #verbosity: 2
   tags:
     - nodemapping
 
