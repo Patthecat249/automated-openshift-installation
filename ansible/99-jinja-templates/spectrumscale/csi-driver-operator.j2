@@ -53,7 +53,7 @@ spec:
               fieldPath: metadata.namespace
         - name: CSI_DRIVER_IMAGE
           value: {{image_csi_driver}}
-        image: {{image_csi_driver}}
+        image: {{image_csi_operator}}
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:

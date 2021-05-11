@@ -81,7 +81,7 @@
   raw: "oc --kubeconfig={{kubeconfig}} create -f {{dir_spectrumscale}}csi-driver-operator.yaml"
 
 # Create template for CSI-Driver-Operator-Instanz
-- name: "### --- 10 - Create template for CSI-Driver-Operator"
+- name: "### --- 10 - Create template for CSI-Driver-Operator-Instanz"
   template:
-    src: "../99-jinja-templates/spectrumscale/csi-driver-operator.j2"
-    dest: "{{dir_spectrumscale}}csi-driver-operator.yaml"
+    src: "../99-jinja-templates/spectrumscale/csi-scale-operator-instanz.j2"
+    dest: "{{dir_spectrumscale}}csi-scale-operator-instanz.yaml"

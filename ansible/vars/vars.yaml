@@ -356,6 +356,7 @@ cnsa_install_file: "Spectrum_Scale_Container_Native_Storage_Access-5.1.0.3-x86_6
 
 # Images for CSI-Operator
 image_csi_driver: "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-driver:v2.2.0"
+image_csi_operator: "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-operator:v2.2.0"
 image_attacher: "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-attacher:v3.1.0"
 image_provisioner: "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-provisioner:v2.1.0"
 image_driverRegistrar: "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-node-driver-registrar:v2.1.0"
