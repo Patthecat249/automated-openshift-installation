@@ -99,3 +99,6 @@
 
 # Wait for Install to complete
 - import_playbook: "../04-start-openshift-installation/04-wait-for-install-complete.yaml"
+
+# Post-Installation-Tasks
+- import_playbook: "../05-post-ocp-installation-tasks/01-playbook-execute-post-install-tasks.yaml"
