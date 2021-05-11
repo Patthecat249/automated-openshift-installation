@@ -96,5 +96,5 @@
     force: "true"
 
 # Create the CSI-Driver-Operator-Instance in OpenShift
-# - name: "### --- 12 - Create CSI-Driver-Operator-Instance"
-#   raw: "oc --kubeconfig={{kubeconfig}} create -f {{dir_spectrumscale}}csi-scale-operator-instance.yaml"
+- name: "### --- 12 - Create CSI-Driver-Operator-Instance"
+  raw: "oc --kubeconfig={{kubeconfig}} create -f {{dir_spectrumscale}}csi-scale-operator-instance.yaml"
