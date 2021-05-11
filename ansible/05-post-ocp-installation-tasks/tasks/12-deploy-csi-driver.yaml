@@ -22,6 +22,11 @@
 # Identify node mapping:
 - name: "### --- 03 - Identify node mapping"
   raw: "oc --kubeconfig={{kubeconfig}} exec $(oc --kubeconfig={{kubeconfig}} get pods | grep -i -m1 \"ibm-spectrum-scale-core-\" | awk '{print $1}') -- curl -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/filesystems/fs1?fields=mount -u \"{{user_csi_admin}}:{{pass_csi_admin}}\""
+
+
+# Retrieve and note down the CNSA cluster ID:
+- name: "### --- 04 - Retrieve and note down the CNSA cluster ID"
+  raw: "oc --kubeconfig={{kubeconfig}} exec ibm-spectrum-scale-core-4xwhz -- curl -s -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId"
   register: stat_result
   tags:
     - nodemapping
@@ -32,11 +37,6 @@
     #verbosity: 2
   tags:
     - nodemapping
-
-
-# Retrieve and note down the CNSA cluster ID:
-- name: "### --- 04 - Retrieve and note down the CNSA cluster ID"
-  raw: "oc --kubeconfig={{kubeconfig}} exec ibm-spectrum-scale-core-4xwhz -- curl -s -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId"
 
 # Retrieve and note down the Storage cluster ID:
 - name: "### --- 05 - Retrieve and note down the Storage cluster ID"
