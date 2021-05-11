@@ -31,5 +31,3 @@
     - name: "999g --- Remove Namespace {{namespace_csi_driver}}"      
       raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete ns {{namespace_csi_driver}}"
 
-    - name: "999h --- Remove CRD"      
-      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete customresourcedefinitions.apiextensions.k8s.io csiscaleoperators.csi.ibm.com"

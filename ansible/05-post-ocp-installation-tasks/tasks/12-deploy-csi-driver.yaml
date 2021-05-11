@@ -45,12 +45,19 @@
   register: result_storage_cluster_id
   tags:
     - nodemapping
+    - writetotemp
 
 - debug: 
     var: result_storage_cluster_id.stdout_lines
     #verbosity: 2
   tags:
     - nodemapping
+    - writetotemp
+
+- name: "write to tmp"
+  raw: "echo {{result_storage_cluster_id.stdout_lines}} > /tmp/test.txt"
+  tags:
+    - writetotemp
 
 # Initgui
 - name: "### --- 05 - Initialize the IBM Spectrum Scale CNSA GUI"
