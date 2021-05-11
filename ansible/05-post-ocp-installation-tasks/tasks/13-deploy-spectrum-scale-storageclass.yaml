@@ -13,6 +13,7 @@
   template:
     src: "../99-jinja-templates/spectrumscale/storageclass.j2"
     dest: "{{dir_spectrumscale}}storageclass-{{sps_filesystem_fs1}}.yaml"
+    force: "true"
 
 # Create the StorageClass in OpenShift
 - name: "### --- 03 - Create the StorageClass in OpenShift"
