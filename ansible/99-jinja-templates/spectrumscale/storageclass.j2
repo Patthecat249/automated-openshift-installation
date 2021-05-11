@@ -1,10 +1,11 @@
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
-  name: spsopenshift
+  name: "{{sps_filesystem_fs1}}"
 provisioner: spectrumscale.csi.ibm.com
 parameters:
-  clusterId: '4495912311840570284'
-  volBackendFs: spsopenshift
+  clusterId: "{{result_storage_cluster_id.stdout_lines}}"
+  volBackendFs: "{{sps_filesystem_fs1}}"
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
+

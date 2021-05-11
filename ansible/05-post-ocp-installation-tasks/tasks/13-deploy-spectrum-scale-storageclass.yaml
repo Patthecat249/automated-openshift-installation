@@ -2,8 +2,16 @@
 ---
 # Dieses Playbook implementiert eine Storageclass
 
-# Copy des Tar-Files Spectrum_Scale_Container_Native_Storage_Access-<version>-<arch>.tgz von Install-Node auf Bastion-Host
-- name: "### --- 01 - Copy TAR-File from Install to Bastion-Host"
-  copy:
-    src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
-    dest: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+# Retrieve and note down the Storage cluster ID:
+- name: "### --- 01 - Retrieve and note down the Storage cluster ID"
+  raw: "curl -s -k https://{{sps.sps3.ip}}/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId | grep -oP \"[0-9]*\""
+  register: result_storage_cluster_id
+
+
+# Create template for CSI-Driver-Operator
+- name: "### --- 02 - Create Storageclass-File from template"
+  template:
+    src: "../99-jinja-templates/spectrumscale/storageclass.j2"
+    dest: "{{dir_spectrumscale}}storageclass-{{sps_filesystem_fs1}}.yaml"
+
+
