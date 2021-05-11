@@ -1,6 +1,7 @@
 ### HOW To DELETE IBM Spectrum SCALE CNSA
 - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - UnInstall CNSA"
   become: "true"
+  ignore_errors: "yes"
   become_user: "root"
   hosts: "{{bastion.ip}}"
   gather_facts: "false"
