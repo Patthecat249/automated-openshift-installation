@@ -3,10 +3,18 @@
 # Dieses Playbook installiert und konfiguriert Spectrum Scale-CNSA in OpenShift
 
 # Copy des Tar-Files Spectrum_Scale_Container_Native_Storage_Access-<version>-<arch>.tgz von Install-Node auf Bastion-Host
-- name: "### --- 01 - Copy {{cnsa_install_file}} from Install to Bastion-Host"
+    - name: "01a - Check, if {{cnsa_install_file}} was already copied"
+      stat:
+        path: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+      register: stat_result
+      tags:
+        - download
+    
+- name: "### --- 01b - Copy {{cnsa_install_file}} from Install to Bastion-Host"
   copy:
     src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
     dest: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+  when: not stat_result.stat.exists
   tags:
     - reinstall
 
