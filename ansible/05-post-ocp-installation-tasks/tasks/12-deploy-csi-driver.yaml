@@ -26,9 +26,10 @@
   tags:
     - nodemapping
 
-- debug: var=stat_result.results
+- debug: msg="{{stat_result.results}}"
   tags:
     - nodemapping
+
 
 # Retrieve and note down the CNSA cluster ID:
 - name: "### --- 04 - Retrieve and note down the CNSA cluster ID"
