@@ -21,7 +21,7 @@
 
 # Identify node mapping:
 - name: "### --- 03 - Identify node mapping"
-  raw: "oc exec $(oc get pods | grep -i -m1 \"ibm-spectrum-scale-core-\" | awk '{print $1}') -- curl -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/filesystems/fs1?fields=mount -u \"{{user_csi_admin}}:{{pass_csi_admin}}\""
+  raw: "oc --kubeconfig={{kubeconfig}} exec $(oc --kubeconfig={{kubeconfig}} get pods | grep -i -m1 \"ibm-spectrum-scale-core-\" | awk '{print $1}') -- curl -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/filesystems/fs1?fields=mount -u \"{{user_csi_admin}}:{{pass_csi_admin}}\""
   register: stat_result
   tags:
     - nodemapping
