@@ -22,8 +22,8 @@
 
 # Create a CNSA GUI user for CSI
 # Wird bereits im vorhergehende Playbook angelegt
-- name: "### --- 02b - Create a CNSA GUI user for CSI"
-  raw: "oc --kubeconfig={{kubeconfig}} -n {{namespace_cnsa}} exec -c liberty ibm-spectrum-scale-gui-0 -- /usr/lpp/mmfs/gui/cli/mkuser {{user_csi_admin}} -p {{pass_csi_admin}} -g CsiAdmin"
+# - name: "### --- 02b - Create a CNSA GUI user for CSI"
+#   raw: "oc --kubeconfig={{kubeconfig}} -n {{namespace_cnsa}} exec -c liberty ibm-spectrum-scale-gui-0 -- /usr/lpp/mmfs/gui/cli/mkuser {{user_csi_admin}} -p {{pass_csi_admin}} -g CsiAdmin"
 
 
 # Identify node mapping:
