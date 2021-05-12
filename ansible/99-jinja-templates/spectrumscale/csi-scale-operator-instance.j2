@@ -25,7 +25,7 @@ spec:
 # ==================================================================================
   clusters:
     - id: "{{result_cnsa_cluster_id.stdout_lines | regex_replace('[^0-9]*', '')}}" # IBM Spectrum® Scale cluster ID of the Storage cluster
-      secrets: "{{secret_name_storage_cluster}}" # Secret for the Storage-Cluster (CsiAdmin)
+      secrets: "{{secret_name_cnsa_cluster}}" # Secret for the CNSA-Cluster (ContainerOperator)
       secureSslMode: false
       primary:
         primaryFs: "{{filesystem_name_cnsa}}" # Filesystem-Name of CNSA-Cluster
