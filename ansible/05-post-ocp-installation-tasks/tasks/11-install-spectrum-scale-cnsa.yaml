@@ -145,29 +145,26 @@
     - secret
 
 # Wait script einbauen
-# - name: "Wait for all 9/9 Pods of GUI are running"
-#   shell: "/usr/local/bin/oc --kubeconfig=\"{{kubeconfig}}\" get pods -n {{namespace_cnsa}} | grep gui | grep 9/9"
-#   register: cmd_res
-#   retries: 90
-#   delay: 30
-#   until: cmd_res.stdout_lines | list | count >= 1
-
-
-
+- name: "Wait for all 9/9 Pods of GUI are running"
+  shell: "/usr/local/bin/oc --kubeconfig=\"{{kubeconfig}}\" get pods -n {{namespace_cnsa}} | grep gui | grep 9/9"
+  register: cmd_res
+  retries: 90
+  delay: 30
+  until: cmd_res.stdout_lines | list | count >= 1
 
 # Change Password from ContainerOperator in GUI-Pod
-# - name: "### --- 18 - Change Password from ContainerOperator in GUI-Pod"
-#   raw: "oc exec --kubeconfig={{kubeconfig}} $(oc --kubeconfig={{kubeconfig}} get pods -lapp=scale-gui -ojsonpath=\"{.items[0].metadata.name}\" -n {{namespace_cnsa}}) liberty -n {{namespace_cnsa}} -- /usr/lpp/mmfs/gui/cli/chuser {{user_containeroperator}} -p '{{pass_containeroperator}}'"
-#   tags:
-#     - reinstall
-#     - secret
+- name: "### --- 18 - Change Password from ContainerOperator in GUI-Pod"
+  raw: "oc exec --kubeconfig={{kubeconfig}} $(oc --kubeconfig={{kubeconfig}} get pods -lapp=scale-gui -ojsonpath=\"{.items[0].metadata.name}\" -n {{namespace_cnsa}}) liberty -n {{namespace_cnsa}} -- /usr/lpp/mmfs/gui/cli/chuser {{user_containeroperator}} -p '{{pass_containeroperator}}'"
+  tags:
+    - reinstall
+    - secret
 
 # Restart GUI-Pod
-# - name: "### --- 19 - Restart GUI-Pod"
-#   raw: "oc delete pod --kubeconfig={{kubeconfig}} $(oc --kubeconfig={{kubeconfig}} get pods -lapp=scale-gui -ojsonpath=\"{.items[0].metadata.name}\" -n {{namespace_cnsa}}) -n {{namespace_cnsa}}"
-#   tags:
-#     - reinstall
-#     - secret
+- name: "### --- 19 - Restart GUI-Pod"
+  raw: "oc delete pod --kubeconfig={{kubeconfig}} $(oc --kubeconfig={{kubeconfig}} get pods -lapp=scale-gui -ojsonpath=\"{.items[0].metadata.name}\" -n {{namespace_cnsa}}) -n {{namespace_cnsa}}"
+  tags:
+    - reinstall
+    - secret
 
 # Enable Nodes to auto-rebooting
 - name: "### --- 20 - Enable Master-OCP-Nodes to autoreboot"
