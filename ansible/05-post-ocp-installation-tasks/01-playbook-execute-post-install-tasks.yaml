@@ -2,6 +2,7 @@
 # Execute on install-vm
 - hosts: "{{ bastion.ip }}"
   # debugger: on_skipped
+  ignore_errors: "yes"
   vars_files:
     - "../vars/vars.yaml"
   tasks:
