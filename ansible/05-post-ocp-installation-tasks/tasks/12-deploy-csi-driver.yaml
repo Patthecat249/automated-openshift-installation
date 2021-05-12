@@ -75,11 +75,11 @@
   raw: "oc  --kubeconfig={{kubeconfig}} new-project {{namespace_csi_driver}}"
 
 # Create secret for the CNSA-Cluster
-- name: "### --- 07 - Create Secret for GUI-User of ISS-Storage-Cluster"
+- name: "### --- 07 - Create Secret for GUI-User of CNSA-Cluster"
   raw: "oc create secret generic {{secret_name_cnsa_cluster}} --from-literal=username='{{cnsa_gui_user}}' --from-literal=password='{{cnsa_gui_pass}}' -n {{namespace_csi_driver}} --kubeconfig={{kubeconfig}}"
 
 # Create secret for the Storage-Cluster
-- name: "### --- 08 - Create Secret for GUI-User of ISS-Storage-Cluster"
+- name: "### --- 08 - Create Secret for GUI-User of SpectrumScale-Storage-Cluster"
   raw: "oc create secret generic {{secret_name_storage_cluster}} --from-literal=username='{{user_csi_admin}}' --from-literal=password='{{pass_csi_admin}}' -n {{namespace_csi_driver}} --kubeconfig={{kubeconfig}}"
 
 
