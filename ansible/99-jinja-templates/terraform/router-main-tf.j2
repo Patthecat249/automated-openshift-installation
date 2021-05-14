@@ -34,6 +34,11 @@ data "vsphere_network" "network_home" {
   name = "{{vsphere_network_home}}"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
+data "vsphere_network" "network_backup" {
+  name = "{{vsphere_network_backup}}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
 
 data "vsphere_virtual_machine" "template" {
   name          = "{{vsphere_vmtemplate_name}}"
@@ -65,6 +70,10 @@ resource "vsphere_virtual_machine" "{{hostname}}" {
     network_id = data.vsphere_network.network_home.id
     adapter_type = "vmxnet3"
   }
+  network_interface {
+    network_id = data.vsphere_network.network_backup.id
+    adapter_type = "vmxnet3"
+  }
   disk {
     label = "rootvolume"
     size  = "{{vsphere_general_disksize}}"
@@ -86,6 +95,10 @@ resource "vsphere_virtual_machine" "{{hostname}}" {
       }
       network_interface {
         ipv4_address = "{{router.ip}}"
+        ipv4_netmask = "24"
+      }
+      network_interface {
+        ipv4_address = "{{router.ocp3}}"
         ipv4_netmask = "24"
       }
       ipv4_gateway = "{{router.default_gw}}"
