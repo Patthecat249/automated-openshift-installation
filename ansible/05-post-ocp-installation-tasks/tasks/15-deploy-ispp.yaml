@@ -58,12 +58,12 @@
 # Create baas-values.yaml from template
 - name: "### --- 09 - Create baas-values.yaml from Template"
   template:
-    src: "../../99-jinja-templates/spectrumprtoect/baas-values.j2"
+    src: "../../99-jinja-templates/spectrumprotect/baas-values.j2"
     dest: "{{dir_baas}}baas-values.yaml"
 
 # Create baas-values.yaml from template
 - name: "### --- 10 - Create baas-options.sh from Template"
   template:
-    src: "../../99-jinja-templates/spectrumprtoect/baas-options.j2"
+    src: "../../99-jinja-templates/spectrumprotect/baas-options.j2"
     dest: "{{dir_baas}}baas-options.sh"
     mode: "0755"
