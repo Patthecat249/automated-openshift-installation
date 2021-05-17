@@ -85,3 +85,20 @@
   with_items: 
     - baas-values.yaml
     - baas-options.sh
+
+# chmod +x *.sh
+# cd /opt/sva/spectrumprotectplus/installer/ibm-spectrum-protect-plus-prod/ibm_cloud_pak/pak_extensions/install/
+- name: "### --- 12 - Change mode of shell-scripts as executable"
+  raw: "cd /opt/sva/spectrumprotectplus/installer/ibm-spectrum-protect-plus-prod/ibm_cloud_pak/pak_extensions/install/; chmod +x *.sh"
+
+# Change Docker-Min-Version
+# DOCKER_MIN_VERSION=17.09.00
+- name: "### --- 12 - Change DOCKER_MIN_VERSION=17.09.00"
+  lineinfile:
+    path: "{{dir_baas}}installer/ibm-spectrum-protect-plus-prod/ibm_cloud_pak/pak_extensions/install/baas-prereqs-checker.sh"
+    regexp: '^DOCKER_MIN_VERSION=17.09.00'
+    line: DOCKER_MIN_VERSION=2.1.0
+    backup: "true"
+
+# Install amq-streams-cluster-operator
+
