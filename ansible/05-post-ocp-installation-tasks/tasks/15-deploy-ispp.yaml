@@ -96,12 +96,41 @@
 
 # Change Docker-Min-Version
 # DOCKER_MIN_VERSION=17.09.00
-- name: "### --- 12 - Change DOCKER_MIN_VERSION=17.09.00"
+- name: "### --- 13 - Change DOCKER_MIN_VERSION=17.09.00"
   lineinfile:
     path: "{{dir_baas}}installer/ibm-spectrum-protect-plus-prod/ibm_cloud_pak/pak_extensions/install/baas-prereqs-checker.sh"
     regexp: '^DOCKER_MIN_VERSION=17.09.00'
     line: DOCKER_MIN_VERSION=2.1.0
     backup: "true"
 
+# Create Namespace baas
+- name: "### --- 14 - Create Namespace baas"
+  raw: "oc create ns {{imageRegistryNamespace}} --kubeconfig={{kubeconfig}}"
+
 # Install amq-streams-cluster-operator
 
+# Install Velero tool by using the OpenShift APIs for Data Protection (OADP) operator.
+
+# Create namespace for velero
+- name: "### --- 17 - Create Namespace spp-velero"
+  raw: "oc create ns {{namespace_velero}} --kubeconfig={{kubeconfig}}"
+  tags:
+    - velero
+
+# Create velero-key-file
+- name: "### --- 18 - Create velero-key-file from Template"
+  template:
+    src: "../../99-jinja-templates/spectrumprotect/velero-key-file.j2"
+    dest: "{{dir_baas}}velero-key-file"
+    mode: "0644"
+    force: "true"
+  tags:
+    - velero
+
+# Create secret in OpenShift
+- name: "### --- 19 - Create Namespace spp-velero"
+  raw: "oc create secret generic cloud-credentials -n {{namespace_velero}} --from-file cloud={{dir_baas}}velero-key-file --kubeconfig={{kubeconfig}}"
+  tags:
+    - velero
+
+ 
