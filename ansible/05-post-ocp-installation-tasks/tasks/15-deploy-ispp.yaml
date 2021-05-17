@@ -67,3 +67,21 @@
     src: "../../99-jinja-templates/spectrumprotect/baas-options.j2"
     dest: "{{dir_baas}}baas-options.sh"
     mode: "0755"
+
+# Link docker as podman
+- name: "### --- 10 - link docker as podman for baas-install-script"
+  file:
+    src: "/usr/bin/podman"
+    dest: "/usr/local/bin/docker"
+    state: link
+
+# Copy values.yaml and options.sh
+- name: "### --- 11 - Copy values.yaml and options.sh"
+  copy:
+    src: "{{dir_baas}}{{item}}"
+    dest: "{{dir_baas}}installer/ibm-spectrum-protect-plus-prod/ibm_cloud_pak/pak_extensions/install/"
+    remote_src: "true"
+    backup: "true"
+  with_items: 
+    - baas-values.yaml
+    - baas-options.sh
