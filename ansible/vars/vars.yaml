@@ -252,6 +252,13 @@ lb:
   api_int:
     ip: "11.11.12.129"
 
+# Spectrum-Protect-Plus
+spp:
+  hostname: "spp"
+  fqdn: "{{spp.hostname}}.{{domain}}"
+  ip: "11.11.11.135"
+  port: "443"
+
 # DNSMASQ-Settings
 dhcp_range: "11.11.12.110 11.11.12.200"
 dhcp_subnetmask: "255.255.255.0"
@@ -335,7 +342,6 @@ image_block: |
 
 
 # Spectrum-Scale-Container-Native-Storage-Access (CNSA)
-# Spectrum-Scale-Container-Native-Storage-Access (CNSA)
 user_csi_admin: "csiadmin"
 pass_csi_admin: "Test1234"
 
@@ -361,6 +367,7 @@ image_scale_core_operator: "ibm-spectrum-scale-core-operator:v5.1.0.3"
 REPLACE_SCALE_CORE_OPERATOR_IMAGE: "{{local_registry}}:{{registry_port}}/{{image_scale_core_operator}}"
 REPLACE_CONTAINER_REGISTRY: "{{local_registry}}:{{registry_port}}"
 cnsa_install_file: "Spectrum_Scale_Container_Native_Storage_Access-5.1.0.3-x86_64-Linux.tgz"
+storage_class_scale: "{{filesystem_name_cnsa}}-{{sps_filesystem_fs1}}"
 
 # Images for CSI-Operator
 image_csi_driver: "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-driver:v2.2.0"
@@ -402,4 +409,17 @@ sps:
 
 
 # --- Spectrum-Protect-Plus --- #
-filename_baas: "SPP_V10.1.8_FOR_CONTAINERS.tar.gz" 
+filename_baas: "SPP_V{{baas_version}}_FOR_CONTAINERS.tar.gz" 
+imageRegistryNamespace: "baas"
+namespace_velero: "spp-velero"
+spp_admin_username: "patrick"
+spp_admin_password: "Password1234!"
+datamover_username: "datamoveruser" # make_up_a_datamover_username
+datamover_password: "datamoverpass" # make_up_a_datamover_password
+minio_username: "miniouser" # make_up_a_minio_username
+minio_password: "miniopass" # make_up_a_minio_password
+baas_version: "10.1.8"
+baas_license_is: "true"
+isOCP: "true"
+isServerInstalledOnAnotherCluster: "false"
+productLoglevel: "INFO"

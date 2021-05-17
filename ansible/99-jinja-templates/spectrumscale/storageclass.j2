@@ -1,7 +1,7 @@
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
-  name: "{{filesystem_name_cnsa}}-{{sps_filesystem_fs1}}"
+  name: "{{storage_class_scale}}"
 provisioner: spectrumscale.csi.ibm.com
 parameters:
   clusterId: "{{result_storage_cluster_id.stdout_lines | regex_replace('[^0-9]*', '')}}" # This must be the Storage-Cluster-ID

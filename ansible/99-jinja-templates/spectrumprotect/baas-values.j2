@@ -1,0 +1,29 @@
+#
+# The value for imageRegistry must match the value for DOCKER_REGISTRY_ADDRESS in baas-options.sh
+# The value for imageRegistryNamespace must match the value for DOCKER_REGISTRY_NAMESPACE in baas-options.sh
+#
+# The value for veleroNamespace must match the value for the -n parameter used in the velero install command
+# If you do not specify a value for verleroNamespace, Velero integration is disabled and you can use
+# Container Backup Support to protect only persistent volume claims (PVCs).
+
+# Change license to true to indicate that you have read and agree to the
+# IBM Spectrum Protect Plus Capacity 10.1.8 license agreements at: https://ibm.biz/BdquzE
+license: "{{baas_license_is}}"
+isOCP: "{{isOCP}}"
+clusterName: "{{clustername}}"
+networkPolicy:
+  clusterAPIServerips:
+    - "{{masters[0].ip}}"
+    - "{{masters[1].ip}}"
+    - "{{masters[2].ip}}"
+  clusterAPIServerport: "{{openshift_api_server.frontend.port}}"
+  clusterCIDR: "{{clusternetwork}}"
+  isServerInstalledOnAnotherCluster: "{{isServerInstalledOnAnotherCluster}}"
+SPPfqdn: "{{spp.fqdn}}"
+SPPips: "{{spp.ip}}"
+SPPport: "{{spp.port}}"
+productLoglevel: "{{productLoglevel}}"
+imageRegistry: "{{local_registry}}:{{registry_port}}"
+imageRegistryNamespace: "{{imageRegistryNamespace}}"
+minioStorageClass: "{{storage_class_scale}}"
+veleroNamespace: "{{namespace_velero}}"

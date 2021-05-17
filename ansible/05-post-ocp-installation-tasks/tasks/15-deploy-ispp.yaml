@@ -44,7 +44,7 @@
 # Check, if file must ibm-spectrum-protect-plus-prod-1.2.0.tgz be extracted
 - name: "### --- 07 - Check, if ibm-spectrum-protect-plus-prod-1.2.0.tgz was already extracted"
   stat:
-    path: "{{dir_baas}}installer/test"
+    path: "{{dir_baas}}installer/ibm-spectrum-protect-plus-prod/values.yaml"
   register: stat_result_baas
 
 # Extraction of zip-archive
@@ -54,3 +54,16 @@
     dest: "{{dir_baas}}installer/"
     remote_src: "true"
   when: not stat_result_baas.stat.exists
+
+# Create baas-values.yaml from template
+- name: "### --- 09 - Create baas-values.yaml from Template"
+  template:
+    src: "../../99-jinja-templates/spectrumprtoect/baas-values.j2"
+    dest: "{{dir_baas}}baas-values.yaml"
+
+# Create baas-values.yaml from template
+- name: "### --- 10 - Create baas-options.sh from Template"
+  template:
+    src: "../../99-jinja-templates/spectrumprtoect/baas-options.j2"
+    dest: "{{dir_baas}}baas-options.sh"
+    mode: "0755"
