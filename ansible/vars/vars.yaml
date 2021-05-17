@@ -412,8 +412,8 @@ sps:
 filename_baas: "SPP_V{{baas_version}}_FOR_CONTAINERS.tar.gz" 
 imageRegistryNamespace: "baas"
 namespace_velero: "spp-velero"
-spp_admin_username: "patrick"
-spp_admin_password: "Password1234!"
+spp_admin_username: "ocpspp"
+spp_admin_password: "z59FqYKGnF"
 datamover_username: "datamoveruser" # make_up_a_datamover_username
 datamover_password: "datamoverpass" # make_up_a_datamover_password
 minio_username: "miniouser" # make_up_a_minio_username

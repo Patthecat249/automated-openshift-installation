@@ -128,7 +128,7 @@
     - velero
 
 # Create secret in OpenShift
-- name: "### --- 19 - Create Namespace spp-velero"
+- name: "### --- 19 - Create Secret cloud-credentials in spp-velero"
   raw: "oc create secret generic cloud-credentials -n {{namespace_velero}} --from-file cloud={{dir_baas}}velero-key-file --kubeconfig={{kubeconfig}}"
   tags:
     - velero
