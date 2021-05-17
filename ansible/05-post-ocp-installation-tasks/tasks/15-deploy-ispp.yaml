@@ -1,0 +1,41 @@
+# This playbook must be run on install-vm node 
+---
+# Dieses Playbook implements IBM Spectrum Protect Plus Container Support on OpenShift
+
+# Install Helm3 on Bastion-Host
+- name: "### --- 01 - Download Helm3-Get-Script"
+  get_url: "https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3"
+  dest: "{{dir_baas}}get_helm.sh"
+  mode: "0700"
+
+# Install Helm3 with Get-Script and move to /us/local/bin/helm3
+- name: "### --- 02 - Install Helm3 with Get-Script and move to /us/local/bin/helm3"
+  raw: "bash {{dir_baas}}get_helm.sh; mv /usr/local/bin/helm /usr/local/bin/helm3"
+
+# Check if the Tar-File exists on Bastion-Node
+- name: "### --- 03 - Check, if {{filename_baas}} was already copied"
+  stat:
+    path: "{{ dir_downloads }}{{filename_baas}}"
+  register: stat_result
+
+# Copy the Tar-File to Bastion-Node
+- name: "### --- 04 - Copy the Tar-File to Bastion-Node"
+  copy:
+    src: "{{ dir_downloads }}{{filename_baas}}"
+    dest: "{{ dir_downloads }}{{filename_baas}}"
+  when: not stat_result.stat.exists
+
+# Entpacken von SPP_<version>_FOR_CONTAINERS.tar.gz
+- name: "### --- 05 - Check, if {{filename_baas}} was already extracted"
+  stat:
+    path: "{{dir_baas}}{{filename_baas}}"
+  register: stat_result_baas
+
+
+# Extraction of zip-archive
+- name: "### --- 06 - Extraction of: {{filename_baas}} to: {{dir_baas}}"
+  unarchive:
+    src: "{{dir_downloads}}{{filename_baas}}"
+    dest: "{{dir_baas}}"
+    remote_src: "true"
+  when: not stat_result_baas.stat.exists

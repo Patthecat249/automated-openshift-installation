@@ -84,6 +84,8 @@
     - "{{ dir_backup_tftp }}"
     - "{{ dir_backup_install_config }}"
     - "{{ dir_backup_dnsmasq }}"
+    - "{{ dir_baas }}"
+    - "{{ dir_downloads }}"
   tags:
     - rerun
 
