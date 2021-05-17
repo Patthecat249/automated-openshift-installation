@@ -8,22 +8,22 @@
 
 # Change license to true to indicate that you have read and agree to the
 # IBM Spectrum Protect Plus Capacity 10.1.8 license agreements at: https://ibm.biz/BdquzE
-license: "{{baas_license_is}}"
-isOCP: "{{isOCP}}"
-clusterName: "{{clustername}}"
+license: {{baas_license_is}}
+isOCP: {{isOCP}}
+clusterName: {{clustername}}
 networkPolicy:
   clusterAPIServerips:
-    - "{{masters[0].ip}}"
-    - "{{masters[1].ip}}"
-    - "{{masters[2].ip}}"
-  clusterAPIServerport: "{{openshift_api_server.frontend.port}}"
-  clusterCIDR: "{{clusternetwork}}"
-  isServerInstalledOnAnotherCluster: "{{isServerInstalledOnAnotherCluster}}"
-SPPfqdn: "{{spp.fqdn}}"
-SPPips: "{{spp.ip}}"
-SPPport: "{{spp.port}}"
-productLoglevel: "{{productLoglevel}}"
-imageRegistry: "{{local_registry}}:{{registry_port}}"
-imageRegistryNamespace: "{{imageRegistryNamespace}}"
-minioStorageClass: "{{storage_class_scale}}"
-veleroNamespace: "{{namespace_velero}}"
+    - {{masters[0].ip}}
+    - {{masters[1].ip}}
+    - {{masters[2].ip}}
+  clusterAPIServerport: {{openshift_api_server.frontend.port}}
+  clusterCIDR: {{clusternetwork}}
+  isServerInstalledOnAnotherCluster: {{isServerInstalledOnAnotherCluster}}
+SPPfqdn: {{spp.fqdn}}
+SPPips: {{spp.ip}}
+SPPport: {{spp.port}}
+productLoglevel: {{productLoglevel}}
+imageRegistry: {{local_registry}}:{{registry_port}}
+imageRegistryNamespace: {{imageRegistryNamespace}}
+minioStorageClass: {{storage_class_scale}}
+veleroNamespace: {{namespace_velero}}

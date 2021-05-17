@@ -60,6 +60,7 @@
   template:
     src: "../../99-jinja-templates/spectrumprotect/baas-values.j2"
     dest: "{{dir_baas}}baas-values.yaml"
+    force: "true"
 
 # Create baas-values.yaml from template
 - name: "### --- 10 - Create baas-options.sh from Template"
@@ -67,6 +68,7 @@
     src: "../../99-jinja-templates/spectrumprotect/baas-options.j2"
     dest: "{{dir_baas}}baas-options.sh"
     mode: "0755"
+    force: "true"
 
 # Link docker as podman
 - name: "### --- 10 - link docker as podman for baas-install-script"
@@ -82,6 +84,7 @@
     dest: "{{dir_baas}}installer/ibm-spectrum-protect-plus-prod/ibm_cloud_pak/pak_extensions/install/"
     remote_src: "true"
     backup: "true"
+    force: "true"
   with_items: 
     - baas-values.yaml
     - baas-options.sh
