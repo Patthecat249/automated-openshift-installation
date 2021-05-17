@@ -9,8 +9,8 @@
     dest: "{{dir_baas}}get_helm.sh"
     mode: "0700"
 
-# Install Helm3 with Get-Script and move to /us/local/bin/helm3
-- name: "### --- 02 - Install Helm3 with Get-Script and move to /us/local/bin/helm3"
+# Install Helm3 with Get-Script and move to /usr/local/bin/helm3
+- name: "### --- 02 - Install Helm3 with Get-Script and move to /usr/local/bin/helm3"
   raw: "bash {{dir_baas}}get_helm.sh; mv /usr/local/bin/helm /usr/local/bin/helm3"
 
 # Check if the Tar-File exists on Bastion-Node
@@ -29,7 +29,7 @@
 # Entpacken von SPP_<version>_FOR_CONTAINERS.tar.gz
 - name: "### --- 05 - Check, if {{filename_baas}} was already extracted"
   stat:
-    path: "{{dir_baas}}{{filename_baas}}"
+    path: "{{dir_baas}}installer/baas-10.1.8.tar.gz"
   register: stat_result_baas
 
 
