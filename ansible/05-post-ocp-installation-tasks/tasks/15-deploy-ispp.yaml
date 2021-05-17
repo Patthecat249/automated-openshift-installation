@@ -26,10 +26,10 @@
     dest: "{{ dir_downloaded_images }}{{filename_baas}}"
   when: not stat_result.stat.exists
 
-# Entpacken von SPP_<version>_FOR_CONTAINERS.tar.gz
+# Check, if file must be extracted: SPP_<version>_FOR_CONTAINERS.tar.gz
 - name: "### --- 05 - Check, if {{filename_baas}} was already extracted"
   stat:
-    path: "{{dir_baas}}installer/baas-10.1.8.tar.gz"
+    path: "{{dir_baas}}installer/ibm-spectrum-protect-plus-prod-1.2.0.tgz"
   register: stat_result_baas
 
 
@@ -38,5 +38,19 @@
   unarchive:
     src: "{{dir_downloaded_images}}{{filename_baas}}"
     dest: "{{dir_baas}}"
+    remote_src: "true"
+  when: not stat_result_baas.stat.exists
+
+# Check, if file must ibm-spectrum-protect-plus-prod-1.2.0.tgz be extracted
+- name: "### --- 07 - Check, if ibm-spectrum-protect-plus-prod-1.2.0.tgz was already extracted"
+  stat:
+    path: "{{dir_baas}}installer/test"
+  register: stat_result_baas
+
+# Extraction of zip-archive
+- name: "### --- 08 - Extraction of: ibm-spectrum-protect-plus-prod-1.2.0.tgz to: {{dir_baas}}"
+  unarchive:
+    src: "{{dir_baas}}installer/ibm-spectrum-protect-plus-prod-1.2.0.tgz"
+    dest: "{{dir_baas}}installer/"
     remote_src: "true"
   when: not stat_result_baas.stat.exists
