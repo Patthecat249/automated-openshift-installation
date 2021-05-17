@@ -129,6 +129,7 @@ key_to_nodes_name: "id_{{clustername}}"
 kubeconfig_certs_filename: "certs_from_kubeconfig.pem"
 dir_post_install_config: "{{dir_cluster}}post_install_config/"
 dir_spectrumscale: "{{dir_root}}spectrumscale/"
+dir_baas: "{{dir_root}}spectrumprotectplus/"
 
 # Netzwerk / IPs / Hostnames
 # OpenShift-Master-Nodes
@@ -398,3 +399,7 @@ sps:
     hostname: "{{node3}}"
     fqdn: "{{node3}}.{{domain}}"
     ip: "10.0.249.163"
+
+
+# --- Spectrum-Protect-Plus --- #
+filename_baas: "SPP_V10.1.8_FOR_CONTAINERS.tar.gz" 
