@@ -4,9 +4,10 @@
 
 # Install Helm3 on Bastion-Host
 - name: "### --- 01 - Download Helm3-Get-Script"
-  get_url: "https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3"
-  dest: "{{dir_baas}}get_helm.sh"
-  mode: "0700"
+  get_url: 
+    url: "https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3"
+    dest: "{{dir_baas}}get_helm.sh"
+    mode: "0700"
 
 # Install Helm3 with Get-Script and move to /us/local/bin/helm3
 - name: "### --- 02 - Install Helm3 with Get-Script and move to /us/local/bin/helm3"
