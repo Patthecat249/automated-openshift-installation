@@ -16,14 +16,14 @@
 # Check if the Tar-File exists on Bastion-Node
 - name: "### --- 03 - Check, if {{filename_baas}} was already copied"
   stat:
-    path: "{{ dir_downloads }}{{filename_baas}}"
+    path: "{{ dir_downloaded_images }}{{filename_baas}}"
   register: stat_result
 
 # Copy the Tar-File to Bastion-Node
 - name: "### --- 04 - Copy the Tar-File to Bastion-Node"
   copy:
-    src: "{{ dir_downloads }}{{filename_baas}}"
-    dest: "{{ dir_downloads }}{{filename_baas}}"
+    src: "{{ dir_downloaded_images }}{{filename_baas}}"
+    dest: "{{ dir_downloaded_images }}{{filename_baas}}"
   when: not stat_result.stat.exists
 
 # Entpacken von SPP_<version>_FOR_CONTAINERS.tar.gz
@@ -36,7 +36,7 @@
 # Extraction of zip-archive
 - name: "### --- 06 - Extraction of: {{filename_baas}} to: {{dir_baas}}"
   unarchive:
-    src: "{{dir_downloads}}{{filename_baas}}"
+    src: "{{dir_downloaded_images}}{{filename_baas}}"
     dest: "{{dir_baas}}"
     remote_src: "true"
   when: not stat_result_baas.stat.exists
