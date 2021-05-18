@@ -414,10 +414,10 @@ imageRegistryNamespace: "baas"
 namespace_velero: "spp-velero"
 spp_admin_username: "ocpspp"
 spp_admin_password: "z59FqYKGnF"
-datamover_username: "datamoveruser" # make_up_a_datamover_username
-datamover_password: "datamoverpass" # make_up_a_datamover_password
-minio_username: "miniouser" # make_up_a_minio_username
-minio_password: "miniopass" # make_up_a_minio_password
+datamover_username: "dmovu" # make_up_a_datamover_username
+datamover_password: "z52Fq64YnF" # make_up_a_datamover_password
+minio_username: "miuser" # make_up_a_minio_username
+minio_password: "a12Lq34UnF" # make_up_a_minio_password
 baas_version: "10.1.8"
 baas_license_is: "true"
 isOCP: "true"
