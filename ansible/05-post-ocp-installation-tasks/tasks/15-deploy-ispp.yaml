@@ -29,7 +29,7 @@
 # Check, if file must be extracted: SPP_<version>_FOR_CONTAINERS.tar.gz
 - name: "### --- 05 - Check, if {{filename_baas}} was already extracted"
   stat:
-    path: "{{dir_baas}}installer/ibm-spectrum-protect-plus-prod-1.2.0.tgz"
+    path: "{{dir_baas}}installer/{{filename_spectrum_plus}}"
   register: stat_result_baas
 
 
@@ -42,15 +42,15 @@
   when: not stat_result_baas.stat.exists
 
 # Check, if file must ibm-spectrum-protect-plus-prod-1.2.0.tgz be extracted
-- name: "### --- 07 - Check, if ibm-spectrum-protect-plus-prod-1.2.0.tgz was already extracted"
+- name: "### --- 07 - Check, if {{filename_spectrum_plus}} was already extracted"
   stat:
     path: "{{dir_baas}}installer/ibm-spectrum-protect-plus-prod/values.yaml"
   register: stat_result_baas
 
 # Extraction of zip-archive
-- name: "### --- 08 - Extraction of: ibm-spectrum-protect-plus-prod-1.2.0.tgz to: {{dir_baas}}"
+- name: "### --- 08 - Extraction of: {{filename_spectrum_plus}} to: {{dir_baas}}"
   unarchive:
-    src: "{{dir_baas}}installer/ibm-spectrum-protect-plus-prod-1.2.0.tgz"
+    src: "{{dir_baas}}installer/{{filename_spectrum_plus}}"
     dest: "{{dir_baas}}installer/"
     remote_src: "true"
   when: not stat_result_baas.stat.exists

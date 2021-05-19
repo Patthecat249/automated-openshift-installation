@@ -410,6 +410,7 @@ sps:
 
 # --- Spectrum-Protect-Plus --- #
 filename_baas: "SPP_V{{baas_version}}_FOR_CONTAINERS.tar.gz" 
+filename_spectrum_plus: "ibm-spectrum-protect-plus-prod-1.1.2.tgz"
 imageRegistryNamespace: "baas"
 namespace_velero: "spp-velero"
 spp_admin_username: "ocpspp"
