@@ -7,7 +7,7 @@
   tasks:
     - name: "Wait for SSH-Login into bootstrap-node is possible"
       # shell: "ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_openshift core@ocpbootstrap \"journalctl -b -f -u release-image.service -u bootkube.service\""
-      shell: "ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_openshift core@ocpbootstrap \"ls -l\""
+      shell: "ssh -o StrictHostKeyChecking=no -i /root/.ssh/{{key_to_nodes_name}} core@{{bstrp.hostname}} \"ls -l\""
       register: cmd_res
       retries: 90
       delay: 20
