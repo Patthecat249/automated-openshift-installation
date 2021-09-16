@@ -3,17 +3,19 @@
 # Das jinja-Template wird mit Variablen gefüllt
 - name: "### --- 16 - Render storage_pv_image_registry.yaml from a template"
   template: 
-    src: templates/storage_pv_image_registry.yaml.j2
+    src: "../99-jinja-templates/nfs-provisioner/storage_pv_image_registry.yaml.j2"
     dest: "{{ dir_post_install_config }}storage_pv_image_registry.yaml"
     owner: root
     group: root
     mode: '0644'
     force: yes
+  delegate_to: "{{bastion.ip}}"
 
 # Führe folgendes "oc create"-Kommando aus um das Persistent Volume anzulegen
 - name: "### --- 17 - Deploy storage_pv_image_registry.yaml"
   shell: |
-    oc create -f "{{ dir_post_install_config }}storage_pv_image_registry.yaml" \
-      --config="{{ kubeconfig_path }}" 
+    /usr/local/bin/oc create -f "{{ dir_post_install_config }}storage_pv_image_registry.yaml" \
+      --config="{{ kubeconfig }}" 
+  delegate_to: "{{bastion.ip}}"
 
     

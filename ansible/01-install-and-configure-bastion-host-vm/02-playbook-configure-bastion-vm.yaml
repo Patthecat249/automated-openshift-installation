@@ -1,5 +1,6 @@
 ---
-- hosts: "{{bastion.ip}}"  
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Configure the Bastion-Host-VM"
+  hosts: "{{bastion.ip}}"  
   become: yes
   gather_facts: "false"
   vars_files:

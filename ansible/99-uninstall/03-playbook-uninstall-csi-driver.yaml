@@ -1,0 +1,33 @@
+### HOW To DELETE IBM Spectrum SCALE CNSA
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - UnInstall CSI-Driver"
+  become: "true"
+  ignore_errors: "yes"
+  become_user: "root"
+  hosts: "{{bastion.ip}}"
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+  tasks:
+    
+# Remove CSI-Driver Configuration
+    - name: "999a --- Go into Namespace context: {{namespace_csi_driver}}"
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} project {{namespace_csi_driver}}"
+
+    - name: "999b --- Remove Deployment" 
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete Deployment/ibm-spectrum-scale-csi-operator  -n {{namespace_csi_driver}}"
+
+    - name: "999c --- Delete ClusterRole"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete ClusterRole/ibm-spectrum-scale-csi-operator -n {{namespace_csi_driver}}"
+
+    - name: "999d --- Delete ClusterRoleBinding"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete ClusterRoleBinding/ibm-spectrum-scale-csi-operator -n {{namespace_csi_driver}}"
+      
+    - name: "999e --- Delete ServiceAccount"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete ServiceAccount/ibm-spectrum-scale-csi-operator -n {{namespace_csi_driver}}"
+
+    - name: "999f --- Remove CustomResourceDefinition csiscaleoperators.csi.ibm.com"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete CustomResourceDefinition/csiscaleoperators.csi.ibm.com"
+    
+    - name: "999g --- Remove Namespace {{namespace_csi_driver}}"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete ns {{namespace_csi_driver}}"
+

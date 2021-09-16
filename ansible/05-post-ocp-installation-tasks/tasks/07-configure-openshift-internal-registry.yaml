@@ -3,30 +3,34 @@
 # Setze den ManagementState auf managed
 - name: "### --- 18 - Patch configs.imageregistry.operator.openshift.io - Change ManagementState Image Registry Operator configuration from Removed to Managed"
   shell: |
-    oc patch configs.imageregistry.operator.openshift.io cluster \
+    /usr/local/bin/oc patch configs.imageregistry.operator.openshift.io cluster \
      --type merge \
      --patch '{"spec":{"managementState":"Managed"}}' \
-     --config="{{ kubeconfig_path }}" 
+     --config="{{ kubeconfig }}" 
+  delegate_to: "{{bastion.ip}}"
   
   # Entferne eine eventuell vorhandene Storage-Konfiguration
 - name: "### --- 19 - Patch configs.imageregistry.operator.openshift.io - Delete emptyDir"
   shell: |
-    oc patch configs.imageregistry.operator.openshift.io cluster \
+    /usr/local/bin/oc patch configs.imageregistry.operator.openshift.io cluster \
      --type merge \
      --patch '{"spec":{"storage":null}}' \
-     --config="{{ kubeconfig_path }}" 
+     --config="{{ kubeconfig }}" 
+  delegate_to: "{{bastion.ip}}"
 
 # Konfiguriere die Registry so, dass sie einen Persistent Volume Claim verwendet
 - name: "### --- 20 - Patch configs.imageregistry.operator.openshift.io - Leave the claim field blank to allow the automatic creation of an image-registry-storage PVC"
   shell: |
-    oc patch configs.imageregistry.operator.openshift.io cluster \
+    /usr/local/bin/oc patch configs.imageregistry.operator.openshift.io cluster \
      --type merge \
      --patch '{"spec":{"storage":{"pvc":{"claim":""}}}}' \
-     --config="{{ kubeconfig_path }}" 
+     --config="{{ kubeconfig }}" 
+  delegate_to: "{{bastion.ip}}"
 
 # Setze den Schalter der Default-Route auf true, so dass man die Registry von extern nutzen kann.
 - name: "### --- 21 - Patch configs.imageregistry.operator.openshift.io - Set defaultRoute to True"
-  raw: oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"defaultRoute":true}}' --kubeconfig="{{ kubeconfig_path }}"
+  raw: /usr/local/bin/oc patch configs.imageregistry.operator.openshift.io cluster --type merge --patch '{"spec":{"defaultRoute":true}}' --kubeconfig="{{ kubeconfig }}"
+  delegate_to: "{{bastion.ip}}"
 
 
 

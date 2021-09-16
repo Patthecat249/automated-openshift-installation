@@ -1,0 +1,106 @@
+# This playbook must be run on install-vm node 
+---
+# This Playbook implements the CSI-Driver-Operator and configures it to Point to SPS-Storage-Cluster
+
+# 
+# - name: "### --- 01 - Copy TAR-File from Install to Bastion-Host"
+#   copy:
+#     src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+#     dest: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+
+# Ensure the following pre-installation tasks on the CNSA cluster are completed.
+# Label Worker-Nodes
+- name: "### --- 01 - Label Worker-Nodes"
+  raw: "oc --kubeconfig={{kubeconfig}} label nodes -l node-role.kubernetes.io/worker= scale=true --overwrite"
+
+- name: "### --- 02a - Wait for all 9/9 Pods of GUI are running"
+  shell: "/usr/local/bin/oc --kubeconfig=\"{{kubeconfig}}\" get pods -n {{namespace_cnsa}} | grep gui | grep 9/9"
+  register: cmd_res
+  retries: 90
+  delay: 30
+  until: cmd_res.stdout_lines | list | count >= 1
+
+# Create a CNSA GUI user for CSI
+# Wird bereits im vorhergehende Playbook angelegt
+# - name: "### --- 02b - Create a CNSA GUI user for CSI"
+#   raw: "oc --kubeconfig={{kubeconfig}} -n {{namespace_cnsa}} exec -c liberty ibm-spectrum-scale-gui-0 -- /usr/lpp/mmfs/gui/cli/mkuser {{user_csi_admin}} -p {{pass_csi_admin}} -g CsiAdmin"
+
+
+# Identify node mapping:
+- name: "### --- 02 - Identify node mapping"
+  raw: "oc --kubeconfig={{kubeconfig}} -n {{namespace_cnsa}} exec $(oc --kubeconfig={{kubeconfig}} get pods -n {{namespace_cnsa}} | grep -i -m1 \"ibm-spectrum-scale-core-\" | awk '{print $1}') -- curl -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/filesystems/fs1?fields=mount -u \"{{user_csi_admin}}:{{pass_csi_admin}}\""
+
+
+# Retrieve and note down the CNSA cluster ID:
+- name: "### --- 03 - Retrieve and note down the CNSA cluster ID"
+  raw: "oc --kubeconfig={{kubeconfig}} -n {{namespace_cnsa}} exec $(oc --kubeconfig={{kubeconfig}} get pods -n {{namespace_cnsa}} | grep -i -m1 \"ibm-spectrum-scale-core-\" | awk '{print $1}') -- curl -s -k https://ibm-spectrum-scale-gui.ibm-spectrum-scale-ns/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId | grep -oP \"[0-9]*\""
+  register: result_cnsa_cluster_id
+  tags:
+    - nodemapping
+
+
+- debug: 
+    var: result_cnsa_cluster_id.stdout_lines
+    #verbosity: 2
+  tags:
+    - nodemapping
+
+# Retrieve and note down the Storage cluster ID:
+- name: "### --- 04 - Retrieve and note down the Storage cluster ID"
+  raw: "curl -s -k https://{{sps.sps3.ip}}/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId | grep -oP \"[0-9]*\""
+  register: result_storage_cluster_id
+  tags:
+    - nodemapping
+    - writetotemp
+
+- debug: 
+    var: result_storage_cluster_id.stdout_lines
+    #verbosity: 2
+  tags:
+    - nodemapping
+    - writetotemp
+
+- name: "write to tmp"
+  raw: "echo {{result_storage_cluster_id.stdout_lines}} > /tmp/test.txt"
+  tags:
+    - writetotemp
+
+# Initgui
+- name: "### --- 05 - Initialize the IBM Spectrum Scale CNSA GUI"
+  raw: "oc exec --kubeconfig={{kubeconfig}} $(oc --kubeconfig={{kubeconfig}} get pods -lapp=scale-gui -ojsonpath=\"{.items[0].metadata.name}\" -n {{namespace_cnsa}}) liberty -n {{namespace_cnsa}} -- /usr/lpp/mmfs/gui/cli/initgui"
+
+
+# Create Namespace for CSI-Driver
+- name: "### --- 06 - Create Namespace for CSI-Driver"
+  raw: "oc  --kubeconfig={{kubeconfig}} new-project {{namespace_csi_driver}}"
+
+# Create secret for the CNSA-Cluster
+- name: "### --- 07 - Create Secret for GUI-User of CNSA-Cluster"
+  raw: "oc create secret generic {{secret_name_cnsa_cluster}} --from-literal=username='{{user_csi_admin}}' --from-literal=password='{{pass_csi_admin}}' -n {{namespace_csi_driver}} --kubeconfig={{kubeconfig}}"
+
+# Create secret for the Storage-Cluster
+- name: "### --- 08 - Create Secret for GUI-User of SpectrumScale-Storage-Cluster"
+  raw: "oc create secret generic {{secret_name_storage_cluster}} --from-literal=username='{{user_csi_admin}}' --from-literal=password='{{pass_csi_admin}}' -n {{namespace_csi_driver}} --kubeconfig={{kubeconfig}}"
+
+
+# Create template for CSI-Driver-Operator
+- name: "### --- 09 - Create template for CSI-Driver-Operator"
+  template:
+    src: "../99-jinja-templates/spectrumscale/csi-driver-operator.j2"
+    dest: "{{dir_spectrumscale}}csi-driver-operator.yaml"
+    force: "true"
+
+# Create the CSI-Driver-Operator in OpenShift
+- name: "### --- 10 - Create CSI-Driver-Operator"
+  raw: "oc --kubeconfig={{kubeconfig}} create -f {{dir_spectrumscale}}csi-driver-operator.yaml"
+
+# Create template for CSI-Driver-Operator-Instanz
+- name: "### --- 11 - Create template for CSI-Driver-Operator-Instanz"
+  template:
+    src: "../99-jinja-templates/spectrumscale/csi-scale-operator-instance.j2"
+    dest: "{{dir_spectrumscale}}csi-scale-operator-instance.yaml"
+    force: "true"
+
+# Create the CSI-Driver-Operator-Instance in OpenShift
+- name: "### --- 12 - Create CSI-Driver-Operator-Instance"
+  raw: "oc --kubeconfig={{kubeconfig}} create -f {{dir_spectrumscale}}csi-scale-operator-instance.yaml"

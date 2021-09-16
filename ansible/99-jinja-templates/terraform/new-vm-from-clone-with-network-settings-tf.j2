@@ -32,7 +32,7 @@ data "vsphere_network" "network" {
 }
 
 
-# --- Create VM ocpbootstrap --- #
+# --- Create VM from clone --- #
 resource "vsphere_virtual_machine" "{{hostname}}" {
 
   name = "{{hostname}}"
@@ -46,6 +46,7 @@ resource "vsphere_virtual_machine" "{{hostname}}" {
   boot_delay = 0
   wait_for_guest_ip_timeout = 0
   wait_for_guest_net_timeout = 0
+  hardware_version = {{ vsphere_hardware_version_non_coreos }}
   network_interface {
     network_id = data.vsphere_network.network.id
     adapter_type = "vmxnet3"
@@ -56,7 +57,9 @@ resource "vsphere_virtual_machine" "{{hostname}}" {
     thin_provisioned  = "true"
   }
   clone {
-    template_uuid = "4226b890-4986-d6b5-f3ef-e3458f22cfee"
+    #template_uuid = "4226b890-4986-d6b5-f3ef-e3458f22cfee"
+    template_uuid = "4226d475-3acd-f520-944f-77d39d9b8f76"    # CentOS 8.1
+    #template_uuid = "422652beee351c16-f5d55f8da16da847"    # CentOS 8.3
     customize {
       linux_options {
         host_name = "{{hostname}}"

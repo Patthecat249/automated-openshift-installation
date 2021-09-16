@@ -1,0 +1,63 @@
+### HOW To DELETE IBM Spectrum SCALE CNSA
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - UnInstall CNSA"
+  become: "true"
+  ignore_errors: "yes"
+  become_user: "root"
+  hosts: "{{bastion.ip}}"
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+  tasks:
+    
+# Lösche die virtuelle Maschine - Bastion
+    - name: "999a --- Go into Namespace context: {{namespace_cnsa}}"
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} project {{namespace_cnsa}}"
+
+    - name: "999b --- Scale down stateful sets - GUI" 
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} scale sts ibm-spectrum-scale-gui --replicas=0 -n {{namespace_cnsa}}"
+      
+    - name: "999c --- Scale down stateful sets - pmcollector"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} scale sts ibm-spectrum-scale-pmcollector --replicas=0 -n {{namespace_cnsa}}"
+      
+    - name: "999d --- Scale down deployment daemonset"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} scale deployment ibm-spectrum-scale-operator --replicas=0 -n {{namespace_cnsa}}"
+      
+    - name: "999e --- Patch daemonset"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} -n {{namespace_cnsa}} patch daemonset.apps/ibm-spectrum-scale-core --type merge --patch '{\"spec\":{\"template\":{\"spec\":{\"nodeSelector\":{\"test\":\"remove\"}}}}}'"
+      
+    - name: "999f --- Remove all deployments"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete -f {{dir_spectrumscale}}spectrumscale/deploy/"
+      
+    - name: "999g --- Remove CRD"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete -f {{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml"
+      
+    - name: "999h --- Remove CR"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete -f {{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_crd.yaml"
+      
+    - name: "999i --- Delete Storage-Class"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete sc ibm-spectrum-scale-internal"
+      
+    - name: "999j --- Delete PVC"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} -n {{namespace_cnsa}} delete pvc datadir-ibm-spectrum-scale-pmcollector-0"
+      
+    - name: "999k --- Delete PVC"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} -n {{namespace_cnsa}} delete pvc datadir-ibm-spectrum-scale-pmcollector-1"
+      
+    - name: "999l --- Delete pv"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete pv ocpworker01-pv"
+      
+    - name: "999m --- Delete pv"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete pv ocpworker02-pv"
+      
+    - name: "999n --- Delete Namespace {{namespace_cnsa}}"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} delete ns {{namespace_cnsa}}"
+      
+    - name: "999o --- Remove Label from Node {{workers[0].hostname}}"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} label node {{workers[0].hostname}} app.kubernetes.io/component-"
+      
+    - name: "999p --- Remove Label from Node {{workers[1].hostname}}"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} label node {{workers[1].hostname}} app.kubernetes.io/component-"
+      
+    - name: "999q --- Remove Label from Node {{workers[2].hostname}}"      
+      raw: "/usr/local/bin/oc --kubeconfig={{kubeconfig}} label node {{workers[2].hostname}} app.kubernetes.io/component-"
+

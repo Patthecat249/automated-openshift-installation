@@ -1,0 +1,26 @@
+# This playbook must be run on install-vm node 
+---
+# Dieses Playbook implementiert eine Storageclass
+
+# Retrieve and note down the Storage cluster ID:
+- name: "### --- 01 - Retrieve and note down the Storage cluster ID"
+  raw: "curl -s -k https://{{sps.sps3.ip}}/scalemgmt/v2/cluster -u \"{{user_csi_admin}}:{{pass_csi_admin}}\" | grep clusterId | grep -oP \"[0-9]*\""
+  register: result_storage_cluster_id
+
+
+# Create template for Storageclass-File
+- name: "### --- 02 - Create Storageclass-File from template"
+  template:
+    src: "../99-jinja-templates/spectrumscale/storageclass.j2"
+    dest: "{{dir_spectrumscale}}storageclass-{{sps_filesystem_fs1}}.yaml"
+    force: "true"
+
+# Create the StorageClass in OpenShift
+- name: "### --- 03 - Create the StorageClass in OpenShift"
+  raw: "oc --kubeconfig={{kubeconfig}} create -f {{dir_spectrumscale}}storageclass-{{sps_filesystem_fs1}}.yaml"
+
+- name: "### --- 04 - Make StorageClass as default"
+  raw: "oc --kubeconfig={{kubeconfig}} patch storageclass {{filesystem_name_cnsa}}-{{sps_filesystem_fs1}} -p '{\"metadata\": {\"annotations\":{\"storageclass.kubernetes.io/is-default-class\":\"true\"}}}'"
+  tags:
+    - defaultstg
+

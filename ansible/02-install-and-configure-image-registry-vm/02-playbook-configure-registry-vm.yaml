@@ -1,5 +1,5 @@
 ---
-- name: "Playbook - Configure the Registry-VM"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Configure the Registry-VM"
   hosts: "{{ registry.ip }}"
   become: "true"
   gather_facts: "false"
@@ -18,11 +18,18 @@
       delegate_to: "localhost"
 
 # Install some software
-    - name: "86 - Install podman"
+    - name: "86a - Install Epel-Release"
+      yum:
+        name: 
+          - "epel-release"
+        state: "present"
+      
+    - name: "86b - Install podman"
       yum:
         name: 
           - "podman"
           - "wget"
+          #- "openssl11"
           - "openssl"
           - "httpd-tools"
         state: "present"
@@ -60,25 +67,25 @@
       delegate_to: "localhost"
 
 # Download openshift-installer
-    - name: "90 - Download OpenShift - openshift-installer on {{ install_vm.hostname }}"
-      get_url:
-        url="{{link_to_openshift_installer}}"
-        dest="{{ dir_downloads }}{{file_openshift_installer}}"
-      register: get_installer
-      tags:
-        - downloads
-      delegate_to: "localhost"
+    # - name: "90 - Download OpenShift - openshift-installer on {{ install_vm.hostname }}"
+    #   get_url:
+    #     url="{{link_to_openshift_installer}}"
+    #     dest="{{ dir_downloads }}{{file_openshift_installer}}"
+    #   register: get_installer
+    #   tags:
+    #     - downloads
+    #   delegate_to: "localhost"
 
 
 # Download Kernel
-    - name: "91 - Download CoreOS - Kernel on {{ install_vm.hostname }}"
-      get_url:
-        url="{{link_to_coreos_kernel}}"
-        dest="{{ dir_downloads }}{{file_coreos_kernel}}"
-      register: get_kernel
-      tags:
-        - downloads
-      delegate_to: "localhost"
+    # - name: "91 - Download CoreOS - Kernel on {{ install_vm.hostname }}"
+    #   get_url:
+    #     url="{{link_to_coreos_kernel}}"
+    #     dest="{{ dir_downloads }}{{file_coreos_kernel}}"
+    #   register: get_kernel
+    #   tags:
+    #     - downloads
+    #   delegate_to: "localhost"
 
     # - debug: 
     #     msg="{{file_coreos_kernel}} was downloaded"
@@ -88,14 +95,14 @@
     #   delegate_to: "localhost"
 
 # Download Initrd
-    - name: "92 - Download CoreOS - Initrd on {{ install_vm.hostname }}"
-      get_url:
-        url="{{link_to_coreos_initrd}}"
-        dest="{{ dir_downloads }}{{file_coreos_initrd}}"
-      register: get_initrd
-      tags:
-        - downloads
-      delegate_to: "localhost"
+    # - name: "92 - Download CoreOS - Initrd on {{ install_vm.hostname }}"
+    #   get_url:
+    #     url="{{link_to_coreos_initrd}}"
+    #     dest="{{ dir_downloads }}{{file_coreos_initrd}}"
+    #   register: get_initrd
+    #   tags:
+    #     - downloads
+    #   delegate_to: "localhost"
 
     # - debug: 
     #     msg="{{file_coreos_kernel}} was downloaded"
@@ -105,14 +112,14 @@
     #   delegate_to: "localhost"
 
 # Download RAW_GZ
-    - name: "93 - Download CoreOS - raw_gz on {{ install_vm.hostname }}"
-      get_url:
-        url="{{link_to_coreos_raw_gz}}"
-        dest="{{ dir_downloads }}{{file_coreos_raw_gz}}"
-      register: get_rawgz
-      tags:
-        - downloads
-      delegate_to: "localhost"
+    # - name: "93 - Download CoreOS - raw_gz on {{ install_vm.hostname }}"
+    #   get_url:
+    #     url="{{link_to_coreos_raw_gz}}"
+    #     dest="{{ dir_downloads }}{{file_coreos_raw_gz}}"
+    #   register: get_rawgz
+    #   tags:
+    #     - downloads
+    #   delegate_to: "localhost"
 
     # - debug: 
     #     msg="{{file_coreos_kernel}} was downloaded"
@@ -142,12 +149,12 @@
       delegate_to: "localhost"
 
 # Extraction of zip-archive
-    - name: "95 - Extract the openshift-installer on {{ install_vm.hostname }}"
-      unarchive:
-        src: "{{ dir_downloads }}openshift-install-linux-{{version_openshift}}.tar.gz"
-        dest: "{{ dir_downloads }}"
-        remote_src: "true"
-      delegate_to: "localhost"
+    # - name: "95 - Extract the openshift-installer on {{ install_vm.hostname }}"
+    #   unarchive:
+    #     src: "{{ dir_downloads }}openshift-install-linux-{{version_openshift}}.tar.gz"
+    #     dest: "{{ dir_downloads }}"
+    #     remote_src: "true"
+    #   delegate_to: "localhost"
 
 # Make oc executable >> copy to /usr/local/bin/oc
     - name: "96 - copy oc to /usr/local/bin and make executable"
@@ -157,16 +164,18 @@
         mode: "0755"
 
 # Make openshift-installer executable >> copy to /usr/local/bin/openshift-install
-    - name: "97 - copy openshift-install to /usr/local/bin and make executable"
-      copy:
-        src: "{{ dir_downloads }}openshift-install"
-        dest: "/usr/local/bin/openshift-install"
-        mode: "0755"
+    # - name: "97 - copy openshift-install to /usr/local/bin and make executable"
+    #   copy:
+    #     src: "{{ dir_downloads }}openshift-install"
+    #     dest: "/usr/local/bin/openshift-install"
+    #     mode: "0755"
 
 # Create SSL-Cert for Registry
     - name: "98 - Create SSL-Cert for Registry"
-      raw: "cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt -subj '/C=DE/ST=Brandenburg/L=Cottbus/O=Home/OU=local/CN={{registry.hostname}}.{{clustername}}.{{domain}}'"
-
+      #raw: "cd {{dir_registry_certs}} && openssl11 req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt -subj '/C=DE/ST=Brandenburg/L=Cottbus/O=Home/OU=local/CN={{registry.hostname}}.{{clustername}}.{{domain}}' -addext 'subjectAltName = DNS:{{registry.hostname}}.{{clustername}}.{{domain}}'"
+      raw: "cd {{dir_registry_certs}} && openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 365 -out domain.crt -subj '/C=DE/ST=Brandenburg/L=Cottbus/O=Home/OU=local/CN={{registry.hostname}}.{{clustername}}.{{domain}}' -addext 'subjectAltName = DNS:{{registry.hostname}}.{{clustername}}.{{domain}}'"
+      tags:
+        - "SSLa"
 
 # Create User for registry
     - name: "99 - Create User {{registry_user}} for Registry"
@@ -188,15 +197,41 @@
      -d docker.io/library/registry:2"
 
 # Copy certs to trust-store
-    - name: "101 - Copy registry-certificate to linux-trust-store"
+    - name: "101a - Copy registry-certificate to linux-trust-store"
       copy:
         src: "{{dir_registry_certs}}domain.crt"
         dest: "/etc/pki/ca-trust/source/anchors/domain.crt"
         remote_src: "true"
 
+# Copy domain.crt to localhost
+    - name: "101b - Fetch domain.crt - Copy from registry-host to localhost"
+      fetch:
+        src: "{{dir_registry_certs}}domain.crt"
+        dest: "{{dir_tools}}{{registry.hostname}}.crt"
+        flat: "yes"
+      tags:
+        - ocpregistrycert
+
+# Copy to bastion-Host
+    - name: "101c - Copy registry-certificate to linux-trust-store"
+      copy:
+        src: "{{dir_tools}}{{registry.hostname}}.crt"
+        dest: "/etc/pki/ca-trust/source/anchors/{{registry.hostname}}.crt"
+      delegate_to: "{{bastion.ip}}"
+      tags:
+        - ocpregistrycert
+
 # Update the Trust-Store
-    - name: "102 - Update Linux Trust-Store"
+    - name: "102a - Update Linux Trust-Store"
       raw: "update-ca-trust" 
+
+# Update the Trust-Store
+    - name: "102b - Update Linux Trust-Store from Bastion-Host"
+      raw: "update-ca-trust" 
+      delegate_to: "{{bastion.ip}}"
+      tags:
+        - ocpregistrycert
+
 
 # Copy the registry-cert from registry-vm to install-vm
     - name: "103 - Copy registry-certificate to local Linux Trust-Store"

@@ -7,19 +7,22 @@
     group: root
     mode: '0644'
     state: directory
+  delegate_to: "{{bastion.ip}}"
 
 # Kopiere die YAML-Datei auf den Bastion Host
 - name: "### --- 08 - Copy nfs_provisioner_rbac to remote host"
   copy: 
-    src: "templates/storage_rbac.yaml"
+    src: "../99-jinja-templates/nfs-provisioner/storage_rbac.yaml"
     dest: "{{ dir_post_install_config }}nfs_provisioner_rbac.yaml"
     owner: root
     group: root
     mode: '0644'
     force: yes
+  delegate_to: "{{bastion.ip}}"
 
 # Erzeuge die RBAC-Rolle per oc create -f nfs_provisioner_rbac.yaml im OpenShift-Cluster
 - name: "### --- 09 - Deploy nfs_provisioner_rbac.yaml for nfs-client-provisioner"
   shell: |
     oc create -f "{{ dir_post_install_config }}nfs_provisioner_rbac.yaml" \
-      --config="{{ kubeconfig_path }}" 
+      --config="{{ kubeconfig }}" 
+  delegate_to: "{{bastion.ip}}"

@@ -1,5 +1,4 @@
-# Run Playbook on Install-VM
-- name: "Registry-VM"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Install a Load-Balancer-VM"
   become: "true"
   become_user: "root"
   hosts: 127.0.0.1
@@ -180,7 +179,7 @@
         - create
 
 # Erzeuge die virtuelle Maschine
-    - name: "17 --- Create virtual machine with terraform"
+    - name: "114 --- Create virtual machine ({{ lb.hostname }}) with terraform"
       raw: "cd {{ dir_terraform }}{{ lb.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM

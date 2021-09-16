@@ -1,0 +1,15 @@
+# The value for DOCKER_REGISTRY_ADDRESS must match the value for imageRegistry in baas-values.yaml
+# The value for DOCKER_REGISTRY_NAMESPACE must match the value for imageRegistryNamespace: in baas-values.yaml
+#
+
+export DOCKER_REGISTRY_ADDRESS='{{local_registry}}:{{registry_port}}'
+export DOCKER_REGISTRY_USERNAME='{{registry_user}}'
+export DOCKER_REGISTRY_PASSWORD='{{registry_pass}}'
+export DOCKER_REGISTRY_NAMESPACE='{{imageRegistryNamespace}}'
+export SPP_ADMIN_USERNAME='{{spp_admin_username}}'
+export SPP_ADMIN_PASSWORD='{{spp_admin_password}}'
+export DATAMOVER_USERNAME='{{datamover_username}}'
+export DATAMOVER_PASSWORD='{{datamover_password}}'
+export MINIO_USERNAME='{{minio_username}}'
+export MINIO_PASSWORD='{{minio_password}}'
+export BAAS_VERSION='{{baas_version}}'

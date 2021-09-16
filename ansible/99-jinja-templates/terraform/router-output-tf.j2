@@ -13,3 +13,8 @@ output "mac-address2" {
  description = "Mac-Adress"
  value = vsphere_virtual_machine.{{hostname}}.network_interface[1].mac_address
 }
+
+output "mac-address3" {
+ description = "Mac-Adress"
+ value = vsphere_virtual_machine.{{hostname}}.network_interface[2].mac_address
+}

@@ -1,9 +1,9 @@
 # OpenShift
 clustername: "openshift"
 domain: "home.local"
-version_openshift: "4.5.28"
-version_core_os: "4.5.6"
-version_major: "4.5"
+version_openshift: "4.7.22"
+version_core_os: "4.7.13"
+version_major: "4.7"
 clusternetwork: "10.254.0.0/16"
 servicenetwork: "10.255.0.0/16"
 
@@ -20,10 +20,11 @@ vsphere_cluster: "cluster-home"
 vsphere_datacenter: "dc-home"
 vsphere_rp: "rp-home"
 vsphere_datastore: "openshift_storage"
-vsphere_network: "dpg-openshift"
+vsphere_network: "dpg-openshift-12"
 vsphere_network_home: "dpg-home-prod"
-vsphere_network_openshift_gw: "11.11.11.1"
-vsphere_network_openshift_broadcast: "11.11.11.255"
+vsphere_network_backup: "dpg-openshift"
+vsphere_network_openshift_gw: "11.11.12.1"
+vsphere_network_openshift_broadcast: "11.11.12.255"
 vsphere_folder: "/dc-home/vm/openshift"
 vsphere_master_cpu: "8"
 vsphere_master_ram: "16384"
@@ -35,24 +36,32 @@ vsphere_worker_disksize: "120"
 vsphere_bstrp_cpu: "8"
 vsphere_bstrp_ram: "16384"
 vsphere_bstrp_disksize: "120"
-vsphere_guest_id: "centos7_64Guest"
-vsphere_vm_boot_delay: "15000"
+vsphere_guest_id: "centos8_64Guest"
+vsphere_vm_boot_delay: "90000"
+vsphere_hardware_version: "13"
+vsphere_hardware_version_non_coreos: "14"
+vsphere_vmtemplate_name: "centos83-template"
 
 
+
+# Storage
+storage_class_name: "nfs"
 
 # Network
-net_openshift: "11.11.11.0"
+net_openshift: "11.11.12.0"
 netmask_openshift_cidr: "/24"
 
 
 # Clients / Software
 link_to_oc: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{version_openshift}}/openshift-client-linux-{{version_openshift}}.tar.gz"
 link_to_openshift_installer: "https://mirror.openshift.com/pub/openshift-v4/clients/ocp/{{version_openshift}}/openshift-install-linux-{{version_openshift}}.tar.gz"
-link_to_coreos_kernel: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/{{version_major}}/{{version_core_os}}/rhcos-{{version_core_os}}-x86_64-installer-kernel-x86_64"
-link_to_coreos_initrd: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/{{version_major}}/{{version_core_os}}/rhcos-{{version_core_os}}-x86_64-installer-initramfs.x86_64.img"
+link_to_coreos_kernel: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/{{version_major}}/{{version_core_os}}/rhcos-{{version_core_os}}-x86_64-live-kernel-x86_64"
+link_to_rootfs: "https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/{{version_major}}/{{version_core_os}}/rhcos-{{version_core_os}}-x86_64-live-rootfs.x86_64.img"
+link_to_coreos_initrd: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/{{version_major}}/{{version_core_os}}/rhcos-{{version_core_os}}-x86_64-live-initramfs.x86_64.img"
 link_to_coreos_raw_gz: "https://mirror.openshift.com/pub/openshift-v4/x86_64/dependencies/rhcos/{{version_major}}/{{version_core_os}}/rhcos-{{version_core_os}}-x86_64-metal.x86_64.raw.gz"
-file_coreos_kernel: "rhcos-{{version_core_os}}-x86_64-installer-kernel-x86_64"
-file_coreos_initrd: "rhcos-{{version_core_os}}-x86_64-installer-initramfs.x86_64.img"
+file_coreos_kernel: "rhcos-{{version_core_os}}-x86_64-live-kernel-x86_64"
+file_coreos_rootfs: "rhcos-{{version_core_os}}-x86_64-live-rootfs.x86_64.img"
+file_coreos_initrd: "rhcos-{{version_core_os}}-x86_64-live-initramfs.x86_64.img"
 file_coreos_raw_gz: "rhcos-{{version_core_os}}-x86_64-metal.x86_64.raw.gz"
 file_oc: "openshift-client-linux-{{version_openshift}}.tar.gz"
 file_openshift_installer: "openshift-install-linux-{{version_openshift}}.tar.gz"
@@ -85,9 +94,11 @@ download_tf_vsphere_plugin: "https://releases.hashicorp.com/terraform-provider-v
 
 # Working directories >> always end with Slash /
 dir_root: "/opt/sva/"
+dir_certs: "{{dir_root}}certs/"
 dir_cluster: "{{dir_root}}{{clustername}}/"
+pull_secret_fullpath: "{{dir_cluster}}{{pull_secret_file_name}}"
 dir_install_config: "{{dir_cluster}}install-config/"
-kubeconfig: "{{dir_install_config}}/auth/kubeconfig"
+kubeconfig: "{{dir_install_config}}auth/kubeconfig"
 dir_terraform: "{{dir_root}}terraform/"
 dir_terraform_modules: "{{dir_terraform}}modules/"
 dir_terraform_module_vm: "{{dir_terraform_modules}}vm-vsphere/"
@@ -115,27 +126,31 @@ dir_backup_install_config: "{{dir_backup}}install_config/"
 dir_backup_dnsmasq: "{{dir_backup}}dnsmasq/"
 dir_key_to_nodes: "/root/.ssh/"
 key_to_nodes_name: "id_{{clustername}}"
+kubeconfig_certs_filename: "certs_from_kubeconfig.pem"
+dir_post_install_config: "{{dir_cluster}}post_install_config/"
+dir_spectrumscale: "{{dir_root}}spectrumscale/"
+dir_baas: "{{dir_root}}spectrumprotectplus/"
 
 # Netzwerk / IPs / Hostnames
 # OpenShift-Master-Nodes
 masters:
   - name: "master01"
     hostname: "ocpmaster01"
-    ip: "11.11.11.121"
+    ip: "11.11.12.121"
     cpu: "8"
     ram: "16384"
     disk: "200"
     datastore: "openshift_storage"
   - name: "master02"
     hostname: "ocpmaster02"
-    ip: "11.11.11.122"
+    ip: "11.11.12.122"
     cpu: "8"
     ram: "16384"
     disk: "200"
     datastore: "openshift_storage"
   - name: "master03"
     hostname: "ocpmaster03"
-    ip: "11.11.11.123"
+    ip: "11.11.12.123"
     cpu: "8"
     ram: "16384"
     disk: "200"
@@ -145,21 +160,21 @@ masters:
 workers:
   - name: "worker01"
     hostname: "ocpworker01"
-    ip: "11.11.11.124"
+    ip: "11.11.12.124"
     cpu: "8"
     ram: "32768"
     disk: "200"
     datastore: "openshift_storage"
   - name: "worker02"
     hostname: "ocpworker02"
-    ip: "11.11.11.125"
+    ip: "11.11.12.125"
     cpu: "8"
     ram: "32768"
     disk: "200"
     datastore: "openshift_storage"
   - name: "worker03"
     hostname: "ocpworker03"
-    ip: "11.11.11.126"
+    ip: "11.11.12.126"
     cpu: "8"
     ram: "32768"
     disk: "200"
@@ -169,7 +184,7 @@ workers:
 bstrp:
   name: "bootstrap"
   hostname: "ocpbootstrap"
-  ip: "11.11.11.127"
+  ip: "11.11.12.127"
   cpu: "8"
   ram: "16384"
   disk: "200"
@@ -184,7 +199,7 @@ install_vm:
 bastion:
   name: "bastion"
   hostname: "ocpbastion"
-  ip: "11.11.11.120"
+  ip: "11.11.12.120"
   cpu: "2"
   ram: "4096"
   disk: "200"
@@ -193,7 +208,7 @@ bastion:
 registry:
   name: "registry"
   hostname: "ocpregistry"
-  ip: "11.11.11.119"
+  ip: "11.11.12.119"
   cpu: "2"
   ram: "2048"
   disk: "200"
@@ -202,10 +217,11 @@ registry:
 router:
   name: "router"
   hostname: "ocprouter"
-  ip: "10.0.249.2"
+  ip: "10.0.249.3"
   default_gw: "10.0.249.1"
   ocp1: "11.11.10.1"
-  ocp2: "11.11.11.1"
+  ocp2: "11.11.12.1"
+  ocp3: "11.11.11.1"
   cpu: "1"
   ram: "1024"
   disk: "200"
@@ -231,21 +247,28 @@ pxe:
 lb:
   name: "load-balancer"
   hostname: "ocplb01"
-  ip: "11.11.11.129"
+  ip: "11.11.12.129"
   cpu: "1"
   ram: "1024"
   disk: "200"
   app:
-    ip: "11.11.11.129"
+    ip: "11.11.12.129"
   api:
-    ip: "11.11.11.129"
+    ip: "11.11.12.129"
   api_int:
-    ip: "11.11.11.129"
+    ip: "11.11.12.129"
+
+# Spectrum-Protect-Plus
+spp:
+  hostname: "spp"
+  fqdn: "spp.{{clustername}}.{{domain}}"
+  ip: "11.11.11.135"
+  port: "443"
 
 # DNSMASQ-Settings
-dhcp_range: "11.11.11.110 11.11.11.200"
+dhcp_range: "11.11.12.110 11.11.12.200"
 dhcp_subnetmask: "255.255.255.0"
-dhcp_gateway: "11.11.11.1"
+dhcp_gateway: "11.11.12.1"
 ntpserver: "10.0.249.1"
 interface: "ens192"
 listen_address: "{{ bastion.ip }}"
@@ -302,6 +325,10 @@ nfs_software_folder: "/volume1/nfs-iso/downloaded-iso/linux/"
 nfs_kickstart_folder: "/volume1/nfs-iso/kickstart-configs/"
 nfs_path_os_rhel77: "CentOS-7-x86_64-DVD-1908.iso"
 iso_centos77: "CentOS-7-x86_64-DVD-1908.iso"
+nfs_client_provisioner_image: "ocpregistry.openshift.home.local:5000/external_storage/nfs-client-provisioner:latest"
+nfs_client_provisioner_image_quay: "quay.io/external_storage/nfs-client-provisioner:latest"
+nfs_bastion_ip: "{{bastion.ip}}"
+nfs_bastion_path: "/nfs"
 
 # PXE-Settings
 pxe_vmlinux_kernel: "kernels_initrd/centos77/vmlinuz"
@@ -318,3 +345,88 @@ image_block: |
   - mirrors:
     - {{ registry.hostname }}.{{ clustername }}.{{ domain }}:{{ registry_port }}/ocp4/openshift4
     source: quay.io/openshift-release-dev/ocp-v4.0-art-dev
+
+
+# Spectrum-Scale-Container-Native-Storage-Access (CNSA)
+user_csi_admin: "csiadmin"
+pass_csi_admin: "Test1234"
+
+# User for interaction with CNSA and Storage-Cluster
+user_cnss: "cnss_storage_gui_user"
+pass_cnss: "cnss_storage_gui_pass"
+
+
+namespace_cnsa: "ibm-spectrum-scale-ns"
+namespace_csi_driver: "ibm-spectrum-scale-csi-driver"
+storage_gui_user: "cnsa"
+storage_gui_pass: "Test1234!"
+cnsa_gui_user: "cnsa"
+cnsa_gui_pass: "Test1234!"
+grp_containeroperator: "ContainerOperator" # Case-sensitive
+role_containeroperator: "containeroperator" # Case-sensitive
+user_containeroperator: "ContainerOperator" # Case-sensitive
+pass_containeroperator: "Test1234!xyz"
+secret_name_cnsa_cluster: "secret-cnsa-cluster" 
+secret_name_storage_cluster: "cnsa-remote-mount-storage-cluster-1" 
+namespace_spectrumscale: "ibm-spectrum-scale-ns"
+image_scale_core_operator: "ibm-spectrum-scale-core-operator:v5.1.0.3"
+REPLACE_SCALE_CORE_OPERATOR_IMAGE: "{{local_registry}}:{{registry_port}}/{{image_scale_core_operator}}"
+REPLACE_CONTAINER_REGISTRY: "{{local_registry}}:{{registry_port}}"
+cnsa_install_file: "Spectrum_Scale_Container_Native_Storage_Access-5.1.0.3-x86_64-Linux.tgz"
+storage_class_scale: "{{filesystem_name_cnsa}}-{{sps_filesystem_fs1}}"
+
+# Images for CSI-Operator
+image_csi_driver: "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-driver:v2.2.0"
+image_csi_operator: "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-operator:v2.2.0"
+image_attacher: "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-attacher:v3.1.0"
+image_provisioner: "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-provisioner:v2.1.0"
+image_driverRegistrar: "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-node-driver-registrar:v2.1.0"
+image_snapshotter: "us.gcr.io/k8s-artifacts-prod/sig-storage/csi-snapshotter:v4.0.0"
+image_spectrumScale_csi_plugin: "quay.io/ibm-spectrum-scale/ibm-spectrum-scale-csi-driver:v2.2.0"
+
+# Custom Resource Spectrum Scale CNSA
+yaml_ibm_v1_scalecluster_cr: "{{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml"
+yaml_operator: "{{dir_spectrumscale}}spectrumscale/deploy/operator.yaml"
+sps_mountpoint_fs1: "/mnt/spsopenshift"
+sps_filesystem_fs1: "spsopenshift"
+filesystem_name_cnsa: "fs1"
+filesystem_mountpoint_cnsa: "/mnt/fs1"
+
+sps_insecureSkipVerify: "true"
+
+# --- Spectrum-Node-Names
+node1: "sps-patrick1"
+node2: "sps-patrick2"
+node3: "sps-patrick3"
+
+sps:
+  sps1:
+    hostname: "{{node1}}"
+    fqdn: "{{node1}}.{{domain}}"
+    ip: "10.0.249.161"
+  sps2:
+    hostname: "{{node2}}"
+    fqdn: "{{node2}}.{{domain}}"
+    ip: "10.0.249.162"
+  sps3:
+    hostname: "{{node3}}"
+    fqdn: "{{node3}}.{{domain}}"
+    ip: "10.0.249.163"
+
+
+# --- Spectrum-Protect-Plus --- #
+filename_baas: "SPP_V{{baas_version}}_FOR_CONTAINERS.tar.gz" 
+filename_spectrum_plus: "ibm-spectrum-protect-plus-prod-1.1.2.tgz"
+imageRegistryNamespace: "baas"
+namespace_velero: "spp-velero"
+spp_admin_username: "ocpspp"
+spp_admin_password: "z59FqYKGnF"
+datamover_username: "dmovu" # make_up_a_datamover_username
+datamover_password: "z52Fq64YnF" # make_up_a_datamover_password
+minio_username: "miuser" # make_up_a_minio_username
+minio_password: "a12Lq34UnF" # make_up_a_minio_password
+baas_version: "10.1.7.2"
+baas_license_is: "true"
+isOCP: "true"
+isServerInstalledOnAnotherCluster: "false"
+productLoglevel: "INFO"

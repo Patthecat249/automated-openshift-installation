@@ -48,6 +48,7 @@ resource "vsphere_virtual_machine" "hostname" {
   memory = var.ram
   wait_for_guest_ip_timeout = 0
   wait_for_guest_net_timeout = 0
+  hardware_version = {{ vsphere_hardware_version_non_coreos }}
   network_interface {
     network_id = data.vsphere_network.network.id
     adapter_type = "vmxnet3"

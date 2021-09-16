@@ -32,7 +32,7 @@
     name:
       - ansible.noarch
       - git
-      - dhcp
+      - dhcp-server
       - sshpass
       - wget.x86_64
       - jq.x86_64
@@ -41,7 +41,7 @@
       - nfs-utils.x86_64
       - unzip
       - dnsmasq
-      - policycoreutils-python
+      - policycoreutils-python-utils
       - syslinux
       - httpd
       - unzip
@@ -75,6 +75,7 @@
     - "{{ dir_root }}"
     - "{{ dir_tools }}"
     - "{{ dir_cluster }}"
+    - "{{ dir_spectrumscale }}"
     - "{{ dir_install_config }}"
     - "{{ dir_http_server }}"
     - "{{ dir_mnt }}"
@@ -86,6 +87,8 @@
     - "{{ dir_backup_tftp }}"
     - "{{ dir_backup_install_config }}"
     - "{{ dir_backup_dnsmasq }}"
+    - "{{ dir_baas }}"
+    - "{{ dir_downloads }}"
   tags:
     - rerun
 
@@ -144,9 +147,9 @@
     src: "{{item}}"
     dest: "{{ dir_http_server }}"  
   loop:
-    #- "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
-    #- "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
-    - "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
+    - "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
+    - "{{ dir_downloaded_images }}{{file_coreos_rootfs}}"
+    - "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
   tags:
     - rerun
 

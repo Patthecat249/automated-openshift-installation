@@ -1,3 +1,6 @@
+# Install-VM
+- import_playbook: "../00-install-and-configure-installation-vm/01-playbook-configure-install-vm.yaml"
+
 # Router-VM
 - import_playbook: "../00-install-and-configure-router-vm/01-playbook-install-router-vm.yaml"
 - name: "Wait for {{ router.hostname }} ({{ router.ip }}) to become available"
@@ -67,17 +70,20 @@
 - import_playbook: "../02-install-and-configure-image-registry-vm/03-playbook-mirror-the-registry.yaml"
 
 
-
+### ---------------------------------------------------------------------------------------------------------------- ###
+### RECREATION of Cluster
+### ---------------------------------------------------------------------------------------------------------------- ###
 
 # It's possible to recreate cluster from here
-## remove host-entries from vi /etc/dhcp/dhcpd.conf
-## restart dhcpd: systemctl stop dhcpd && systemctl start dhcpd && systemctl status dhcpd
-## remove all-files from bastion-host rm -f /tftproot/pxelinux.cfg/*
-## remove all-files from bastion-host rm -f /var/www/html/openshift/*.ign
-## restart httpd systemctl stop httpd && systemctl start httpd && systemctl status httpd
-## empty folder from bastion-host  rm -rf /opt/sva/openshift/install-config/*
-## bastion-host rm -f /opt/sva/openshift/install-config.yaml
-## install-vM: terraform destroy nodes: cd /opt/sva/terraform && ./cleanup-openshift-nodes.sh
+# On Bastion-Host
+# vi /etc/dhcp/dhcpd.conf                                               # remove host-entries from 
+# systemctl restart dhcpd                                               # restart dhcpd
+# rm -f /tftproot/pxelinux.cfg/*                                        # remove all-files from bastion-host 
+# rm -f /var/www/html/openshift/*.ign                                   # remove all-files from bastion-host 
+# systemctl stop httpd && systemctl start httpd && systemctl status httpd # restart httpd 
+# rm -rf /opt/sva/openshift473/install-config/*                            # empty folder from bastion-host  
+# rm -f /opt/sva/openshift473/install-config.yaml                          # remove install-config.yaml on bastion-host 
+# cd /opt/sva/terraform && ./cleanup-openshift-nodes473.sh                 # install-vM: terraform destroy nodes 
 
 # Prepare install-config.yaml
 - import_playbook: "../01-install-and-configure-bastion-host-vm/03-prepare-openshift-install-config.yaml"
@@ -93,3 +99,6 @@
 
 # Wait for Install to complete
 - import_playbook: "../04-start-openshift-installation/04-wait-for-install-complete.yaml"
+
+# Post-Installation-Tasks
+- import_playbook: "../05-post-ocp-installation-tasks/01-playbook-execute-post-install-tasks.yaml"

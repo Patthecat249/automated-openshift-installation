@@ -2,17 +2,19 @@
 # Dieses Playbook erstellt eine Storage-Class
 - name: "### --- 12 - Render nfs_provisioner_class.yaml from a template"
   template: 
-    src: templates/storage_class.yaml.j2
+    src: "../99-jinja-templates/nfs-provisioner/storage_class.yaml.j2"
     dest: "{{ dir_post_install_config }}nfs_provisioner_class.yaml"
     owner: root
     group: root
     mode: '0644'
     force: yes
+  delegate_to: "{{bastion.ip}}"
 
 # Führe folgendes "oc create"-Kommando aus um die Storage-Class zu erstellen
 - name: "### --- 13 - Deploy nfs_provisioner_class.yaml for nfs-client-provisioner"
   shell: |
-    oc create -f "{{ dir_post_install_config }}nfs_provisioner_class.yaml" \
-      --config="{{ kubeconfig_path }}" 
+    /usr/local/bin/oc create -f "{{ dir_post_install_config }}nfs_provisioner_class.yaml" \
+      --config="{{ kubeconfig }}" 
+  delegate_to: "{{bastion.ip}}"
 
     

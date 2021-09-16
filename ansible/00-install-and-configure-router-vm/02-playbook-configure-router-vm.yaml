@@ -1,5 +1,5 @@
 ---
-- name: "Playbook - Configuration of a router-vm"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Configuration of a router-vm"
   hosts: "{{ router.ip }}"
   become: "true"
   gather_facts: "false"

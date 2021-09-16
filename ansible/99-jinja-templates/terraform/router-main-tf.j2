@@ -34,11 +34,20 @@ data "vsphere_network" "network_home" {
   name = "{{vsphere_network_home}}"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
+data "vsphere_network" "network_backup" {
+  name = "{{vsphere_network_backup}}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+
+data "vsphere_virtual_machine" "template" {
+  name          = "{{vsphere_vmtemplate_name}}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
 
 
 
-
-# --- Create VM ocpbootstrap --- #
+# --- Create VM ocprouter --- #
 resource "vsphere_virtual_machine" "{{hostname}}" {
 
   name = "{{hostname}}"
@@ -52,6 +61,7 @@ resource "vsphere_virtual_machine" "{{hostname}}" {
   boot_delay = 0
   wait_for_guest_ip_timeout = 0
   wait_for_guest_net_timeout = 0
+  hardware_version = {{ vsphere_hardware_version_non_coreos }}
   network_interface {
     network_id = data.vsphere_network.network.id
     adapter_type = "vmxnet3"
@@ -60,13 +70,20 @@ resource "vsphere_virtual_machine" "{{hostname}}" {
     network_id = data.vsphere_network.network_home.id
     adapter_type = "vmxnet3"
   }
+  network_interface {
+    network_id = data.vsphere_network.network_backup.id
+    adapter_type = "vmxnet3"
+  }
   disk {
     label = "rootvolume"
     size  = "{{vsphere_general_disksize}}"
     thin_provisioned  = "true"
   }
   clone {
-    template_uuid = "4226b890-4986-d6b5-f3ef-e3458f22cfee"
+    #template_uuid = "4226b890-4986-d6b5-f3ef-e3458f22cfee"
+    template_uuid = "4226d475-3acd-f520-944f-77d39d9b8f76"    # CentOS 8.1
+    #template_uuid = "422652beee351c16-f5d55f8da16da847"    # CentOS 8.3
+    #template_uuid = data.vsphere_virtual_machine.template.id
     customize {
       linux_options {
         host_name = "{{hostname}}"
@@ -78,6 +95,10 @@ resource "vsphere_virtual_machine" "{{hostname}}" {
       }
       network_interface {
         ipv4_address = "{{router.ip}}"
+        ipv4_netmask = "24"
+      }
+      network_interface {
+        ipv4_address = "{{router.ocp3}}"
         ipv4_netmask = "24"
       }
       ipv4_gateway = "{{router.default_gw}}"

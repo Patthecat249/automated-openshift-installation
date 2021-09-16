@@ -1,0 +1,136 @@
+# This playbook must be run on install-vm node 
+---
+# Dieses Playbook implements IBM Spectrum Protect Plus Container Support on OpenShift
+
+# Install Helm3 on Bastion-Host
+- name: "### --- 01 - Download Helm3-Get-Script"
+  get_url: 
+    url: "https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3"
+    dest: "{{dir_baas}}get_helm.sh"
+    mode: "0700"
+
+# Install Helm3 with Get-Script and move to /usr/local/bin/helm3
+- name: "### --- 02 - Install Helm3 with Get-Script and move to /usr/local/bin/helm3"
+  raw: "bash {{dir_baas}}get_helm.sh; mv /usr/local/bin/helm /usr/local/bin/helm3"
+
+# Check if the Tar-File exists on Bastion-Node
+- name: "### --- 03 - Check, if {{filename_baas}} was already copied"
+  stat:
+    path: "{{ dir_downloaded_images }}{{filename_baas}}"
+  register: stat_result
+
+# Copy the Tar-File to Bastion-Node
+- name: "### --- 04 - Copy the Tar-File to Bastion-Node"
+  copy:
+    src: "{{ dir_downloaded_images }}{{filename_baas}}"
+    dest: "{{ dir_downloaded_images }}{{filename_baas}}"
+  when: not stat_result.stat.exists
+
+# Check, if file must be extracted: SPP_<version>_FOR_CONTAINERS.tar.gz
+- name: "### --- 05 - Check, if {{filename_baas}} was already extracted"
+  stat:
+    path: "{{dir_baas}}installer/{{filename_spectrum_plus}}"
+  register: stat_result_baas
+
+
+# Extraction of zip-archive
+- name: "### --- 06 - Extraction of: {{filename_baas}} to: {{dir_baas}}"
+  unarchive:
+    src: "{{dir_downloaded_images}}{{filename_baas}}"
+    dest: "{{dir_baas}}"
+    remote_src: "true"
+  when: not stat_result_baas.stat.exists
+
+# Check, if file must ibm-spectrum-protect-plus-prod-1.2.0.tgz be extracted
+- name: "### --- 07 - Check, if {{filename_spectrum_plus}} was already extracted"
+  stat:
+    path: "{{dir_baas}}installer/ibm-spectrum-protect-plus-prod/values.yaml"
+  register: stat_result_baas
+
+# Extraction of zip-archive
+- name: "### --- 08 - Extraction of: {{filename_spectrum_plus}} to: {{dir_baas}}"
+  unarchive:
+    src: "{{dir_baas}}installer/{{filename_spectrum_plus}}"
+    dest: "{{dir_baas}}installer/"
+    remote_src: "true"
+  when: not stat_result_baas.stat.exists
+
+# Create baas-values.yaml from template
+- name: "### --- 09 - Create baas-values.yaml from Template"
+  template:
+    src: "../../99-jinja-templates/spectrumprotect/baas-values.j2"
+    dest: "{{dir_baas}}baas-values.yaml"
+    force: "true"
+
+# Create baas-values.yaml from template
+- name: "### --- 10 - Create baas-options.sh from Template"
+  template:
+    src: "../../99-jinja-templates/spectrumprotect/baas-options.j2"
+    dest: "{{dir_baas}}baas-options.sh"
+    mode: "0755"
+    force: "true"
+
+# Link docker as podman
+- name: "### --- 10 - link docker as podman for baas-install-script"
+  file:
+    src: "/usr/bin/podman"
+    dest: "/usr/local/bin/docker"
+    state: link
+
+# Copy values.yaml and options.sh
+- name: "### --- 11 - Copy values.yaml and options.sh"
+  copy:
+    src: "{{dir_baas}}{{item}}"
+    dest: "{{dir_baas}}installer/ibm-spectrum-protect-plus-prod/ibm_cloud_pak/pak_extensions/install/"
+    remote_src: "true"
+    backup: "true"
+    force: "true"
+  with_items: 
+    - baas-values.yaml
+    - baas-options.sh
+
+# chmod +x *.sh
+# cd /opt/sva/spectrumprotectplus/installer/ibm-spectrum-protect-plus-prod/ibm_cloud_pak/pak_extensions/install/
+- name: "### --- 12 - Change mode of shell-scripts as executable"
+  raw: "cd /opt/sva/spectrumprotectplus/installer/ibm-spectrum-protect-plus-prod/ibm_cloud_pak/pak_extensions/install/; chmod +x *.sh"
+
+# Change Docker-Min-Version
+# DOCKER_MIN_VERSION=17.09.00
+- name: "### --- 13 - Change DOCKER_MIN_VERSION=17.09.00"
+  lineinfile:
+    path: "{{dir_baas}}installer/ibm-spectrum-protect-plus-prod/ibm_cloud_pak/pak_extensions/install/baas-prereqs-checker.sh"
+    regexp: '^DOCKER_MIN_VERSION=17.09.00'
+    line: DOCKER_MIN_VERSION=2.1.0
+    backup: "true"
+
+# Create Namespace baas
+- name: "### --- 14 - Create Namespace baas"
+  raw: "oc create ns {{imageRegistryNamespace}} --kubeconfig={{kubeconfig}}"
+
+# Install amq-streams-cluster-operator
+
+# Install Velero tool by using the OpenShift APIs for Data Protection (OADP) operator.
+
+# Create namespace for velero
+- name: "### --- 17 - Create Namespace spp-velero"
+  raw: "oc create ns {{namespace_velero}} --kubeconfig={{kubeconfig}}"
+  tags:
+    - velero
+
+# Create velero-key-file
+- name: "### --- 18 - Create velero-key-file from Template"
+  template:
+    src: "../../99-jinja-templates/spectrumprotect/velero-key-file.j2"
+    dest: "{{dir_baas}}velero-key-file"
+    mode: "0644"
+    force: "true"
+  tags:
+    - velero
+
+# Create secret in OpenShift
+- name: "### --- 19 - Create Secret cloud-credentials in spp-velero"
+  raw: "oc create secret generic cloud-credentials -n {{namespace_velero}} --from-file cloud={{dir_baas}}velero-key-file --kubeconfig={{kubeconfig}}"
+  tags:
+    - velero
+
+ 

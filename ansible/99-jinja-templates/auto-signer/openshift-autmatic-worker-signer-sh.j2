@@ -3,7 +3,7 @@ export KUBECONFIG={{kubeconfig}}
 while [ $(oc get csr | grep -i pending | wc -l) -gt 0 -o $(oc get csr | grep Approved | wc -l) -lt {{ masters|length*2+workers|length*2 + extra_nodes|default('0')|int*2 }}]
 do
   oc get csr -o json | jq -r '.items[] | select(.status == {} ) | .metadata.name' | xargs oc adm certificate approve
-  sleep 10
+  sleep 20
 done
 
 echo "All csr approved"

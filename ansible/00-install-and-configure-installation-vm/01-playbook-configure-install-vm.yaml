@@ -1,10 +1,16 @@
 ---
-- name: "Playbook - Install-VM - Configuration"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Install-VM - Configuration"
   hosts: 127.0.0.1
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
   tasks:
+# Zeitausgabe
+    - name: "--- Starte Playbook: {{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+      debug: msg="{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }}"
+
+
+# Install Software packages
     - name: "01 - Install necassary software programs"
       become: "true"
       yum:
@@ -37,47 +43,108 @@
         - download
 
 # Download some OpenShift-Software (Kernel, initrd, rawgz, oc, openshift-install)
-    - name: "04 - Download CoreOS-Kernel"
+    # CoreOS-Kernel
+    - name: "04a - Check, if CoreOS-Kernel was already downloaded"
+      stat:
+        path: "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
+      register: stat_result
+      tags:
+        - download
+    
+    - name: "04b - Download CoreOS-Kernel"
       get_url:
         url: "{{ link_to_coreos_kernel }}"
         dest: "{{ dir_downloaded_images }}{{file_coreos_kernel}}"
+      when: not stat_result.stat.exists
       tags:
         - download
 
-    - name: "05 - Download CoreOS-Initrd"
+    # CoreOS-Rootfs
+    - name: "04c - Check, if CoreOS-Rootfs was already downloaded"
+      stat:
+        path: "{{ dir_downloaded_images }}{{file_coreos_rootfs}}"
+      register: stat_result
+      tags:
+        - download
+
+    - name: "04d - Download CoreOS-Rootfs"
+      get_url:
+        url: "{{ link_to_rootfs }}"
+        dest: "{{ dir_downloaded_images }}{{file_coreos_rootfs}}"
+      when: not stat_result.stat.exists
+      tags:
+        - download
+
+    # CoreOS-Initrd
+    - name: "05a - Check, if CoreOS-Initrd was already downloaded"
+      stat:
+        path: "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
+      register: stat_result
+      tags:
+        - download
+
+    - name: "05b - Download CoreOS-Initrd"
       get_url:
         url: "{{ link_to_coreos_initrd }}"
         dest: "{{ dir_downloaded_images }}{{file_coreos_initrd}}"
+      when: not stat_result.stat.exists
       tags:
         - download
 
-    - name: "06 - Download CoreOS-RawGz"
+    # CoreOS-RawGz
+    - name: "06a - Check, if CoreOS-RawGz was already downloaded"
+      stat:
+        path: "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
+      register: stat_result
+      tags:
+        - download
+
+    - name: "06b - Download CoreOS-RawGz"
       get_url:
         url: "{{ link_to_coreos_raw_gz }}"
         dest: "{{ dir_downloaded_images }}{{file_coreos_raw_gz}}"
+      when: not stat_result.stat.exists
       tags:
         - download
 
-    - name: "07 - Download oc-client {{link_to_oc}}"
+    # OC-Client
+    - name: "07a - Check, if OC-Client was already downloaded"
+      stat:
+        path: "{{ dir_downloaded_images }}{{file_oc}}"
+      register: stat_result
+      tags:
+        - download
+
+    - name: "07b - Download oc-client {{link_to_oc}}"
       get_url:
         url: "{{ link_to_oc }}"
         dest: "{{ dir_downloaded_images }}{{file_oc}}"
+      when: not stat_result.stat.exists
       tags:
-        - downloada
+        - download
 
-    - name: "08 - Download openshift-installer {{link_to_openshift_installer}}"
+    # openshift-install-Client
+    - name: "08a - Check, if Openshift-Install-Client was already downloaded"
+      stat:
+        path: "{{ dir_downloaded_images }}{{file_openshift_installer}}"
+      register: stat_result
+      tags:
+        - download
+
+    - name: "08b - Download openshift-installer {{link_to_openshift_installer}}"
       get_url:
         url: "{{ link_to_openshift_installer }}"
         dest: "{{ dir_downloaded_images }}{{file_openshift_installer}}"
+      when: not stat_result.stat.exists
       tags:
-        - downloada
+        - download
 
 
 # Download terraform software from internet
     - name: "09 - Download terraform"
       get_url:
         url: "{{ download_tf }}"
-        dest: "{{ dir_terraform }}"
+        dest: "{{ dir_tools }}"
 
 # Download terraform vSphere-Provider-Plugin from internet
     - name: "10 - Download terraform vSphere-Provider-Plugin"
@@ -88,7 +155,7 @@
 # Extraction of zip-archive
     - name: "11 - Entpacken von terraform"
       unarchive:
-        src: "{{ dir_terraform }}terraform_{{ tf_version }}_linux_amd64.zip"
+        src: "{{ dir_tools }}terraform_{{ tf_version }}_linux_amd64.zip"
         dest: "{{ dir_tools }}"
         remote_src: "true"
 
@@ -104,6 +171,7 @@
     - name: "13 - Create SSH-Key for root-user"
       become: "true"
       raw: "ssh-keygen -q -t rsa -N '' -f /root/.ssh/id_rsa <<<y 2>&1 >/dev/null"
+
 # Copy SSH-Key to localhost
     - name: "14 - SSH-COPY-ID"
       become: "true"
@@ -173,7 +241,8 @@
       become: "true"
       template:
         src: "../99-jinja-templates/ansible/ansible.cfg.j2"
-        dest: "/root/.ansible.cfg" 
+        dest: "/root/.ansible.cfg"
+
 # Create inventory file in /root-dir
     - name: "24 --- Create .ansible.cfg and inventory-file in /root"
       become: "true"

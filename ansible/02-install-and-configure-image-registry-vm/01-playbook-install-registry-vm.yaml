@@ -1,4 +1,4 @@
-- name: "Playbook - Install the Registry-VM"
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Install the Registry-VM"
   become: "true"
   become_user: "root"
   hosts: 127.0.0.1
@@ -177,7 +177,7 @@
     #     - create
 
 # Erzeuge die virtuelle Maschine
-    - name: "81 --- Create virtual machine with terraform"
+    - name: "81 --- Create virtual machine ({{ registry.hostname }}) with terraform"
       raw: "cd {{ dir_terraform }}{{ registry.hostname }} && /usr/local/bin/terraform init && /usr/local/bin/terraform apply -auto-approve"
 
 # Ermittle die MAC-Adresse, der erzeugten VM

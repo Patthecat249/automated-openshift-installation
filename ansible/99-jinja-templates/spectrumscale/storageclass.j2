@@ -1,0 +1,11 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: "{{storage_class_scale}}"
+provisioner: spectrumscale.csi.ibm.com
+parameters:
+  clusterId: "{{result_storage_cluster_id.stdout_lines | regex_replace('[^0-9]*', '')}}" # This must be the Storage-Cluster-ID
+  volBackendFs: "{{filesystem_name_cnsa}}" # The must be the file-system-name of the CNSA-Cluster
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+
