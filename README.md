@@ -1,4 +1,22 @@
+# Quick-Start
+
+```bash
+# Login into INSTALLVM
+ssh root@install-vm
+
+# Set Path-Variable
+mypath=${PWD}
+
+# Install Everything (Router, Load-Balancer, Registry, Bootstrap, Master, Worker) with one command
+cd $mypath/git/automated-openshift-installation/ansible/00-play-all-in-one/ %% ansible-playbook 01-play-all.yaml
+```
+
+
+
+
+
 # Projektbeschreibung
+
 Diese Script-Sammlung hat zum Ziel voll automatisiert einen OpenShift-Cluster in einer VMware-Umgebung mit vCenter zu installieren. 
 
 
