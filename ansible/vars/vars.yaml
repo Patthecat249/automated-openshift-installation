@@ -1,9 +1,9 @@
 # OpenShift
 clustername: "openshift"
 domain: "home.local"
-version_openshift: "4.7.22"
-version_core_os: "4.7.13"
-version_major: "4.7"
+version_openshift: "4.8.12"
+version_core_os: "4.8.2"
+version_major: "4.8"
 clusternetwork: "10.254.0.0/16"
 servicenetwork: "10.255.0.0/16"
 
