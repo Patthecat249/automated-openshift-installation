@@ -226,7 +226,7 @@ router:
   ram: "1024"
   disk: "200"
   openshift:
-    ip: "11.11.11.1"
+    ip: "11.11.12.1"
   
 
 # Router
