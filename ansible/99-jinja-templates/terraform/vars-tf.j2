@@ -1,7 +1,7 @@
 
 # VMware Folder, where VM will be created
 variable "ocp-folder" {
-  default = "{{ dir_vmware }}"
+  default = "{{ vsphere_folder }}"
 }
 
 # VMware Tag
