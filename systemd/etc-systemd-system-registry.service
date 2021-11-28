@@ -1,0 +1,12 @@
+[Unit]
+Description=Service zum starten der Mirrored-Registry mit Podman
+
+[Service]
+User=root
+WorkingDirectory=/root/registry-start-script
+ExecStart=/usr/bin/podman start -a mirror-registry
+ExecStop=/usr/bin/podman stop mirror-registry
+Restart=always
+
+[Install]
+WantedBy=local.target
