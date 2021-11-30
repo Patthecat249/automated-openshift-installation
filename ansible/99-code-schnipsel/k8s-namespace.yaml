@@ -1,0 +1,10 @@
+- name: "Kubectl"
+  hosts: localhost
+  tasks:
+    - name: "Create a k8s namespace"
+      k8s:
+        name: test
+        api_version: v1
+        kind: Namespace
+        state: present
+        kubeconfig: "/opt/sva/openshift/install-config/auth/kubeconfig"
