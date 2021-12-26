@@ -37,6 +37,7 @@
       unarchive:
         src: "{{ dir_downloaded_images }}{{jfrog.tar_file}}"
         dest: "{{ jfrog.install_folder }}"
+        remote_src: "true"
       tags:
         - test 
 
