@@ -25,7 +25,7 @@
         - test 
 
 # Download Artifactory-jcr-Software + nginx
-    - name: "01 - Download Artifactory-Tar-File: {{jfrog.tar_file}}"
+    - name: "02 - Download Artifactory-Tar-File: {{jfrog.tar_file}}"
       get_url:
         url: "{{ jfrog.url }}"
         dest: "{{ dir_downloaded_images }}{{jfrog.tar_file}}"
@@ -33,15 +33,15 @@
         - test
 
 # Entpacken
-    - name: "02 - Entpacken Artifactory-Tar-File: {{link_to_coreos_kernel}}"
-      archive:
+    - name: "03 - Entpacken Artifactory-Tar-File: {{jfrog.tar_file}}"
+      unarchive:
         src: "{{ dir_downloaded_images }}{{jfrog.tar_file}}"
         dest: "{{ jfrog.install_folder }}"
       tags:
         - test 
 
 # Copy Template into Install-Folder
-    - name: "01 - Copy-Artifactory-Config-Template to: {{jfrog.artifactory_config_file}}"
+    - name: "04 - Copy-Artifactory-Config-Template to: {{jfrog.artifactory_config_file}}"
       template:
         src: "{{ jfrog.artifactory_config_file }}"
         dest: "{{ jfrog.install_folder }}artifactory.config.latest.xml"
@@ -50,7 +50,7 @@
 
 
 # EPEL-Release bei CentOS hinzufügen
-    - name: "03 - yum-repos EPEL-RELEASE hinzufügen"
+    - name: "05 - yum-repos EPEL-RELEASE hinzufügen"
       become: "true"
       yum:
         name:
@@ -58,7 +58,7 @@
         state: "present"
 
 # Ansible hinzufügen
-    - name: "04 - Update yum-repos centos-release-ansible-29.noarch"
+    - name: "06 - Update yum-repos centos-release-ansible-29.noarch"
       become: "true"
       yum:
         name:
@@ -66,7 +66,7 @@
         state: "present"
 
 # Software installieren
-    - name: "05 - Install necassary software programs"
+    - name: "07 - Install necassary software programs"
       become: "true"
       yum:
         name:
