@@ -97,6 +97,15 @@
       tags:
         - install
 
+    - name: "09 - Start Artifactory-Service"
+      service:
+        name: "artifactory.service"
+        state: started
+        enabled: yes
+      tags:
+        - install
+
+
 # # Mirror images from Red Hat to mirror-registry
 #     - name: "16 - Mirror the Images from Red Hat into mirror-registry"
 #       command: "/usr/local/bin/oc adm -a {{ dir_tools }}pull-secret release mirror --from=quay.io/{{product_repo}}/{{release_name}}:{{ocp_release}} --to={{local_registry}}:{{registry_port}}/{{local_repository}} --to-release-image={{local_registry}}:{{registry_port}}/{{local_repository}}:{{ocp_release}}"
