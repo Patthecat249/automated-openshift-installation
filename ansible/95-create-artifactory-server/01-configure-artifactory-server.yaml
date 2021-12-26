@@ -25,17 +25,17 @@
         - test 
 
 # Download Artifactory-jcr-Software + nginx
-    - name: "01 - Download Artifactory-Tar-File: {{jfrog_tar_file}}"
+    - name: "01 - Download Artifactory-Tar-File: {{jfrog.tar_file}}"
       get_url:
         url: "{{ jfrog.url }}"
-        dest: "{{ dir_downloaded_images }}{{jfrog_tar_file}}"
+        dest: "{{ dir_downloaded_images }}{{jfrog.tar_file}}"
       tags:
         - test
 
 # Entpacken
     - name: "02 - Entpacken Artifactory-Tar-File: {{link_to_coreos_kernel}}"
       archive:
-        src: "{{ dir_downloaded_images }}{{jfrog_tar_file}}"
+        src: "{{ dir_downloaded_images }}{{jfrog.tar_file}}"
         dest: "{{ jfrog.install_folder }}"
       tags:
         - test 
