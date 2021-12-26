@@ -429,7 +429,8 @@ productLoglevel: "INFO"
 # --- Artifactory --- #
 jfrog_version: "7.27.6"
 jfrog:
-  install_folder: "/jfrog/artifactory/"
+  install_folder: "/jfrog/"
+  work_folder: "/jfrog/artifactory-jcr-{{jfrog_version}}"
   fqdn: "artifactory.{{domain}}"
   url: "https://releases.jfrog.io/artifactory/bintray-artifactory/org/artifactory/jcr/jfrog-artifactory-jcr/{{jfrog_version}}/jfrog-artifactory-jcr-{{jfrog_version}}-linux.tar.gz"
   tar_file: "jfrog-artifactory-jcr-{{jfrog_version}}-linux.tar.gz"
