@@ -85,7 +85,7 @@
           - nfs-utils.x86_64
           - unzip
           - dnsmasq
-          - policycoreutils-python-utils
+          #- policycoreutils-python-utils
           - httpd
           - unzip
         state: "present"
