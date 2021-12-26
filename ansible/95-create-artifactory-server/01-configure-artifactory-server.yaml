@@ -90,7 +90,10 @@
           - unzip
         state: "present"
 
-
+# Install Artifactory as a service
+#$JFROG_HOME/artifactory/app/bin/installService.sh
+    - name: "08 - Install Artifactory as a service"
+      raw: "{{jfrog.work_folder}}app/bin/installService.sh"
 
 # # Mirror images from Red Hat to mirror-registry
 #     - name: "16 - Mirror the Images from Red Hat into mirror-registry"
