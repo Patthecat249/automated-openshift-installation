@@ -88,6 +88,7 @@
           #- policycoreutils-python-utils
           - httpd
           - unzip
+          - net-tools.x86_64
         state: "present"
 
 # Install Artifactory as a service
