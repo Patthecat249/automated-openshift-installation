@@ -1,4 +1,5 @@
 credentials.yaml
+inventory
 vault
 pull-secret
 #main.tf
