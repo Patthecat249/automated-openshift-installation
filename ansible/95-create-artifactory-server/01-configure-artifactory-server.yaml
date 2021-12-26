@@ -23,16 +23,6 @@
       tags:
         - test 
 
-# Copy Template into Install-Folder
-    - name: "01 - Copy-Artifactory-Config-Template to: {{jfrog.artifactory_config_file}}"
-      template:
-        src: "{{ jfrog.artifactory_config_file }}"
-        dest: "{{ jfrog.install_folder }}artifactory.config.latest.xml"
-      tags:
-        - test 
-
-
-
 # Download Artifactory-jcr-Software + nginx
     - name: "01 - Download Artifactory-Tar-File: {{jfrog_tar_file}}"
       get_url:
@@ -46,7 +36,18 @@
       archive:
         src: "{{ dir_downloaded_images }}{{jfrog_tar_file}}"
         dest: "{{ jfrog.install_folder }}"
-  
+      tags:
+        - test 
+
+# Copy Template into Install-Folder
+    - name: "01 - Copy-Artifactory-Config-Template to: {{jfrog.artifactory_config_file}}"
+      template:
+        src: "{{ jfrog.artifactory_config_file }}"
+        dest: "{{ jfrog.install_folder }}artifactory.config.latest.xml"
+      tags:
+        - test 
+
+
 # EPEL-Release bei CentOS hinzufügen
     - name: "03 - yum-repos EPEL-RELEASE hinzufügen"
       become: "true"
