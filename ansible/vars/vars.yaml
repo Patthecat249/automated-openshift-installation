@@ -424,3 +424,24 @@ baas_license_is: "true"
 isOCP: "true"
 isServerInstalledOnAnotherCluster: "false"
 productLoglevel: "INFO"
+
+
+# --- Artifactory --- #
+jfrog:
+  install_folder: "/jfrog/artifactory/"
+  fqdn: "artifactory.{{domain}}"
+  version: "7.27.6"
+  url: "https://releases.jfrog.io/artifactory/bintray-artifactory/org/artifactory/jcr/jfrog-artifactory-jcr/{{jfrog.version}}/jfrog-artifactory-jcr-{{jfrog.version}}-linux.tar.gz"
+  tar_file: "jfrog-artifactory-jcr-{{jfrog.version}}-linux.tar.gz"
+  artifactory_config_file: "files/artifactory-config.xml.j2"
+  config_xml: "{{install_folder}}var/etc/artifactory/artifactory.config.latest.xml"
+
+
+# --- Nginx --- #
+nginx:
+  file_config: "nginx.conf"
+  folder_config: "/etc/nginx/"
+  certs:
+    key: "wildcard-artifactory-key.pem"
+    crt: "wildcard-artifactory-crt.pem" 
+    req: "wildcard-artifactory-req.pem"

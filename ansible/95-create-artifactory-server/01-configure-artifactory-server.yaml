@@ -1,0 +1,91 @@
+# Execute on Artifactory-Server
+# Basis: CentOS8.x, RHEL8.x, Fedora35
+# Artifactory-Server muss Internet-Zugang haben
+---
+- name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Configure-Artifactory-Server"
+  hosts: artifactory
+  gather_facts: "false"
+  vars_files:
+    - "../vars/vars.yaml"
+    - "files/credentials"
+  tasks:
+
+# Create Working-Directories
+    - name: "01 --- Create Working-Directories"
+      file:
+        path: "{{ item }}"
+        state: "directory"
+        recurse: "true"
+      with_items:
+        - "{{ dir_root }}"
+        - "{{ jfrog.install_folder }}"
+        - "{{ dir_downloaded_images }}"
+      tags:
+        - test 
+
+# Copy Template into Install-Folder
+    - name: "01 - Copy-Artifactory-Config-Template to: {{jfrog.artifactory_config_file}}"
+      template:
+        src: "{{ jfrog.artifactory_config_file }}"
+        dest: "{{ jfrog.install_folder }}artifactory.config.latest.xml"
+      tags:
+        - test 
+
+
+
+# Download Artifactory-jcr-Software + nginx
+    - name: "01 - Download Artifactory-Tar-File: {{jfrog_tar_file}}"
+      get_url:
+        url: "{{ jfrog.url }}"
+        dest: "{{ dir_downloaded_images }}{{jfrog_tar_file}}"
+      tags:
+        - test
+
+# Entpacken
+    - name: "02 - Entpacken Artifactory-Tar-File: {{link_to_coreos_kernel}}"
+      archive:
+        src: "{{ dir_downloaded_images }}{{jfrog_tar_file}}"
+        dest: "{{ jfrog.install_folder }}"
+  
+# EPEL-Release bei CentOS hinzufügen
+    - name: "03 - yum-repos EPEL-RELEASE hinzufügen"
+      become: "true"
+      yum:
+        name:
+          - "epel-release"
+        state: "present"
+
+# Ansible hinzufügen
+    - name: "04 - Update yum-repos centos-release-ansible-29.noarch"
+      become: "true"
+      yum:
+        name:
+          - "centos-release-ansible-29.noarch"
+        state: "present"
+
+# Software installieren
+    - name: "05 - Install necassary software programs"
+      become: "true"
+      yum:
+        name:
+          - ansible.noarch
+          - git
+          - sshpass
+          - wget.x86_64
+          - jq.x86_64
+          - podman.x86_64
+          - skopeo.x86_64
+          - nfs-utils.x86_64
+          - unzip
+          - dnsmasq
+          - policycoreutils-python-utils
+          - httpd
+          - unzip
+        state: "present"
+
+
+
+# # Mirror images from Red Hat to mirror-registry
+#     - name: "16 - Mirror the Images from Red Hat into mirror-registry"
+#       command: "/usr/local/bin/oc adm -a {{ dir_tools }}pull-secret release mirror --from=quay.io/{{product_repo}}/{{release_name}}:{{ocp_release}} --to={{local_registry}}:{{registry_port}}/{{local_repository}} --to-release-image={{local_registry}}:{{registry_port}}/{{local_repository}}:{{ocp_release}}"
+#       delegate_to: "{{registry.ip}}"
