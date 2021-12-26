@@ -434,7 +434,7 @@ jfrog:
   url: "https://releases.jfrog.io/artifactory/bintray-artifactory/org/artifactory/jcr/jfrog-artifactory-jcr/{{jfrog.version}}/jfrog-artifactory-jcr-{{jfrog.version}}-linux.tar.gz"
   tar_file: "jfrog-artifactory-jcr-{{jfrog.version}}-linux.tar.gz"
   artifactory_config_file: "files/artifactory-config.xml.j2"
-  config_xml: "{{install_folder}}var/etc/artifactory/artifactory.config.latest.xml"
+  config_xml: "{{jfrog.install_folder}}var/etc/artifactory/artifactory.config.latest.xml"
 
 
 # --- Nginx --- #
