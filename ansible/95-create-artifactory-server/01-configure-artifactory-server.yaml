@@ -4,6 +4,7 @@
 ---
 - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Configure-Artifactory-Server"
   hosts: artifactory
+  become: "true"
   gather_facts: "false"
   vars_files:
     - "../vars/vars.yaml"
