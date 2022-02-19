@@ -1,0 +1,181 @@
+# This playbook must be run on install-vm node 
+---
+# Dieses Playbook installiert und konfiguriert Spectrum Scale-CNSA in OpenShift
+# Das ist eine Online-Installation
+# Schritte
+# Github-YAML-Files herunterladen
+# - https://raw.githubusercontent.com/IBM/ibm-spectrum-scale-container-native/v5.1.2.1/config/scale/cluster/cluster/scale_v1beta1_cluster.yaml
+# -   oc apply -f https://raw.githubusercontent.com/IBM/ibm-spectrum-scale-container-native/v5.1.2.1/generated/mco/ocp4.8/mco_x86_64.yaml
+
+# Copy des Tar-Files Spectrum_Scale_Container_Native_Storage_Access-<version>-<arch>.tgz von Install-Node auf Bastion-Host
+- name: "01a - Check, if {{cnsa_install_file}} was already copied"
+  stat:
+    path: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+  register: stat_result
+  tags:
+    - download
+    
+- name: "### --- 01b - Copy {{cnsa_install_file}} from Install to Bastion-Host"
+  copy:
+    src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+    dest: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+  when: not stat_result.stat.exists
+  tags:
+    - reinstall
+
+# Prevent Nodes from auto-rebooting
+- name: "### --- 02 - Prevent Master-OCP-Nodes from autorebooting"
+  shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":true}}' machineconfigpool/master --kubeconfig={{kubeconfig}}"
+
+- name: "### --- 03 - Prevent Worker-OCP-Nodes from autorebooting"
+  shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":true}}' machineconfigpool/worker --kubeconfig={{kubeconfig}}"
+
+# Create a Namespace for SpectrumScale CNSA installation in OpenShift
+- name: "### --- 04 - Create the Namespace {{namespace_cnsa}}"
+  shell: "oc create namespace {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
+  tags:
+    - reinstall
+
+
+# Entpacken von Spectrum_Scale_Container_Native_Storage_Access-<version>-<arch>.tgz
+- name: "05a - Check, if {{cnsa_install_file}} was already extracted"
+  stat:
+    path: "{{dir_spectrumscale}}spectrumscale"
+  register: stat_result_scale
+
+
+# Extraction of zip-archive
+- name: "### --- 05b - Entpacken von {{cnsa_install_file}}"
+  unarchive:
+    src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
+    dest: "{{dir_spectrumscale}}"
+    remote_src: "true"
+  when: not stat_result_scale.stat.exists
+  tags:
+    - reinstall
+# Increase PIDS_LIMIT (von 1024 > 4096) UND
+# Installieren der Kernel-Abhängigkeit "kernel-devel" im OpenShift per Operator
+# Machine-Config-Template erstellen mit beiden
+# Alternativ: 
+# oc create -f spectrumscale/machineconfig/increase_pid_mco.yaml
+# oc create -f spectrumscale/machineconfig/machineconfigoperator.yaml
+- name: "### --- 06 - Create Template machineconfig and ContainerRuntimeConfig in one file"
+  template:
+    src: "../../99-jinja-templates/spectrumscale/worker-machine-config.j2"
+    dest: "{{dir_spectrumscale}}sps-worker-machine-config.yaml"
+
+- name: "### --- 07 - Create machine-config"
+  raw: "oc apply -f {{dir_spectrumscale}}sps-worker-machine-config.yaml --kubeconfig={{kubeconfig}}"
+# Login into Registry
+# podman login -u {{registry_user}} -p {{registry_pass}} {{local_registry}}:{{registry_port}}
+
+# Label the machineconfigpool
+- name: "### --- 08 - Label machine-config-pool worker"
+  raw: "oc label machineconfigpool worker pid-crio=config-pid --overwrite --kubeconfig={{kubeconfig}}"
+
+# # Label the Worker-Nodes
+- name: "### --- 09 - Label Worker-Nodes with Label app.kubernetes.io/component=scale"
+  raw: "oc label node {{item.hostname}} app.kubernetes.io/component=scale --overwrite --kubeconfig={{kubeconfig}}"
+  with_items:
+    - "{{workers}}"
+
+
+# Load der Images aus TAR-File
+- name: "### --- 10 - Load of Images from TAR-File"
+  raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed \"s/-$tag/:$tag/g\"`; podman load -i $file localhost/$tagname; done"
+  tags:
+    - reinstall
+
+# Tag, Push der Images aus TAR-File
+- name: "### --- 11 - Tag, Push der Images aus TAR-File in Registry"
+  raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed \"s/-$tag/:$tag/g\"`; podman tag localhost/$tagname {{local_registry}}:{{registry_port}}/$tagname; podman push --authfile {{pull_secret_fullpath}} {{local_registry}}:{{registry_port}}/$tagname; done"
+  tags:
+    - reinstall
+# Create Secret for GUI-User in SPS-OpenShift
+# Zu klären: User in OpenShift AND SPS-Storage-Cluster must be the same!
+- name: "### --- 12 - Create Secret for GUI-User in SPS-OpenShift"
+  raw: "oc create secret generic {{secret_name_storage_cluster}} --from-literal=username='{{user_cnss}}' --from-literal=password='{{pass_cnss}}' -n {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
+  tags:
+    - reinstall
+# Edit the spectrumscale/deploy/operator.yaml and modify the imagenames
+- name: "### --- 13 - Create Template for the SPS-Operator"
+  template:
+    src: "../../99-jinja-templates/spectrumscale/operator.j2"
+    dest: "{{dir_spectrumscale}}spectrumscale/deploy/operator.yaml"
+    force: "yes"
+    backup: "yes"
+  tags:
+    - reinstall
+# Edit the Custom Resource spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml file 
+- name: "### --- 14 - Create Template for the Spectrum-Custom-Resource in OpenShift"
+  template:
+    src: "../../99-jinja-templates/spectrumscale/ibm_v1_scalecluster_cr.j2"
+    dest: "{{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml"
+    force: "yes"
+    backup: "yes"
+  tags:
+    - reinstall
+
+
+# Deploy the CNSA-Cluster into OpenShift
+- name: "### --- 15 - Deploy the CRD, CR and everything"
+  raw: "{{item}}"
+  with_items:
+    - "oc create -f {{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_crd.yaml -n {{namespace_spectrumscale}} --kubeconfig={{kubeconfig}}"
+    - "oc create -f {{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml -n {{namespace_spectrumscale}} --kubeconfig={{kubeconfig}}"
+    - "oc create -f {{dir_spectrumscale}}spectrumscale/deploy -n {{namespace_spectrumscale}} --kubeconfig={{kubeconfig}}"
+  tags:
+    - deploysps
+    - reinstall
+
+# Wait two minutes
+- name: "Wait ten seconds..."
+  wait_for:
+    timeout: 30
+  tags:
+    - reinstall
+
+# Delete secret
+- name: "### --- 16 - Delete default secret ibm-spectrum-scale-gui-containeroperator"
+  raw: "oc delete secret ibm-spectrum-scale-gui-containeroperator -n {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
+  tags:
+    - reinstall
+    - secret
+
+# Create secret
+- name: "### --- 17 - Create default secret ibm-spectrum-scale-gui-containeroperator"
+  raw: "oc create secret generic ibm-spectrum-scale-gui-containeroperator --from-literal=username='{{user_containeroperator}}' --from-literal=password='{{pass_containeroperator}}' --from-literal=group='{{grp_containeroperator}}' -n {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
+  tags:
+    - reinstall
+    - secret
+
+# Wait script einbauen
+- name: "Wait for all 9/9 Pods of GUI are running"
+  shell: "/usr/local/bin/oc --kubeconfig=\"{{kubeconfig}}\" get pods -n {{namespace_cnsa}} | grep gui | grep 9/9"
+  register: cmd_res
+  retries: 90
+  delay: 30
+  until: cmd_res.stdout_lines | list | count >= 1
+
+# Change Password from ContainerOperator in GUI-Pod
+- name: "### --- 18 - Change Password from ContainerOperator in GUI-Pod"
+  raw: "oc exec --kubeconfig={{kubeconfig}} $(oc --kubeconfig={{kubeconfig}} get pods -lapp=scale-gui -ojsonpath=\"{.items[0].metadata.name}\" -n {{namespace_cnsa}}) liberty -n {{namespace_cnsa}} -- /usr/lpp/mmfs/gui/cli/chuser {{user_containeroperator}} -p '{{pass_containeroperator}}'"
+  tags:
+    - reinstall
+    - secret
+
+# Restart GUI-Pod
+- name: "### --- 19 - Restart GUI-Pod"
+  raw: "oc delete pod --kubeconfig={{kubeconfig}} $(oc --kubeconfig={{kubeconfig}} get pods -lapp=scale-gui -ojsonpath=\"{.items[0].metadata.name}\" -n {{namespace_cnsa}}) -n {{namespace_cnsa}}"
+  tags:
+    - reinstall
+    - secret
+
+# Enable Nodes to auto-rebooting
+- name: "### --- 20 - Enable Master-OCP-Nodes to autoreboot"
+  shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":false}}' machineconfigpool/master --kubeconfig={{kubeconfig}}"
+
+- name: "### --- 21 - Enable Worker-OCP-Nodes to autoreboot"
+  shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":false}}' machineconfigpool/worker --kubeconfig={{kubeconfig}}"
+
+# Wait for Nodes to reboot
