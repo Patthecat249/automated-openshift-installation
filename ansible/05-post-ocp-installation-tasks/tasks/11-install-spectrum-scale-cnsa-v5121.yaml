@@ -12,6 +12,7 @@
 ## - Download yaml from Github
 ## - Create templates from github-yaml-files
 ## - Create Namespaces
+## - Create configmap with scale-storage-cluster-certificate
 ## - Prevent Nodes from auto-rebooting
 ## - Create MachineConfig and ContainerRunTimeConfig
 ## - Label Nodes
@@ -30,35 +31,145 @@
 
 
 # Prevent Nodes from auto-rebooting
-- name: "02 - Prevent Master-OCP-Nodes from autorebooting"
-  shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":true}}' machineconfigpool/master --kubeconfig={{kubeconfig}}"
+- name: "Prevent nodes from autorebooting while patching - MASTER" 
+  # shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":true}}' machineconfigpool/master --kubeconfig={{ kubeconfig_path }}"
+  k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    context: admin
+    definition:
+      apiVersion: machineconfiguration.openshift.io/v1
+      kind: MachineConfigPool
+      metadata:
+        name: master
+      spec:
+        paused: true
 
-- name: "03 - Prevent Worker-OCP-Nodes from autorebooting"
-  shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":true}}' machineconfigpool/worker --kubeconfig={{kubeconfig}}"
+- name: "Prevent nodes from autorebooting while patching - WORKER" 
+  # shell: "oc patch --type=merge --patch='{\"spec\":{\"paused\":true}}' machineconfigpool/worker --kubeconfig={{ kubeconfig_path }}"
+  k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    context: admin
+    definition:
+      apiVersion: machineconfiguration.openshift.io/v1
+      kind: MachineConfigPool
+      metadata:
+        name: worker
+      spec:
+        paused: true
 
 # Create a Namespace for SpectrumScale CNSA installation in OpenShift
-- name: "04 - Create the Namespace {{namespace_cnsa}}"
-  shell: "oc create namespace {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
+# Create a Namespace for SpectrumScale CNSA installation in OpenShift
+- name: "### --- 05 - Create the Namespace {{namespace_cnsa}}"
+  # ignore_errors: "yes"
+  # shell: "oc create namespace {{namespace_cnsa}} --kubeconfig={{ kubeconfig_path }}"
+  k8s:
+    name: "{{ namespace_cnsa }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    context: admin
   tags:
     - reinstall
+    - v5113
 
+# Create a Namespace for SpectrumScale Driver installation in OpenShift
+- name: "### --- 06 - Create the Namespace {{namespace_csi_driver}}"
+  # ignore_errors: "yes"
+  # shell: "oc create namespace {{namespace_csi_driver}} --kubeconfig={{ kubeconfig_path }}"
+  k8s:
+    name: "{{ namespace_csi_driver }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    context: admin
+  tags:
+    - reinstall    
+    - v5113
 
-# Entpacken von Spectrum_Scale_Container_Native_Storage_Access-<version>-<arch>.tgz
-- name: "05a - Check, if {{cnsa_install_file}} was already extracted"
-  stat:
-    path: "{{dir_spectrumscale}}spectrumscale"
-  register: stat_result_scale
+# Create a Namespace for SpectrumScale Operator installation in OpenShift
+- name: "### --- 07 - Create the Namespace {{namespace_cnsa_operator}}"
+  # ignore_errors: "yes"
+  # shell: "oc create namespace {{namespace_cnsa_operator}} --kubeconfig={{ kubeconfig_path }}"
+  k8s:
+    name: "{{ namespace_cnsa_operator }}"
+    api_version: v1
+    kind: Namespace
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    context: admin
+  tags:
+    - reinstall   
+    - v5113
 
+# Trust the self signed certificate of remote gpfs cluster GUI
+- name: "### --- 08 - Create CA Certificats for storage cluster"
+  # command: |
+  #   oc create configmap cacert-storage-cluster-1 --from-literal=storage-cluster-1.crt="$(openssl s_client -showcerts -connect {{ sps.sps1.fqdn }}:443 </dev/null 2>/dev/null|openssl x509 -outform PEM)" -n {{namespace_cnsa}} --kubeconfig={{ kubeconfig_path }}
+  # ignore_errors: yes
+  k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    context: admin
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: cacert-storage-cluster-1
+        namespace: "{{ namespace_cnsa }}"
+      data:
+        storage-cluster-1.crt: "{{ lookup('pipe', 'openssl s_client -showcerts -connect ' + sps.sps1.fqdn + ':443 </dev/null 2>/dev/null|openssl x509 -outform PEM') }}"
+  tags:
+    - v5113
 
-# Extraction of zip-archive
-- name: "05b - Entpacken von {{cnsa_install_file}}"
-  unarchive:
-    src: "{{dir_spectrumscale}}{{cnsa_install_file}}"
-    dest: "{{dir_spectrumscale}}"
-    remote_src: "true"
-  when: not stat_result_scale.stat.exists
+# This secret must be a Containeroperator-User on the Storage-Cluster
+- name: "### --- 10 - Create Secret for GUI-User cnsa in SPS-OpenShift"
+  # ignore_errors: "yes"
+  # raw: "oc create secret generic {{secret_name_storage_cluster_cnsa}} --from-literal=username='{{user_cnsa}}' --from-literal=password='{{pass_cnsa}}' -n {{namespace_cnsa}} --kubeconfig={{ kubeconfig_path }}"
+  k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    context: admin
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: Opaque
+      metadata:
+        name: "{{ secret_name_storage_cluster_cnsa }}"
+        namespace: "{{ namespace_cnsa }}"
+      stringData:
+        username: "{{ user_cnsa }}"
+        password: "{{ pass_cnsa }}"
   tags:
     - reinstall
+    - v5113
+
+- name: "### --- 11 - Create Secret for GUI-User csiadm of SpectrumScale-Storage-Cluster"
+  # ignore_errors: "yes"
+  # raw: "oc create secret generic {{secret_name_storage_cluster_csi}} --from-literal=username='{{user_csiadmin}}' --from-literal=password='{{pass_csiadmin}}' -n {{namespace_csi_driver}} --kubeconfig={{ kubeconfig_path }}"
+  k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    context: admin
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: Opaque
+      metadata:
+        name: "{{ secret_name_storage_cluster_csi }}"
+        namespace: "{{ namespace_csi_driver }}"
+        labels:
+          product: ibm-spectrum-scale-csi
+      stringData:
+        username: "{{ user_csiadmin }}"
+        password: "{{ pass_csiadmin }}"
+  tags:
+    - v5113
+    
+    
 # Increase PIDS_LIMIT (von 1024 > 4096) UND
 # Installieren der Kernel-Abhängigkeit "kernel-devel" im OpenShift per Operator
 # Machine-Config-Template erstellen mit beiden
@@ -75,71 +186,92 @@
 # Login into Registry
 # podman login -u {{registry_user}} -p {{registry_pass}} {{local_registry}}:{{registry_port}}
 
-# Label the machineconfigpool
-- name: "08 - Label machine-config-pool worker"
-  raw: "oc label machineconfigpool worker pid-crio=config-pid --overwrite --kubeconfig={{kubeconfig}}"
 
 # # Label the Worker-Nodes
-- name: "09 - Label Worker-Nodes with Label app.kubernetes.io/component=scale"
-  raw: "oc label node {{item.hostname}} app.kubernetes.io/component=scale --overwrite --kubeconfig={{kubeconfig}}"
+- name: "### --- 09 - Label Worker-Nodes with Label app.kubernetes.io/component=scale"
+  # raw: "oc label node {{item.hostname}} app.kubernetes.io/component=scale --overwrite --kubeconfig={{ kubeconfig_path }}"
+  k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    context: admin
+    definition:
+      apiVersion: v1
+      kind: Node
+      metadata:
+        name: "{{ item.hostname }}"
+        labels: 
+          app.kubernetes.io/component: scale
   with_items:
     - "{{workers}}"
-
-
-# Load der Images aus TAR-File
-- name: "10 - Load of Images from TAR-File"
-  raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed \"s/-$tag/:$tag/g\"`; podman load -i $file localhost/$tagname; done"
   tags:
-    - reinstall
+    - v5113
 
-# Tag, Push der Images aus TAR-File
-- name: "11 - Tag, Push der Images aus TAR-File in Registry"
-  raw: "cd {{dir_spectrumscale}}; for file in `ls spectrumscale/*.tar`; do tarname=${file##*/}; tag=`echo $tarname | sed 's/.tar//g' | rev | cut -d- -f1 | rev`; tagname=`echo $tarname | sed 's/.tar//g' | sed \"s/-$tag/:$tag/g\"`; podman tag localhost/$tagname {{local_registry}}:{{registry_port}}/$tagname; podman push --authfile {{pull_secret_fullpath}} {{local_registry}}:{{registry_port}}/$tagname; done"
-  tags:
-    - reinstall
-# Create Secret for GUI-User in SPS-OpenShift
-# Zu klären: User in OpenShift AND SPS-Storage-Cluster must be the same!
-- name: "12 - Create Secret for GUI-User in SPS-OpenShift"
-  raw: "oc create secret generic {{secret_name_storage_cluster}} --from-literal=username='{{user_cnss}}' --from-literal=password='{{pass_cnss}}' -n {{namespace_cnsa}} --kubeconfig={{kubeconfig}}"
-  tags:
-    - reinstall
-# Edit the spectrumscale/deploy/operator.yaml and modify the imagenames
-- name: "13 - Create Template for the SPS-Operator"
+# Edit the ibm-spectrum-scale-operator-v{{ version_cnsa }}.yaml and modify the imagenames
+- name: "### --- 13 - Create Template for the SPS-Operator"
   template:
-    src: "../../99-jinja-templates/spectrumscale/operator.j2"
-    dest: "{{dir_spectrumscale}}spectrumscale/deploy/operator.yaml"
+    src: "../templates/ibm-spectrum-scale-operator-v{{ version_cnsa }}.yaml"
+    dest: "{{dir_spectrumscale}}ibm-spectrum-scale-operator-v{{ version_cnsa }}.yaml"
+    owner: "ocpadm"
+    group: "ocpadmin"
     force: "yes"
     backup: "yes"
   tags:
     - reinstall
-# Edit the Custom Resource spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml file 
-- name: "14 - Create Template for the Spectrum-Custom-Resource in OpenShift"
+    - v5113
+
+
+# Edit the Custom Resource ibm_v1_scalecluster_cr-v{{ version_cnsa }}.yaml file 
+- name: "### --- 14 - Create Template for the Spectrum-Custom-Resource in OpenShift"
   template:
-    src: "../../99-jinja-templates/spectrumscale/ibm_v1_scalecluster_cr.j2"
-    dest: "{{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml"
+    src: "../templates/ibm_v1_scalecluster_cr-v{{ version_cnsa }}.yaml"
+    dest: "{{dir_spectrumscale}}ibm_v1_scalecluster_cr-v{{ version_cnsa }}.yaml"
+    owner: "ocpadm"
+    group: "ocpadmin"
     force: "yes"
     backup: "yes"
   tags:
     - reinstall
+    - v5113
 
 
 # Deploy the CNSA-Cluster into OpenShift
-- name: "15 - Deploy the CRD, CR and everything"
-  raw: "{{item}}"
-  with_items:
-    - "oc create -f {{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_crd.yaml -n {{namespace_spectrumscale}} --kubeconfig={{kubeconfig}}"
-    - "oc create -f {{dir_spectrumscale}}spectrumscale/deploy/crds/ibm_v1_scalecluster_cr.yaml -n {{namespace_spectrumscale}} --kubeconfig={{kubeconfig}}"
-    - "oc create -f {{dir_spectrumscale}}spectrumscale/deploy -n {{namespace_spectrumscale}} --kubeconfig={{kubeconfig}}"
+- name: "### --- 15 - Deploy the IBM-Spectrum-Scale-Operator and CNSA-Cluster"
+  # ignore_errors: "yes"
+  # raw: "{{item}}"
+  # with_items:
+  #   - "oc apply -f {{dir_spectrumscale}}ibm-spectrum-scale-operator-v{{ version_cnsa }}.yaml  --kubeconfig={{ kubeconfig_path }}"
+  #   - "oc apply -f {{dir_spectrumscale}}ibm_v1_scalecluster_cr-v{{ version_cnsa }}.yaml --kubeconfig={{ kubeconfig_path }}"
+  k8s:
+    state: present
+    src: "{{ item }}"
+    kubeconfig: "{{ kubeconfig_path }}"
+    context: admin
+  loop:
+    - "{{ dir_spectrumscale }}ibm-spectrum-scale-operator-v{{ version_cnsa }}.yaml"
+    - "{{ dir_spectrumscale }}ibm_v1_scalecluster_cr-v{{ version_cnsa }}.yaml"
   tags:
     - deploysps
     - reinstall
+    - v5113
 
-# Wait two minutes
-- name: "Wait ten seconds..."
-  wait_for:
-    timeout: 30
+# Wait for all four Pods of CNSA Gui are running
+- name: "### --- 16 - Wait for all 4/4 Pods of GUI are running"
+  shell: "/usr/local/bin/oc --kubeconfig=\"{{ kubeconfig_path }}\" get pods -n {{namespace_cnsa}} | grep gui | grep 4/4"
+  changed_when: false
+  register: cmd_res
+  retries: 90
+  delay: 30
+  until: cmd_res.stdout_lines | list | count >= 1
+
+# Wait until GUI is initialized
+- name: "### --- 17 - Wait for CNSA-GUI is initialized and available"
+  raw: "oc --kubeconfig={{ kubeconfig_path }} -n {{namespace_cnsa}} exec {{ workers[0].hostname }} -- curl -s -k https://ibm-spectrum-scale-gui-ibm-spectrum-scale.apps.{{clustername}}.{{domainname}} --write-out '%{http_code}' -o /dev/null"
+  register: output_res
+  retries: 90
+  delay: 30
+  until: "'200' in output_res.stdout"
   tags:
-    - reinstall
+    - v5113
 
 # Delete secret
 - name: "16 - Delete default secret ibm-spectrum-scale-gui-containeroperator"
