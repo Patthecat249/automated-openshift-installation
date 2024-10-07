@@ -136,59 +136,59 @@ dir_baas: "{{dir_root}}spectrumprotectplus/"
 masters:
   - name: "master01"
     hostname: "ocpmaster01"
-    ip: "11.11.12.121"
+    ip: "172.16.1.121"
     cpu: "8"
     ram: "16384"
     disk: "200"
-    datastore: "openshift_storage"
+    datastore: "esx-datengrab"
   - name: "master02"
     hostname: "ocpmaster02"
-    ip: "11.11.12.122"
+    ip: "172.16.1.122"
     cpu: "8"
     ram: "16384"
     disk: "200"
-    datastore: "openshift_storage"
+    datastore: "esx-datengrab"
   - name: "master03"
     hostname: "ocpmaster03"
-    ip: "11.11.12.123"
+    ip: "172.16.1.123"
     cpu: "8"
     ram: "16384"
     disk: "200"
-    datastore: "openshift_storage"
+    datastore: "esx-datengrab"
 
 # OpenShift-Worker-Nodes
 workers:
   - name: "worker01"
     hostname: "ocpworker01"
-    ip: "11.11.12.124"
+    ip: "172.16.1.124"
     cpu: "8"
     ram: "32768"
     disk: "200"
-    datastore: "openshift_storage"
+    datastore: "esx-datengrab"
   - name: "worker02"
     hostname: "ocpworker02"
-    ip: "11.11.12.125"
+    ip: "172.16.1.125"
     cpu: "8"
     ram: "32768"
     disk: "200"
-    datastore: "openshift_storage"
+    datastore: "esx-datengrab"
   - name: "worker03"
     hostname: "ocpworker03"
-    ip: "11.11.12.126"
+    ip: "172.16.1.126"
     cpu: "8"
     ram: "32768"
     disk: "200"
-    datastore: "openshift_storage"
+    datastore: "esx-datengrab"
 
 # Temporary Bootstrap-VM
 bstrp:
   name: "bootstrap"
   hostname: "ocpbootstrap"
-  ip: "11.11.12.127"
+  ip: "172.16.1.127"
   cpu: "8"
   ram: "16384"
   disk: "200"
-  datastore: "openshift_storage"
+  datastore: "esx-datengrab"
 
 # Install-VM
 install_vm:
@@ -199,7 +199,7 @@ install_vm:
 bastion:
   name: "bastion"
   hostname: "ocpbastion"
-  ip: "11.11.12.120"
+  ip: "172.16.1.120"
   cpu: "2"
   ram: "4096"
   disk: "200"
@@ -208,7 +208,7 @@ bastion:
 registry:
   name: "registry"
   hostname: "ocpregistry"
-  ip: "11.11.12.119"
+  ip: "172.16.1.119"
   cpu: "2"
   ram: "2048"
   disk: "200"
@@ -217,16 +217,16 @@ registry:
 router:
   name: "router"
   hostname: "ocprouter"
-  ip: "10.0.249.3"
+  ip: "10.0.249.2"
   default_gw: "10.0.249.1"
   ocp1: "11.11.10.1"
-  ocp2: "11.11.12.1"
+  ocp2: "172.16.1.1"
   ocp3: "11.11.11.1"
   cpu: "1"
   ram: "1024"
   disk: "200"
   openshift:
-    ip: "11.11.12.1"
+    ip: "172.16.1.1"
   
 
 # Router
@@ -249,16 +249,16 @@ pxe:
 lb:
   name: "load-balancer"
   hostname: "ocplb01"
-  ip: "11.11.12.129"
+  ip: "172.16.1.129"
   cpu: "1"
   ram: "1024"
   disk: "200"
   app:
-    ip: "11.11.12.129"
+    ip: "172.16.1.129"
   api:
-    ip: "11.11.12.129"
+    ip: "172.16.1.129"
   api_int:
-    ip: "11.11.12.129"
+    ip: "172.16.1.129"
 
 # Spectrum-Protect-Plus
 spp:
@@ -268,9 +268,9 @@ spp:
   port: "443"
 
 # DNSMASQ-Settings
-dhcp_range: "11.11.12.110 11.11.12.200"
+dhcp_range: "172.16.1.110 172.16.1.200"
 dhcp_subnetmask: "255.255.255.0"
-dhcp_gateway: "11.11.12.1"
+dhcp_gateway: "172.16.1.1"
 ntpserver: "10.0.249.1"
 interface: "ens192"
 listen_address: "{{ bastion.ip }}"
