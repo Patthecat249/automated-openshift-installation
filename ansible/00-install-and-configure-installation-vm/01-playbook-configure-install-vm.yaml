@@ -16,7 +16,6 @@
       yum:
         name:
           - epel-release
-          - centos-release-ansible-29.noarch
           - ansible
           - git
           - sshpass
@@ -177,10 +176,10 @@
       become: "true"
       raw: "sshpass -f rootpassword ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@localhost"
 
-# Create User pi
-    - name: "15 - Create User pi"
+# Create User ansible
+    - name: "15 - Create User ansible"
       user:
-        name: "pi" 
+        name: "ansible" 
         group: "wheel"
         shell: "/bin/bash"
         password: "{{'Test1234' | password_hash('sha512', '')}}"
@@ -188,52 +187,52 @@
         ssh_key_bits: "2048"
         ssh_key_file: ".ssh/id_rsa"
 
-# Create Working-Directories for User pi
-    - name: "16 --- Create Working-Directories for user pi"
+# Create Working-Directories for User ansible
+    - name: "16 --- Create Working-Directories for user ansible"
       become: "true"
-      become_user: "pi"
+      become_user: "ansible"
       file:
         path: "{{ item }}"
         state: "directory"
         recurse: "true"
       with_items:
-        - "{{ dir_pi_home }}git"
+        - "{{ dir_ansible_home }}git"
 
 # Add right to wheel in sudoers.d
     - name: "17 - add wheel to sudoers.d"
       become: "true"
       raw: "echo '%wheel        ALL=(ALL)       NOPASSWD: ALL' > /etc/sudoers.d/wheel"
 
-# Clone Github-Repo automation... to /home/pi/git/ Directory and set permissions for user pi and group wheel
+# Clone Github-Repo automation... to /home/ansible/git/ Directory and set permissions for user ansible and group wheel
     - name: "18 - Clone Github-Repository https://github.com/Patthecat249/automated-openshift-installation.git"
       become: "true"
-      become_user: "pi"     
+      become_user: "ansible"
       git:
         repo: "https://github.com/Patthecat249/automated-openshift-installation.git"
-        dest: "{{ dir_pi_home }}git/automated-openshift-installation/"
+        dest: "{{ dir_ansible_home }}git/automated-openshift-installation/"
         clone: "true"
         update: "true"
 # Do task as pi: ssh-copy-id
-    - name: "19 - ssh-copy-id as user-pi to pi-server"
-      become: "true"
-      become_user: "pi"
-      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pi"
+#    - name: "19 - ssh-copy-id as user-pi to pi-server"
+#      become: "true"
+#      become_user: "ansible"
+#      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pi"
 
-    - name: "20 - ssh-copy-id as user-root to pi-server"
-      become: "true"
-      become_user: "root"
-      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pi"
+#    - name: "20 - ssh-copy-id as user-root to pi-server"
+#      become: "true"
+#      become_user: "root"
+#      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@pi"
 
 
-    - name: "21 - ssh-copy-id as user-pi to {{ pxe.hostname }}"
-      become: "true"
-      become_user: "pi"
-      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@{{ pxe.hostname }}"
+#    - name: "21 - ssh-copy-id as user-pi to {{ pxe.hostname }}"
+#      become: "true"
+#      become_user: "pi"
+#      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@{{ pxe.hostname }}"
 
-    - name: "22 - ssh-copy-id as user-root to {{ pxe.hostname }}"
-      become: "true"
-      become_user: "root"
-      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@{{ pxe.hostname }}"
+#    - name: "22 - ssh-copy-id as user-root to {{ pxe.hostname }}"
+#      become: "true"
+#      become_user: "root"
+#      raw: "ssh-copy-id -o StrictHostKeyChecking=no pi@{{ pxe.hostname }}"
 
 
 # Create .ansible.cfg in /root-dir

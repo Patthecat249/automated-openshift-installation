@@ -17,7 +17,6 @@ domain={{clustername}}.{{domain}},{{net_openshift}}{{netmask_openshift_cidr}},lo
 no-resolv
 strict-order
 
-<<<<<<< HEAD
 # DHCP-Host-Entries
 
 
@@ -25,7 +24,6 @@ strict-order
 
 ### Auflösung für Bastion-Host
 address=/{{ bastion.hostname }}.{{ clustername }}.{{ domain }}/{{ bastion.ip }}
-=======
 #+--------------+#
 #| --- DHCP --- |#
 #+--------------+#
@@ -54,7 +52,6 @@ address=/{{ bastion.hostname }}.{{ clustername }}.{{ domain }}/{{ bastion.ip }}
 
 ## DHCP-Boot-Options
 #dhcp-boot=tag:openshift_node,{{ boot_script }},{{ bastion.hostname }}.{{ clustername }}.{{ domain }}
->>>>>>> dpg-openshift
 
 
 #+-------------+#
@@ -76,7 +73,6 @@ srv-host=_etcd-server-ssl._tcp.{{ clustername }}.{{ domain }},etcd-{{ i }}.{{ cl
 address=/etcd-{{ i }}.{{ clustername }}.{{ domain }}/{{ masters[i].ip }}
 {% endfor %}
 
-<<<<<<< HEAD
 
 ### Auflösung für GPFS-Cluster-IP
 address=/{{ nfs_server_name }}/{{ nfs_server_ip }}
@@ -98,22 +94,25 @@ dhcp-option=3,{{ dhcp_gateway }}
 ## DNS-Server (Option=6)
 dhcp-option=6,{{ bastion.ip }}
 
+## DNS-Server (Option=15)
+dhcp-option=15,{{ clustername }}.{{ domain }},{{ domain }}
+
 {% if ntpserver is defined %}
 ## NTP Server (Option=42)
 dhcp-option=42,{{ ntpserver }}
 {% endif %}
-=======
+
 ## Auflösung für Bastion-Host, Registry, Load-Balancer
 address=/{{ bastion.hostname }}.{{ clustername }}.{{ domain }}/{{ bastion.ip }}
 address=/{{ registry.hostname }}.{{ clustername }}.{{ domain }}/{{ registry.ip }}
 address=/{{ lb.hostname }}.{{ clustername }}.{{ domain }}/{{ lb.ip }}
+address=/{{ router.hostname }}.{{ clustername }}.{{ domain }}/{{ router.ip }}
 
 ### Auflösung für NFS-IP
 address=/{{ nfs_server_name }}/{{ nfs_server_ip }}
 
 # VMware, vCenter, vSphere
 address=/{{ vsphere_server }}/10.0.249.205
->>>>>>> dpg-openshift
 
 #+-------------+#
 #| --- PXE --- |#

@@ -9,23 +9,6 @@
     src: "{{rootpw}}"
     dest: "{{rootpw}}"
 
-- name: "03a- yum makecache fast"
-  raw: "yum makecache fast"
-
-- name: "03 - Update yum-repos EPEL-RELEASE"
-  become: "true"
-  yum:
-    name:
-      - "epel-release.noarch"
-    state: "present"
-
-- name: "43 - Update yum-repos centos-release-ansible-29.noarch"
-  become: "true"
-  yum:
-    name:
-      - "centos-release-ansible-29.noarch"
-    state: "present"
-
 - name: "44 - Install necassary software programs"
   become: "true"
   yum:
@@ -153,6 +136,11 @@
   tags:
     - rerun
 
+- name: Stelle sicher, dass firewalld gestartet und aktiviert ist
+  ansible.builtin.systemd:
+    name: firewalld
+    enabled: true
+    state: started
 
 - name: "54 - Open some firewall-ports"
   firewalld:
@@ -167,3 +155,22 @@
     - "dhcp"
   tags:
     - rerun
+
+- name: Öffne den UDP-Port 53 für DNS in firewalld
+  ansible.builtin.firewalld:
+    port: 53/udp
+    permanent: true
+    state: enabled
+    #immediate: yes
+
+- name: Öffne den TCP-Port 53 für DNS in firewalld
+  ansible.builtin.firewalld:
+    port: 53/tcp
+    permanent: true
+    state: enabled
+    #immediate: yes
+
+- name: Reload firewalld, um die Änderungen zu übernehmen
+  ansible.builtin.systemd:
+    name: firewalld
+    state: reloaded

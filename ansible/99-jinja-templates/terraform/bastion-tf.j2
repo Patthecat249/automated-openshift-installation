@@ -31,12 +31,16 @@ data "vsphere_network" "network" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
+data "vsphere_virtual_machine" "template" {
+  name          = "{{vsphere_vmtemplate_name}}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
 
 # --- Create VM {{ bastion.hostname }} --- #
 resource "vsphere_virtual_machine" "{{ bastion.hostname }}" {
   name                        = "{{ bastion.hostname }}"
   folder                      = "{{ vsphere_folder }}"
-  guest_id                    = "centos7_64Guest"
+  guest_id                    = "centos8_64Guest"
   resource_pool_id            = data.vsphere_resource_pool.pool.id
   firmware                    = "bios"
   datastore_id                = data.vsphere_datastore.datastore_{{ bastion.hostname }}.id
@@ -51,7 +55,7 @@ resource "vsphere_virtual_machine" "{{ bastion.hostname }}" {
   }
 
   clone {
-    template_uuid = "4226b890-4986-d6b5-f3ef-e3458f22cfee"
+    template_uuid = "${data.vsphere_virtual_machine.template.id}"
     customize {
       linux_options {
         host_name = "{{ hostname }}"

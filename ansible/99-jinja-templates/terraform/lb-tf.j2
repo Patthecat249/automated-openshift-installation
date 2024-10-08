@@ -21,7 +21,7 @@ data "vsphere_resource_pool" "pool" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-data "vsphere_datastore" "datastore_{{ registry.hostname }}" {
+data "vsphere_datastore" "datastore_{{ lb.hostname }}" {
   name = "{{vsphere_datastore}}"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
@@ -36,16 +36,16 @@ data "vsphere_virtual_machine" "template" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-# --- Create VM {{ registry.hostname }} --- #
-resource "vsphere_virtual_machine" "{{ registry.hostname }}" {
-  name                        = "{{ registry.hostname }}"
+# --- Create VM {{ lb.hostname }} --- #
+resource "vsphere_virtual_machine" "{{ lb.hostname }}" {
+  name                        = "{{ lb.hostname }}"
   folder                      = "{{ vsphere_folder }}"
   guest_id                    = "{{ vsphere_guest_id }}"
   resource_pool_id            = data.vsphere_resource_pool.pool.id
   firmware                    = "bios"
-  datastore_id                = data.vsphere_datastore.datastore_{{ registry.hostname }}.id
-  num_cpus                    = {{ registry.cpu }}
-  memory                      = {{ registry.ram }}
+  datastore_id                = data.vsphere_datastore.datastore_{{ lb.hostname }}.id
+  num_cpus                    = {{ lb.cpu }}
+  memory                      = {{ lb.ram }}
   boot_delay                  = var.vm_boot_delay
   wait_for_guest_ip_timeout   = 0
   wait_for_guest_net_timeout  = 0
@@ -58,21 +58,21 @@ resource "vsphere_virtual_machine" "{{ registry.hostname }}" {
     template_uuid = "${data.vsphere_virtual_machine.template.id}"
     customize {
       linux_options {
-        host_name = "{{ registry.hostname }}"
+        host_name = "{{ lb.hostname }}"
         domain = "{{ domain }}"
       }
       network_interface {
-        ipv4_address = "{{registry.ip}}"
+        ipv4_address = "{{lb.ip}}"
         ipv4_netmask = 24
       }
       dns_server_list = ["{{bastion.ip}}"]
-      ipv4_gateway = "{{router.ip}}"
+      ipv4_gateway = "{{router.openshift.ip}}"
     }
   }
 
   disk {
     label                     = "disk0"
-    size                      = {{ registry.disk }}
+    size                      = {{ lb.disk }}
     thin_provisioned          = "true"
   }
 }
