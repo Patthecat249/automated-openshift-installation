@@ -75,6 +75,7 @@ pull_secret_file_name: "pull-secret"
 # Mirror-Registry
 registry_user: "reguser" # No underscore allowed!
 registry_pass: "Test1234"
+registry_auth: "{{registry_user }}:{{registry_pass}}"
 registry_port: "5000"
 local_registry: "{{registry.hostname}}.{{clustername}}.{{domain}}"
 product_repo: "openshift-release-dev"
@@ -211,7 +212,8 @@ registry:
   ip: "172.16.1.119"
   cpu: "2"
   ram: "2048"
-  disk: "200"
+  disk: "50"
+  disk_for_registry: "500"
 
 # Router-VM
 router:

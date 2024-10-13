@@ -1,6 +1,6 @@
 ---
 - name: "{{ lookup('pipe','date \"+%Y-%m-%d %H-%M-%S\"') }} | Playbook - Configure the Registry-VM"
-  hosts: "{{ registry.ip }}"
+  hosts: "{{ registry.hostname }}"
   become: "true"
   gather_facts: "false"
   vars_files:
@@ -16,23 +16,6 @@
       become_user: "root"
       raw: "sshpass -f '/root/rootpassword' ssh-copy-id -i /root/.ssh/id_rsa -o StrictHostKeyChecking=no root@{{registry.ip}}"
       delegate_to: "localhost"
-
-# Install some software
-    - name: "86a - Install Epel-Release"
-      yum:
-        name: 
-          - "epel-release"
-        state: "present"
-      
-    - name: "86b - Install podman"
-      yum:
-        name: 
-          - "podman"
-          - "wget"
-          #- "openssl11"
-          - "openssl"
-          - "httpd-tools"
-        state: "present"
 
 # Create Working-Directories on Install-VM
     - name: "87 --- Create Working-Directories on {{ install_vm.hostname }}"
@@ -54,6 +37,54 @@
         - "{{dir_registry_auth}}"
         - "{{dir_registry_certs}}"
         - "{{dir_registry_data}}"
+        - "/opcregistry"
+
+# Add seconds disk
+    - name: Create directory /ocpregistry
+      ansible.builtin.file:
+        path: /ocpregistry
+        state: directory
+        mode: '0755'
+
+    - name: Initialize /dev/sdb as a physical volume (PV)
+      ansible.builtin.command:
+        cmd: pvcreate /dev/sdb
+      # only if the device is not already a PV
+      when: ansible_facts.devices['sdb'].partitions == {}
+
+    - name: Create volume group vg-registry
+      ansible.builtin.command:
+        cmd: vgcreate vg-registry /dev/sdb
+      # only if the VG doesn't exist
+      when: "'vg-registry' not in ansible_lvm.vgs"
+
+    - name: Create logical volume lv-registry in vg-registry
+      ansible.builtin.command:
+        cmd: lvcreate -n lv-registry -l 100%FREE vg-registry
+      # only if the LV doesn't exist
+      when: "'lv-registry' not in ansible_lvm.lvs"
+
+    - name: Format the logical volume with XFS
+      ansible.builtin.command:
+        cmd: mkfs.xfs /dev/vg-registry/lv-registry
+      # only if it's not already formatted as XFS
+      when: ansible_mounts | selectattr('mount', 'equalto', '/ocpregistry') | map(attribute='fstype') | list != ['xfs']
+
+    - name: Mount the logical volume to /ocpregistry
+      ansible.builtin.mount:
+        path: /ocpregistry
+        src: /dev/vg-registry/lv-registry
+        fstype: xfs
+        state: mounted
+
+    - name: Ensure /dev/vg-registry/lv-registry is mounted at boot in /etc/fstab
+      ansible.builtin.mount:
+        path: /ocpregistry
+        src: /dev/vg-registry/lv-registry
+        fstype: xfs
+        opts: defaults
+        state: present
+
 
 # Download openshift software from internet
 # Download oc-client
@@ -66,80 +97,6 @@
         - downloads
       delegate_to: "localhost"
 
-# Download openshift-installer
-    # - name: "90 - Download OpenShift - openshift-installer on {{ install_vm.hostname }}"
-    #   get_url:
-    #     url="{{link_to_openshift_installer}}"
-    #     dest="{{ dir_downloads }}{{file_openshift_installer}}"
-    #   register: get_installer
-    #   tags:
-    #     - downloads
-    #   delegate_to: "localhost"
-
-
-# Download Kernel
-    # - name: "91 - Download CoreOS - Kernel on {{ install_vm.hostname }}"
-    #   get_url:
-    #     url="{{link_to_coreos_kernel}}"
-    #     dest="{{ dir_downloads }}{{file_coreos_kernel}}"
-    #   register: get_kernel
-    #   tags:
-    #     - downloads
-    #   delegate_to: "localhost"
-
-    # - debug: 
-    #     msg="{{file_coreos_kernel}} was downloaded"
-    #   when: get_kernel|changed
-    #   tags:
-    #     - downloads
-    #   delegate_to: "localhost"
-
-# Download Initrd
-    # - name: "92 - Download CoreOS - Initrd on {{ install_vm.hostname }}"
-    #   get_url:
-    #     url="{{link_to_coreos_initrd}}"
-    #     dest="{{ dir_downloads }}{{file_coreos_initrd}}"
-    #   register: get_initrd
-    #   tags:
-    #     - downloads
-    #   delegate_to: "localhost"
-
-    # - debug: 
-    #     msg="{{file_coreos_kernel}} was downloaded"
-    #   when: get_initrd|changed
-    #   tags:
-    #     - downloads
-    #   delegate_to: "localhost"
-
-# Download RAW_GZ
-    # - name: "93 - Download CoreOS - raw_gz on {{ install_vm.hostname }}"
-    #   get_url:
-    #     url="{{link_to_coreos_raw_gz}}"
-    #     dest="{{ dir_downloads }}{{file_coreos_raw_gz}}"
-    #   register: get_rawgz
-    #   tags:
-    #     - downloads
-    #   delegate_to: "localhost"
-
-    # - debug: 
-    #     msg="{{file_coreos_kernel}} was downloaded"
-    #   when: get_rawgz|changed
-    #   tags:
-    #     - downloads
-    #   delegate_to: "localhost"
-
-    # - name: "10 - Download OpenShift-Software"
-    #   get_url:
-    #     url: "{{ item }}"
-    #     dest: "{{ dir_downloads }}"
-    #   with_items:
-    #     - "{{ link_to_oc }}"
-    #     - "{{ link_to_openshift_installer }}"
-    #     - "{{ link_to_coreos_kernel }}"
-    #     - "{{ link_to_coreos_initrd }}"
-    #     - "{{ link_to_coreos_raw_gz }}"
-    #   delegate_to: "localhost"
-
 # Extraction of zip-archive
     - name: "94 - Extract the oc-client on {{ install_vm.hostname }}"
       unarchive:
@@ -148,27 +105,12 @@
         remote_src: "true"
       delegate_to: "localhost"
 
-# Extraction of zip-archive
-    # - name: "95 - Extract the openshift-installer on {{ install_vm.hostname }}"
-    #   unarchive:
-    #     src: "{{ dir_downloads }}openshift-install-linux-{{version_openshift}}.tar.gz"
-    #     dest: "{{ dir_downloads }}"
-    #     remote_src: "true"
-    #   delegate_to: "localhost"
-
 # Make oc executable >> copy to /usr/local/bin/oc
     - name: "96 - copy oc to /usr/local/bin and make executable"
       copy:
         src: "{{ dir_downloads }}oc"
         dest: "/usr/local/bin/oc"
         mode: "0755"
-
-# Make openshift-installer executable >> copy to /usr/local/bin/openshift-install
-    # - name: "97 - copy openshift-install to /usr/local/bin and make executable"
-    #   copy:
-    #     src: "{{ dir_downloads }}openshift-install"
-    #     dest: "/usr/local/bin/openshift-install"
-    #     mode: "0755"
 
 # Create SSL-Cert for Registry
     - name: "98 - Create SSL-Cert for Registry"
@@ -180,6 +122,19 @@
 # Create User for registry
     - name: "99 - Create User {{registry_user}} for Registry"
       raw: "htpasswd -bBc {{dir_registry_auth}}htpasswd {{registry_user}} {{registry_pass}}"
+
+# Füge dem Pull-Secret einen neuen Eintrag hinzu
+    - name: Add new registry to pull-secret.json
+      ansible.builtin.lineinfile:
+        path: "/opt/sva/tools/pull-secret"
+        insertafter: '"auths": {'  # Fügt die Zeile nach dem "auths"-Eintrag ein
+        line: |
+          "{{local_registry}}:{{registry_port}}": {
+            "auth": "{{ registry_auth | b64encode }}",
+            "email": "bla@bla.bla"
+          },
+      tags:
+        - addregistry
 
 
 # Run the mirror-registry with Podman

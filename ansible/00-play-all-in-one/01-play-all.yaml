@@ -66,8 +66,8 @@
 #        timeout: 300
 #        port: 22
 
-- import_playbook: "../02-install-and-configure-image-registry-vm/02-playbook-configure-registry-vm.yaml"
-- import_playbook: "../02-install-and-configure-image-registry-vm/03-playbook-mirror-the-registry.yaml"
+#- import_playbook: "../02-install-and-configure-image-registry-vm/02-playbook-configure-registry-vm.yaml"
+#- import_playbook: "../02-install-and-configure-image-registry-vm/03-playbook-mirror-the-registry.yaml"
 
 
 ### ---------------------------------------------------------------------------------------------------------------- ###
@@ -86,19 +86,19 @@
 # cd /opt/sva/terraform && ./cleanup-openshift-nodes473.sh                 # install-vM: terraform destroy nodes 
 
 # Prepare install-config.yaml
-- import_playbook: "../01-install-and-configure-bastion-host-vm/03-prepare-openshift-install-config.yaml"
+#- import_playbook: "../01-install-and-configure-bastion-host-vm/03-prepare-openshift-install-config.yaml"
 
 # Start openshift-installation bootstrap -> master-/worker-nodes
-- import_playbook: "../04-start-openshift-installation/01-openshift-in-one-tf-file.yaml"
+#- import_playbook: "../04-start-openshift-installation/01-openshift-in-one-tf-file.yaml"
 
 # Wait for Bootstrap to complete
-- import_playbook: "../04-start-openshift-installation/02-wait-for-bootstrap-complete.yaml"
+#- import_playbook: "../04-start-openshift-installation/02-wait-for-bootstrap-complete.yaml"
 
 # Sign Certificate Signing Requests
-- import_playbook: "../04-start-openshift-installation/03-sign-certificate-requests.yaml"
+#- import_playbook: "../04-start-openshift-installation/03-sign-certificate-requests.yaml"
 
 # Wait for Install to complete
-- import_playbook: "../04-start-openshift-installation/04-wait-for-install-complete.yaml"
+#- import_playbook: "../04-start-openshift-installation/04-wait-for-install-complete.yaml"
 
 # Post-Installation-Tasks
-- import_playbook: "../05-post-ocp-installation-tasks/01-playbook-execute-post-install-tasks.yaml"
+#- import_playbook: "../05-post-ocp-installation-tasks/01-playbook-execute-post-install-tasks.yaml"
