@@ -1,0 +1,75 @@
+global  
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    maxconn     4000
+    user        haproxy
+    group       haproxy
+    daemon
+    stats   socket  /var/lib/haproxy/stats
+
+### BEGIN First OpenShift-Cluster
+frontend openshift-api-server
+    bind        {{ openshift_api_server.frontend.ip }}{% if openshift_api_server.frontend.port is defined %}:{{ openshift_api_server.frontend.port }}{% endif %}{% if openshift_api_server.frontend.ssl_crt is defined %} ssl crt {{ openshift_api_server.frontend.ssl_crt }}{% endif %}{{- '\n'}}
+    default_backend openshift-api-server
+    mode        tcp
+    option      tcplog
+
+backend openshift-api-server
+    balance     source
+    mode        tcp
+{% for srv in openshift_api_server.backend.servers %}
+    server  {{ srv.hostname }}  {{ srv.ip }}:{{ openshift_api_server.frontend.port }} check
+{% endfor %}
+
+frontend machine-config-server
+    bind        {{ machine_config_server.frontend.ip }}{% if machine_config_server.frontend.port is defined %}:{{ machine_config_server.frontend.port }}{% endif %}{% if machine_config_server.frontend.ssl_crt is defined %} ssl crt {{ machine_config_server.frontend.ssl_crt }}{% endif %}{{- '\n'}}
+    default_backend machine-config-server
+    mode        tcp
+    option      tcplog
+
+backend machine-config-server
+    balance     source
+    mode        tcp
+{% for srv in machine_config_server.backend.servers %}
+    server  {{ srv.hostname }}  {{ srv.ip }}:{{ machine_config_server.frontend.port }} check
+{% endfor %}  
+
+frontend ingress-http
+    bind        {{ ingress_http.frontend.ip }}{% if ingress_http.frontend.port is defined %}:{{ ingress_http.frontend.port }}{% endif %}{% if ingress_http.frontend.ssl_crt is defined %} ssl crt {{ ingress_http.frontend.ssl_crt }}{% endif %}{{- '\n'}}
+    default_backend ingress-http
+    mode        tcp
+    option      tcplog
+
+backend ingress-http
+    balance     source
+    mode        tcp
+{% for srv in ingress_http.backend.servers %}
+    server  {{ srv.hostname }}  {{ srv.ip }}:{{ ingress_http.frontend.port }} check
+{% endfor %}
+
+frontend ingress-https
+    bind        {{ ingress_https.frontend.ip }}{% if ingress_https.frontend.port is defined %}:{{ ingress_https.frontend.port }}{% endif %}{% if ingress_https.frontend.ssl_crt is defined %} ssl crt {{ ingress_https.frontend.ssl_crt }}{% endif %}{{- '\n'}}
+    default_backend ingress-https
+    mode        tcp
+    option      tcplog
+
+backend ingress-https
+    balance     source
+    mode        tcp
+{% for srv in ingress_https.backend.servers %}
+    server  {{ srv.hostname }}  {{ srv.ip }}:{{ ingress_https.frontend.port }} check
+{% endfor %} 
+
+frontend image-registry
+    bind        {{ image_registry.frontend.ip }}{% if image_registry.frontend.port is defined %}:{{ image_registry.frontend.port }}{% endif %}{% if image_registry.frontend.ssl_crt is defined %} ssl crt {{ image_registry.frontend.ssl_crt }}{% endif %}{{- '\n'}}
+    default_backend image-registry
+    mode        tcp
+    option      tcplog
+
+backend image-registry
+    balance     source
+    mode        tcp
+{% for srv in image_registry.backend.servers %}
+    server  {{ srv.hostname }}  {{ srv.ip }}:{{ image_registry.frontend.port }} check
+{% endfor %} 
+### END First OpenShift-Cluster
