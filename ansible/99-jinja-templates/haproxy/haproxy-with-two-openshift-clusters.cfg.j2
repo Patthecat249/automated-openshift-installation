@@ -1,4 +1,38 @@
-global  
+#[root@ocplb01 ~]# cat /etc/haproxy/haproxy.cfg
+# In dieser Konfiguration gibt es zwei OpenShift-Cluster
+#  airgapped21
+#  airgapped22
+
+# Die FQDNs der cluster sind:
+#  airgapped21.home.local
+#  airgapped22.home.local
+
+# Die APIs sind:
+#   api.airgapped21.home.local
+#   api.airgapped22.home.local
+#   api-int.airgapped21.home.local
+#   api-int.airgapped22.home.local
+
+# Die Wildcard-Domains sind:
+#   *.apps.airgapped21.home.local
+#   *.apps.airgapped22.home.local
+
+# Die Default Sektion enthält Werte, die für alle Frontends und Backends gelten.
+# Sollen Werte in einem Frontend oder Backend veraendert werden, koennen diese
+# dort angepasst werden.
+defaults
+    mode        tcp
+    option      dontlognull
+    option      redispatch
+    log         global
+    log 127.0.0.1 local0
+    retries     3
+    timeout connect 5s       # Timeout für Verbindungsaufbau zum Backend
+    timeout client  30s      # Timeout für Client-Verbindung
+    timeout server 30s       # Timeout für Antwort vom Backend
+    timeout http-request 10s # Timeout für den Empfang der vollständigen HTTP-Anfrage
+    timeout check 5s         # Timeout für Health-Checks
+global
     chroot      /var/lib/haproxy
     pidfile     /var/run/haproxy.pid
     maxconn     4000
@@ -7,69 +41,229 @@ global
     daemon
     stats   socket  /var/lib/haproxy/stats
 
-### BEGIN First OpenShift-Cluster
-frontend openshift-api-server
-    bind        {{ openshift_api_server.frontend.ip }}{% if openshift_api_server.frontend.port is defined %}:{{ openshift_api_server.frontend.port }}{% endif %}{% if openshift_api_server.frontend.ssl_crt is defined %} ssl crt {{ openshift_api_server.frontend.ssl_crt }}{% endif %}{{- '\n'}}
-    default_backend openshift-api-server
+# Frontend aktiviert
+# Das Frontend von Haproxy bietet eine Weboberflaeche und ist hier ereichbar:
+#   http://172.16.1.129:9000/haproxy?stats
+
+frontend stats
+    bind *:9000                 # Port, auf dem das Stats-Webinterface verfügbar ist
+    mode http
+    stats enable                # Aktiviert das Webinterface
+    stats hide-version           # Versteckt die Version von HAProxy (Sicherheitsmaßnahme)
+    stats uri /haproxy?stats     # URL, um auf das Interface zuzugreifen
+    stats realm HAProxy\ Statistics  # Authentifizierungsbereich
+    stats auth admin:password    # Benutzername und Passwort für den Zugriff
+    stats refresh 10s            # Aktualisierungsintervall (alle 10 Sekunden)
+
+###############################
+###                         ###
+###    OPENSHIFT-CLUSTER-1  ###
+###                         ###
+###############################
+
+### ACHTUNG ##################################################################
+# Das ist eine restriktive OpenShift-Konfiguration                           #
+# HAPROXY startet nicht, wenn die Bind-Namen nicht von DNS aufgelöst werden. #
+### ACHTUNG ##################################################################
+
+# Alle eingehenden Anfragen die an:
+# api-int.airgapped21.home.local
+# gehen, werden an das Backend:
+# ocpcluster1-openshift-api-int-server
+# weitergeleitet.
+
+
+# Frontend bedeutet EINGEHENDER Traffic. Wie geht HAPROXY mit eingehendem Traffic um. Weiterleitung ans Backend.
+frontend ocpcluster1-openshift-api-int-server
+    bind        api-int.airgapped21.home.local:6443     # Dieser Name muss per DNS auflösbar sein und auf den LB zeigen
     mode        tcp
     option      tcplog
+    default_backend ocpcluster1-openshift-api-int-server
 
-backend openshift-api-server
+# Wie geht HAPROXY mit dem Traffic vom Frontend um. Es leitet den Traffic an die Server im Backend weiter.
+backend ocpcluster1-openshift-api-int-server
     balance     source
     mode        tcp
-{% for srv in openshift_api_server.backend.servers %}
-    server  {{ srv.hostname }}  {{ srv.ip }}:{{ openshift_api_server.frontend.port }} check
-{% endfor %}
+    server  ocpmaster01  172.16.1.121:6443 check inter 3s fall 3 rise 2
+    server  ocpmaster02  172.16.1.122:6443 check inter 3s fall 3 rise 2
+    server  ocpmaster03  172.16.1.123:6443 check inter 3s fall 3 rise 2
+    server  ocpbootstrap  172.16.1.127:6443 check inter 3s fall 3 rise 2
 
-frontend machine-config-server
-    bind        {{ machine_config_server.frontend.ip }}{% if machine_config_server.frontend.port is defined %}:{{ machine_config_server.frontend.port }}{% endif %}{% if machine_config_server.frontend.ssl_crt is defined %} ssl crt {{ machine_config_server.frontend.ssl_crt }}{% endif %}{{- '\n'}}
-    default_backend machine-config-server
+# Alle eingehenden Anfragen die an: api-int.airgapped21.home.local gehen, werden an das
+# Backend ocpcluster1-openshift-api-server weitergeleitet.
+
+frontend ocpcluster1-openshift-api-server
+    bind        api.airgapped21.home.local:6443
     mode        tcp
     option      tcplog
+    default_backend ocpcluster1-openshift-api-server
 
-backend machine-config-server
+backend ocpcluster1-openshift-api-server
     balance     source
     mode        tcp
-{% for srv in machine_config_server.backend.servers %}
-    server  {{ srv.hostname }}  {{ srv.ip }}:{{ machine_config_server.frontend.port }} check
-{% endfor %}  
+    server  ocpmaster01  172.16.1.121:6443 check inter 3s fall 3 rise 2
+    server  ocpmaster02  172.16.1.122:6443 check inter 3s fall 3 rise 2
+    server  ocpmaster03  172.16.1.123:6443 check inter 3s fall 3 rise 2
+    server  ocpbootstrap  172.16.1.127:6443 check inter 3s fall 3 rise 2
 
+# Alle Anfragen an den Machine-Config-Server gehen an: api-int.ocp.home.local
+# und werden an das Backend: ocpcluster1-machine-config-server weitergeleitet
+
+frontend ocpcluster1-machine-config-server
+    bind        api-int.airgapped21.home.local:22623
+    mode        tcp
+    option      tcplog
+    default_backend ocpcluster1-machine-config-server
+
+backend ocpcluster1-machine-config-server
+    balance     source
+    mode        tcp
+    server  ocpmaster01  172.16.1.121:22623 check inter 3s fall 3 rise 2
+    server  ocpmaster02  172.16.1.122:22623 check inter 3s fall 3 rise 2
+    server  ocpmaster03  172.16.1.123:22623 check inter 3s fall 3 rise 2
+    server  ocpbootstrap  172.16.1.127:22623 check inter 3s fall 3 rise 2
+
+# Alle Anfragen an die Wildcard-Domain *.apps.airgapped21.home.local werden an das
+# Backend: ocpcluster1-ingress-http weitergeleitet
 frontend ingress-http
-    bind        {{ ingress_http.frontend.ip }}{% if ingress_http.frontend.port is defined %}:{{ ingress_http.frontend.port }}{% endif %}{% if ingress_http.frontend.ssl_crt is defined %} ssl crt {{ ingress_http.frontend.ssl_crt }}{% endif %}{{- '\n'}}
-    default_backend ingress-http
+    bind        apps.airgapped21.home.local:80
+    default_backend ocpcluster1-ingress-http
     mode        tcp
     option      tcplog
 
-backend ingress-http
+backend ocpcluster1-ingress-http
     balance     source
     mode        tcp
-{% for srv in ingress_http.backend.servers %}
-    server  {{ srv.hostname }}  {{ srv.ip }}:{{ ingress_http.frontend.port }} check
-{% endfor %}
+    server  ocpworker01  172.16.1.124:80 check inter 3s fall 3 rise 2
+    server  ocpworker02  172.16.1.125:80 check inter 3s fall 3 rise 2
+    server  ocpworker03  172.16.1.126:80 check inter 3s fall 3 rise 2
 
-frontend ingress-https
-    bind        {{ ingress_https.frontend.ip }}{% if ingress_https.frontend.port is defined %}:{{ ingress_https.frontend.port }}{% endif %}{% if ingress_https.frontend.ssl_crt is defined %} ssl crt {{ ingress_https.frontend.ssl_crt }}{% endif %}{{- '\n'}}
-    default_backend ingress-https
+frontend ocpcluster1-ingress-https
+    bind        apps.airgapped21.home.local:443
+    default_backend ocpcluster1-ingress-https
     mode        tcp
     option      tcplog
 
-backend ingress-https
+backend ocpcluster1-ingress-https
     balance     source
     mode        tcp
-{% for srv in ingress_https.backend.servers %}
-    server  {{ srv.hostname }}  {{ srv.ip }}:{{ ingress_https.frontend.port }} check
-{% endfor %} 
+    server  ocpworker01  172.16.1.124:443 check inter 3s fall 3 rise 2
+    server  ocpworker02  172.16.1.125:443 check inter 3s fall 3 rise 2
+    server  ocpworker03  172.16.1.126:443 check inter 3s fall 3 rise 2
 
 frontend image-registry
-    bind        {{ image_registry.frontend.ip }}{% if image_registry.frontend.port is defined %}:{{ image_registry.frontend.port }}{% endif %}{% if image_registry.frontend.ssl_crt is defined %} ssl crt {{ image_registry.frontend.ssl_crt }}{% endif %}{{- '\n'}}
+    bind        ocplb01.airgapped21.home.local:80
     default_backend image-registry
-    mode        tcp
+    mode        http
     option      tcplog
 
 backend image-registry
     balance     source
+    mode        http
+    server  ocpbastion  172.16.1.120:80 check inter 3s fall 3 rise 2
+
+###############################
+###                         ###
+###    OPENSHIFT-CLUSTER-2  ###
+###                         ###
+###############################
+
+
+
+### ACHTUNG ###
+# Das ist eine restriktive OpenShift-Konfiguration
+# HAPROXY startet nicht, wenn die Bind-Namen nicht von DNS aufgelöst werden.
+### ACHTUNG ###
+
+# Alle eingehenden Anfragen die an:
+# api-int.airgapped21.home.local
+# gehen, werden an das Backend:
+# ocpcluster2-openshift-api-int-server
+# weitergeleitet.
+
+frontend ocpcluster2-openshift-api-int-server
+    bind        api-int.airgapped22.home.local:6443
     mode        tcp
-{% for srv in image_registry.backend.servers %}
-    server  {{ srv.hostname }}  {{ srv.ip }}:{{ image_registry.frontend.port }} check
-{% endfor %} 
-### END First OpenShift-Cluster
+    option      tcplog
+    default_backend ocpcluster2-openshift-api-int-server
+
+backend ocpcluster2-openshift-api-int-server
+    balance     source
+    mode        tcp
+    server  ocpmaster01  172.16.1.121:6443 check inter 3s fall 3 rise 2
+    server  ocpmaster02  172.16.1.122:6443 check inter 3s fall 3 rise 2
+    server  ocpmaster03  172.16.1.123:6443 check inter 3s fall 3 rise 2
+    server  ocpbootstrap  172.16.1.127:6443 check inter 3s fall 3 rise 2
+
+# Alle eingehenden Anfragen die an: api.airgapped21.home.local gehen, werden an das
+# Backend ocpcluster2-openshift-api-server weitergeleitet.
+
+frontend ocpcluster2-openshift-api-server
+    bind        api.airgapped22.home.local:6443
+    mode        tcp
+    option      tcplog
+    default_backend ocpcluster2-openshift-api-server
+
+backend ocpcluster2-openshift-api-server
+    balance     source
+    mode        tcp
+    server  ocpmaster01  172.16.1.121:6443 check inter 3s fall 3 rise 2
+    server  ocpmaster02  172.16.1.122:6443 check inter 3s fall 3 rise 2
+    server  ocpmaster03  172.16.1.123:6443 check inter 3s fall 3 rise 2
+    server  ocpbootstrap  172.16.1.127:6443 check inter 3s fall 3 rise 2
+
+# Alle Anfragen an den Machine-Config-Server gehen an: api-int.airgapped22.home.local
+# und werden an das Backend: ocpcluster2-machine-config-server weitergeleitet
+
+frontend ocpcluster2-machine-config-server
+    bind        api-int.airgapped22.home.local:22623
+    mode        tcp
+    option      tcplog
+    default_backend ocpcluster2-machine-config-server
+
+backend ocpcluster2-machine-config-server
+    balance     source
+    mode        tcp
+    server  ocpmaster01  172.16.1.121:22623 check inter 3s fall 3 rise 2
+    server  ocpmaster02  172.16.1.122:22623 check inter 3s fall 3 rise 2
+    server  ocpmaster03  172.16.1.123:22623 check inter 3s fall 3 rise 2
+    server  ocpbootstrap  172.16.1.127:22623 check inter 3s fall 3 rise 2
+
+# Alle Anfragen an die Wildcard-Domain *.apps.airgapped22.home.local werden an das
+# Backend: ocpcluster2-ingress-http weitergeleitet
+frontend ocpcluster2-ingress-http
+    bind        apps.airgapped22.home.local:80
+    default_backend ocpcluster2-ingress-http
+    mode        tcp
+    option      tcplog
+
+backend ocpcluster2-ingress-http
+    balance     source
+    mode        tcp
+    server  ocpworker01  172.16.1.124:80 check inter 3s fall 3 rise 2
+    server  ocpworker02  172.16.1.125:80 check inter 3s fall 3 rise 2
+    server  ocpworker03  172.16.1.126:80 check inter 3s fall 3 rise 2
+
+frontend ocpcluster2-ingress-https
+    bind        apps.airgapped22.home.local:443
+    default_backend ocpcluster2-ingress-https
+    mode        tcp
+    option      tcplog
+
+backend ocpcluster2-ingress-https
+    balance     source
+    mode        tcp
+    server  ocpworker01  172.16.1.124:443 check inter 3s fall 3 rise 2
+    server  ocpworker02  172.16.1.125:443 check inter 3s fall 3 rise 2
+    server  ocpworker03  172.16.1.126:443 check inter 3s fall 3 rise 2
+
+frontend ocpcluster2-image-registry
+    bind        ocplb01.airgapped22.home.local:80
+    default_backend ocpcluster2-image-registry
+    mode        http
+    option      tcplog
+
+backend ocpcluster2-image-registry
+    balance     source
+    mode        http
+    server  ocpbastion  172.16.1.120:80 check inter 3s fall 3 rise 2
